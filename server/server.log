@@ -1,0 +1,2459 @@
+
+> roommate-finder-server@1.0.0 start
+> node index.js
+
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+(node:93583) [MONGOOSE] Warning: Duplicate schema index on {"email":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:93583) [MONGOOSE] Warning: Duplicate schema index on {"inviteCode":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+Server running on http://0.0.0.0:3333
+Local access: http://localhost:3333
+Network access: http://10.0.0.204:3333
+Connected to MongoDB
+Initializing sample data...
+Sample data initialized successfully
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
+Matched user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('6912c0436817d2294e60ddaa')
+]
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 1
+Pending matches: 0
+Returning conversations for user: 691424d26baa75e349cc38b8 1
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Returning conversations for user: 691424d26baa75e349cc38b8 1
+Auth check: {
+  reqUserId: '6912c0436817d2294e60ddaa',
+  paramsId: '6912c0436817d2294e60ddaa'
+}
+Current user: Stephanie Louise Campos stephaniec1646@gmail.com
+Swiped user IDs: [
+  new ObjectId('691424d26baa75e349cc38b8'),
+  new ObjectId('691428270354fa2597b4da5e'),
+  new ObjectId('691428270354fa2597b4da6a'),
+  new ObjectId('691428280354fa2597b4da6e')
+]
+Matched user IDs: [ new ObjectId('691424d26baa75e349cc38b8') ]
+All excluded user IDs: [
+  new ObjectId('691424d26baa75e349cc38b8'),
+  new ObjectId('691428270354fa2597b4da5e'),
+  new ObjectId('691428270354fa2597b4da6a'),
+  new ObjectId('691428280354fa2597b4da6e'),
+  new ObjectId('691424d26baa75e349cc38b8')
+]
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Returning matches for user: 6912c0436817d2294e60ddaa
+Real matches: 1
+Pending matches: 0
+Returning conversations for user: 6912c0436817d2294e60ddaa 1
+Auth check: {
+  reqUserId: '6912c0436817d2294e60ddaa',
+  paramsId: '6912c0436817d2294e60ddaa'
+}
+Current user: Stephanie Louise Campos stephaniec1646@gmail.com
+Swiped user IDs: [
+  new ObjectId('691424d26baa75e349cc38b8'),
+  new ObjectId('691428270354fa2597b4da5e'),
+  new ObjectId('691428270354fa2597b4da6a'),
+  new ObjectId('691428280354fa2597b4da6e')
+]
+Matched user IDs: [ new ObjectId('691424d26baa75e349cc38b8') ]
+All excluded user IDs: [
+  new ObjectId('691424d26baa75e349cc38b8'),
+  new ObjectId('691428270354fa2597b4da5e'),
+  new ObjectId('691428270354fa2597b4da6a'),
+  new ObjectId('691428280354fa2597b4da6e'),
+  new ObjectId('691424d26baa75e349cc38b8')
+]
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Returning conversations for user: 6912c0436817d2294e60ddaa 1
+Returning conversations for user: 6912c0436817d2294e60ddaa 1
+Returning conversations for user: 6912c0436817d2294e60ddaa 1
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 6912c0436817d2294e60ddaa
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Auth check: {
+  reqUserId: '6912c0436817d2294e60ddaa',
+  paramsId: '6912c0436817d2294e60ddaa'
+}
+Current user: Stephanie Louise Campos stephaniec1646@gmail.com
+Swiped user IDs: [
+  new ObjectId('691424d26baa75e349cc38b8'),
+  new ObjectId('691428270354fa2597b4da5e'),
+  new ObjectId('691428270354fa2597b4da6a'),
+  new ObjectId('691428280354fa2597b4da6e'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('691439b48bd89a641b2c2301')
+]
+Matched user IDs: [ new ObjectId('691424d26baa75e349cc38b8') ]
+All excluded user IDs: [
+  new ObjectId('691424d26baa75e349cc38b8'),
+  new ObjectId('691428270354fa2597b4da5e'),
+  new ObjectId('691428270354fa2597b4da6a'),
+  new ObjectId('691428280354fa2597b4da6e'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('691439b48bd89a641b2c2301'),
+  new ObjectId('691424d26baa75e349cc38b8')
+]
+Found potential matches: 0
+User names: []
+Returning: 0 matches
+Auth check: {
+  reqUserId: '6912c0436817d2294e60ddaa',
+  paramsId: '6912c0436817d2294e60ddaa'
+}
+Current user: Stephanie Louise Campos stephaniec1646@gmail.com
+Swiped user IDs: [
+  new ObjectId('691424d26baa75e349cc38b8'),
+  new ObjectId('691428270354fa2597b4da5e'),
+  new ObjectId('691428270354fa2597b4da6a'),
+  new ObjectId('691428280354fa2597b4da6e'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('691439b48bd89a641b2c2301')
+]
+Matched user IDs: [ new ObjectId('691424d26baa75e349cc38b8') ]
+All excluded user IDs: [
+  new ObjectId('691424d26baa75e349cc38b8'),
+  new ObjectId('691428270354fa2597b4da5e'),
+  new ObjectId('691428270354fa2597b4da6a'),
+  new ObjectId('691428280354fa2597b4da6e'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('691439b48bd89a641b2c2301'),
+  new ObjectId('691424d26baa75e349cc38b8')
+]
+Found potential matches: 0
+User names: []
+Returning: 0 matches
+Auth check: {
+  reqUserId: '691439b38bd89a641b2c22eb',
+  paramsId: '691439b38bd89a641b2c22eb'
+}
+Current user: Alex Johnson alex@example.com
+Swiped user IDs: []
+Matched user IDs: []
+All excluded user IDs: []
+Found potential matches: 4
+User names: [ 'Stephanie Louise Campos', 'Mia C', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 4 matches
+Returning matches for user: 691439b38bd89a641b2c22eb
+Real matches: 0
+Pending matches: 0
+Returning conversations for user: 691439b38bd89a641b2c22eb 0
+Auth check: {
+  reqUserId: '691439b38bd89a641b2c22eb',
+  paramsId: '691439b38bd89a641b2c22eb'
+}
+Current user: Alex Johnson alex@example.com
+Swiped user IDs: []
+Matched user IDs: []
+All excluded user IDs: []
+Found potential matches: 4
+User names: [ 'Stephanie Louise Campos', 'Mia C', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 4 matches
+Returning conversations for user: 691439b38bd89a641b2c22eb 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
+Matched user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('6912c0436817d2294e60ddaa')
+]
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 1
+Pending matches: 1
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
+Matched user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('6912c0436817d2294e60ddaa')
+]
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Match accepted: new ObjectId('6914b8248bd89a641b2c23a8') status: accepted
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Returning conversations for user: 691424d26baa75e349cc38b8 2
+Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "691439b38bd89a641b2c22eb"
+        },
+        {
+          "senderId": "691439b38bd89a641b2c22eb",
+          "receiverId": "691424d26baa75e349cc38b8"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 0 messages
+Null groupId query returned 0 messages
+Query returned 0 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
+Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "691439b38bd89a641b2c22eb"
+        },
+        {
+          "senderId": "691439b38bd89a641b2c22eb",
+          "receiverId": "691424d26baa75e349cc38b8"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 0 messages
+Null groupId query returned 0 messages
+Query returned 0 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
+Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "691439b38bd89a641b2c22eb"
+        },
+        {
+          "senderId": "691439b38bd89a641b2c22eb",
+          "receiverId": "691424d26baa75e349cc38b8"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 0 messages
+Null groupId query returned 0 messages
+Query returned 0 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
+Message send request: {
+  senderId: '691424d26baa75e349cc38b8',
+  receiverId: '691439b38bd89a641b2c22eb',
+  groupId: undefined,
+  content: 'HI!'
+}
+Message saved successfully: {
+  senderId: new ObjectId('691424d26baa75e349cc38b8'),
+  receiverId: new ObjectId('691439b38bd89a641b2c22eb'),
+  groupId: null,
+  content: 'HI!',
+  messageType: 'text',
+  isRead: false,
+  isDeleted: false,
+  _id: new ObjectId('6914b8748bd89a641b2c23ce'),
+  readBy: [],
+  createdAt: 2025-11-12T16:40:20.730Z,
+  updatedAt: 2025-11-12T16:40:20.730Z,
+  __v: 0
+}
+Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "691439b38bd89a641b2c22eb"
+        },
+        {
+          "senderId": "691439b38bd89a641b2c22eb",
+          "receiverId": "691424d26baa75e349cc38b8"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 1 messages
+Null groupId query returned 1 messages
+Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "691439b38bd89a641b2c22eb"
+        },
+        {
+          "senderId": "691439b38bd89a641b2c22eb",
+          "receiverId": "691424d26baa75e349cc38b8"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 1 messages
+Null groupId query returned 1 messages
+Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "691439b38bd89a641b2c22eb"
+        },
+        {
+          "senderId": "691439b38bd89a641b2c22eb",
+          "receiverId": "691424d26baa75e349cc38b8"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 1 messages
+Null groupId query returned 1 messages
+Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "691439b38bd89a641b2c22eb"
+        },
+        {
+          "senderId": "691439b38bd89a641b2c22eb",
+          "receiverId": "691424d26baa75e349cc38b8"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 1 messages
+Null groupId query returned 1 messages
+Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
+Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "691439b38bd89a641b2c22eb"
+        },
+        {
+          "senderId": "691439b38bd89a641b2c22eb",
+          "receiverId": "691424d26baa75e349cc38b8"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 1 messages
+Null groupId query returned 1 messages
+Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Returning conversations for user: 691424d26baa75e349cc38b8 2
+Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "691439b38bd89a641b2c22eb"
+        },
+        {
+          "senderId": "691439b38bd89a641b2c22eb",
+          "receiverId": "691424d26baa75e349cc38b8"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 1 messages
+Null groupId query returned 1 messages
+Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Returning conversations for user: 691424d26baa75e349cc38b8 2
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Returning conversations for user: 691424d26baa75e349cc38b8 2
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Returning conversations for user: 691424d26baa75e349cc38b8 2
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Returning conversations for user: 691424d26baa75e349cc38b8 2
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 2
+User names: [ 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 2 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 7
+User names: [
+  'Sam Chen',
+  'Mike Rodriguez',
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5'
+]
+Returning: 7 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 6
+User names: [
+  'Mike Rodriguez',
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5'
+]
+Returning: 6 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 6
+User names: [
+  'Mike Rodriguez',
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5'
+]
+Returning: 6 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 6
+User names: [
+  'Mike Rodriguez',
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5'
+]
+Returning: 6 matches
+Returning conversations for user: 691424d26baa75e349cc38b8 2
+Returning conversations for user: 691424d26baa75e349cc38b8 2
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 6
+User names: [
+  'Mike Rodriguez',
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5'
+]
+Returning: 6 matches
+Returning conversations for user: 691424d26baa75e349cc38b8 2
+Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+Request userId: 691424d26baa75e349cc38b8
+Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
+ObjectId query created successfully
+Message query: {
+  "$and": [
+    {
+      "groupId": null
+    },
+    {
+      "$or": [
+        {
+          "senderId": "6912c0436817d2294e60ddaa",
+          "receiverId": "691424d26baa75e349cc38b8"
+        },
+        {
+          "senderId": "691424d26baa75e349cc38b8",
+          "receiverId": "6912c0436817d2294e60ddaa"
+        }
+      ]
+    }
+  ]
+}
+Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
+Sample messages in database: [
+  {
+    id: new ObjectId('691433f7ac7daef89c500abd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'HI!'
+  },
+  {
+    id: new ObjectId('69143459106d2e96723f8cfe'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi!'
+  },
+  {
+    id: new ObjectId('69143482106d2e96723f8d04'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'hi'
+  },
+  {
+    id: new ObjectId('6914359752daa7ec52b18d65'),
+    senderId: new ObjectId('691424d26baa75e349cc38b8'),
+    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
+    content: 'Hi !'
+  }
+]
+Simple query returned 15 messages
+Null groupId query returned 15 messages
+Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 6
+User names: [
+  'Mike Rodriguez',
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5'
+]
+Returning: 6 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 6
+User names: [
+  'Mike Rodriguez',
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5'
+]
+Returning: 6 matches
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 6
+User names: [
+  'Mike Rodriguez',
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5'
+]
+Returning: 6 matches
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Returning matches for user: 691424d26baa75e349cc38b8
+Real matches: 2
+Pending matches: 0
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 8
+User names: [
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5',
+  'Alex Johnson',
+  'Sam Chen',
+  'Mike Rodriguez'
+]
+Returning: 8 matches
+Get matches error: TypeError: Cannot read properties of null (reading '_id')
+    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:356:55
+    at Array.some (<anonymous>)
+    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:355:36
+    at Array.filter (<anonymous>)
+    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:355:8
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Get conversations error: TypeError: Cannot read properties of null (reading '_id')
+    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:682:39
+    at Array.map (<anonymous>)
+    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:678:39
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Get conversations error: TypeError: Cannot read properties of null (reading '_id')
+    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:682:39
+    at Array.map (<anonymous>)
+    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:678:39
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 8
+User names: [
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5',
+  'Alex Johnson',
+  'Sam Chen',
+  'Mike Rodriguez'
+]
+Returning: 8 matches
+Get conversations error: TypeError: Cannot read properties of null (reading '_id')
+    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:682:39
+    at Array.map (<anonymous>)
+    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:678:39
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Auth check: {
+  reqUserId: '691424d26baa75e349cc38b8',
+  paramsId: '691424d26baa75e349cc38b8'
+}
+Current user: Mia C mialcarter04@gmail.com
+Swiped user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe')
+]
+Matched user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+All excluded user IDs: [
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb'),
+  new ObjectId('691439b48bd89a641b2c22fe'),
+  new ObjectId('6912c0436817d2294e60ddaa'),
+  new ObjectId('691439b38bd89a641b2c22eb')
+]
+Found potential matches: 8
+User names: [
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5',
+  'Alex Johnson',
+  'Sam Chen',
+  'Mike Rodriguez'
+]
+Returning: 8 matches
