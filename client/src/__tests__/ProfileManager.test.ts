@@ -341,8 +341,8 @@ describe('ProfileManager Class', () => {
     test('should get group members', () => {
       const members = profileManager.getGroupMembers('group1');
       expect(members).toHaveLength(2);
-      expect(members.map(m => m.getId())).toContain('user1');
-      expect(members.map(m => m.getId())).toContain('user2');
+      expect(members.map((m: any) => m.getId())).toContain('user1');
+      expect(members.map((m: any) => m.getId())).toContain('user2');
     });
 
     test('should return empty array for non-existent group', () => {
@@ -379,15 +379,15 @@ describe('ProfileManager Class', () => {
     test('should search users by age range', () => {
       const results = profileManager.searchUsers({ minAge: 20, maxAge: 30 });
       expect(results).toHaveLength(2);
-      expect(results.map(u => u.getId())).toContain('user1');
-      expect(results.map(u => u.getId())).toContain('user2');
+      expect(results.map((u: any) => u.getId())).toContain('user1');
+      expect(results.map((u: any) => u.getId())).toContain('user2');
     });
 
     test('should search users by gender', () => {
       const results = profileManager.searchUsers({ gender: 'male' });
       expect(results).toHaveLength(2);
-      expect(results.map(u => u.getId())).toContain('user1');
-      expect(results.map(u => u.getId())).toContain('user3');
+      expect(results.map((u: any) => u.getId())).toContain('user1');
+      expect(results.map((u: any) => u.getId())).toContain('user3');
     });
 
     test('should search users by max rent', () => {

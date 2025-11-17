@@ -1,17 +1,9 @@
 /**
- * MESSAGING SYSTEM CLASS - [CURRENTLY COMMENTED OUT] Local messaging and conversation management
- * Previously handled in-memory message storage and conversation threading before MongoDB.
- * Managed user-to-user and group messaging with Maps for conversation organization.
- * Now replaced by API endpoints (/api/messages, /api/conversations) and real-time Socket.io.
- * Preserved for reference and contains useful messaging business logic patterns.
+ * MESSAGING SYSTEM CLASS - Local messaging and conversation management
+ * Handles in-memory message storage and conversation threading.
+ * Manages user-to-user and group messaging with Maps for conversation organization.
+ * Can work alongside API endpoints for hybrid local/remote functionality.
  */
-/* 
-COMMENTED OUT - NOT NEEDED WITH MONGODB
-This class uses only in-memory storage and is redundant with MongoDB-based messaging system.
-The MessagingInterface component now communicates directly with API endpoints:
-- /api/messages for message history
-- /api/conversations for conversation lists
-- Real-time updates via Socket.io
 
 import { Message } from '../types';
 import { User } from './User';
@@ -237,4 +229,3 @@ export class MessagingSystem {
     return null;
   }
 }
-*/

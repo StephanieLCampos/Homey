@@ -1,17 +1,9 @@
 /**
- * MATCHING SYSTEM CLASS - [CURRENTLY COMMENTED OUT] Local matching and swipe action management
- * Previously handled in-memory storage of swipe actions and match generation before MongoDB.
- * Managed swipe left/right logic, mutual match detection, and potential match filtering.
- * Now replaced by API endpoints (/api/swipe, /api/matches) and database-driven matching logic.
- * Preserved for reference and potential extraction of matching algorithm business logic.
+ * MATCHING SYSTEM CLASS - Local matching and swipe action management
+ * Handles in-memory storage of swipe actions and match generation.
+ * Manages swipe left/right logic, mutual match detection, and potential match filtering.
+ * Can work alongside API endpoints for hybrid local/remote functionality.
  */
-/* 
-COMMENTED OUT - MOSTLY NOT NEEDED WITH MONGODB
-This class uses only in-memory storage and is mostly redundant with MongoDB-based matching system.
-The app now uses API endpoints for swipe actions and match management:
-- /api/swipe for recording swipe actions
-- /api/matches for match management
-- Database handles all persistence and matching logic
 
 import { User } from './User';
 // import { Group } from './Group';
@@ -239,4 +231,3 @@ export class MatchingSystem {
     return newMatches;
   }
 }
-*/

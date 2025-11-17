@@ -8,20 +8,20 @@
 import React, { useState } from 'react';
 import { User } from '../classes/User';
 import { Group } from '../classes/Group';
-import { ProfileManager } from '../classes/ProfileManager';
-import { MatchingSystem } from '../classes/MatchingSystem';
+// import { ProfileManager } from '../classes/ProfileManager';
+// import { MatchingSystem } from '../classes/MatchingSystem';
 import defaultUserImage from '../images/default_user.png';
 
 interface GroupManagementProps {
   currentUser: User;
-  profileManager: ProfileManager;
-  matchingSystem: MatchingSystem;
+  // profileManager: ProfileManager;
+  // matchingSystem: MatchingSystem;
 }
 
 const GroupManagement: React.FC<GroupManagementProps> = ({ 
-  currentUser, 
-  profileManager, 
-  matchingSystem 
+  currentUser
+  // profileManager
+  // matchingSystem 
 }) => {
   const [showProposeMember, setShowProposeMember] = useState(false);
   const [proposedUserId, setProposedUserId] = useState('');
@@ -30,68 +30,77 @@ const GroupManagement: React.FC<GroupManagementProps> = ({
 
   // Get user's groups
   React.useEffect(() => {
-    if (currentUser.getGroupId()) {
-      const group = profileManager.getGroup(currentUser.getGroupId()!);
-      if (group) {
-        setUserGroups([group]);
-      }
-    } else {
-      setUserGroups([]);
-    }
+    // TODO: Replace with API calls when integrating with backend
+    setUserGroups([]);
+    setAvailableUsers([]);
+    // if (currentUser.getGroupId()) {
+    //   const group = profileManager.getGroup(currentUser.getGroupId()!);
+    //   if (group) {
+    //     setUserGroups([group]);
+    //   }
+    // } else {
+    //   setUserGroups([]);
+    // }
     
     // Get available users for proposing
-    const available = profileManager.getIndividualUsers().filter(user => 
-      user.getId() !== currentUser.getId()
-    );
-    setAvailableUsers(available);
-  }, [currentUser, profileManager]);
+    // const available = profileManager.getIndividualUsers().filter((user: User) => 
+    //   user.getId() !== currentUser.getId()
+    // );
+    // setAvailableUsers(available);
+  }, [currentUser]);
 
   const handleProposeMember = () => {
-    if (!proposedUserId || !currentUser.getGroupId()) return;
+    // TODO: Replace with API call to backend
+    alert('Group management not yet integrated with backend API');
+    // if (!proposedUserId || !currentUser.getGroupId()) return;
     
-    const group = profileManager.getGroup(currentUser.getGroupId()!);
-    if (!group) return;
+    // const group = profileManager.getGroup(currentUser.getGroupId()!);
+    // if (!group) return;
     
-    try {
-      group.proposeMember(proposedUserId, currentUser.getId());
-      setShowProposeMember(false);
-      setProposedUserId('');
-      alert('Member proposed successfully! Other group members can now vote.');
-    } catch (error) {
-      alert(error instanceof Error ? error.message : 'Failed to propose member');
-    }
+    // try {
+    //   group.proposeMember(proposedUserId, currentUser.getId());
+    //   setShowProposeMember(false);
+    //   setProposedUserId('');
+    //   alert('Member proposed successfully! Other group members can now vote.');
+    // } catch (error) {
+    //   alert(error instanceof Error ? error.message : 'Failed to propose member');
+    // }
   };
 
   const handleVote = (proposedUserId: string, vote: 'yes' | 'no') => {
-    if (!currentUser.getGroupId()) return;
+    // TODO: Replace with API call to backend
+    alert('Group voting not yet integrated with backend API');
+    // if (!currentUser.getGroupId()) return;
     
-    const group = profileManager.getGroup(currentUser.getGroupId()!);
-    if (!group) return;
+    // const group = profileManager.getGroup(currentUser.getGroupId()!);
+    // if (!group) return;
     
-    try {
-      group.voteOnMember(proposedUserId, currentUser.getId(), vote);
+    // try {
+    //   group.voteOnMember(proposedUserId, currentUser.getId(), vote);
       
-      // Check if member is accepted
-      if (group.isMemberAccepted(proposedUserId)) {
-        profileManager.addMemberToGroup(group.getId(), proposedUserId);
-        group.clearPendingVotes(proposedUserId);
-        alert('Member added to group!');
-      } else {
-        alert('Vote recorded!');
-      }
-    } catch (error) {
-      alert(error instanceof Error ? error.message : 'Failed to vote');
-    }
+    //   // Check if member is accepted
+    //   if (group.isMemberAccepted(proposedUserId)) {
+    //     profileManager.addMemberToGroup(group.getId(), proposedUserId);
+    //     group.clearPendingVotes(proposedUserId);
+    //     alert('Member added to group!');
+    //   } else {
+    //     alert('Vote recorded!');
+    //   }
+    // } catch (error) {
+    //   alert(error instanceof Error ? error.message : 'Failed to vote');
+    // }
   };
 
   const handleLeaveGroup = () => {
-    if (!currentUser.getGroupId()) return;
+    // TODO: Replace with API call to backend
+    alert('Leave group functionality not yet integrated with backend API');
+    // if (!currentUser.getGroupId()) return;
     
-    if (confirm('Are you sure you want to leave this group?')) {
-      profileManager.removeMemberFromGroup(currentUser.getGroupId()!, currentUser.getId());
-      setUserGroups([]);
-      alert('You have left the group.');
-    }
+    // if (confirm('Are you sure you want to leave this group?')) {
+    //   profileManager.removeMemberFromGroup(currentUser.getGroupId()!, currentUser.getId());
+    //   setUserGroups([]);
+    //   alert('You have left the group.');
+    // }
   };
 
   if (userGroups.length === 0) {
@@ -104,8 +113,8 @@ const GroupManagement: React.FC<GroupManagementProps> = ({
   }
 
   const group = userGroups[0];
-  const members = profileManager.getGroupMembers(group.getId());
-  const pendingProposals = Array.from((group as any).pendingVotes?.keys() || []) as string[];
+  const members: User[] = []; // TODO: Replace with API call to get group members
+  const pendingProposals: string[] = []; // TODO: Replace with API call to get pending proposals
 
   return (
     <div style={{ color: 'white' }}>
@@ -179,14 +188,7 @@ const GroupManagement: React.FC<GroupManagementProps> = ({
         <div className="card" style={{ marginBottom: '20px', padding: '20px' }}>
           <h3 style={{ marginBottom: '15px', color: '#e17055' }}>Pending Proposals</h3>
           {pendingProposals.map(proposedUserId => {
-            const proposedUser = profileManager.getUser(proposedUserId as string);
-            if (!proposedUser) return null;
-            
-            const votingStatus = group.getVotingStatus(proposedUserId as string);
-            const hasVoted = (group as any).pendingVotes?.get(proposedUserId)?.some(
-              (vote: any) => vote.voterId === currentUser.getId()
-            );
-            
+            // TODO: Replace with API call to get user by ID
             return (
               <div key={proposedUserId} style={{ 
                 marginBottom: '15px',
@@ -196,45 +198,36 @@ const GroupManagement: React.FC<GroupManagementProps> = ({
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                   <img
-                    src={proposedUser.getPhotos()[0] || defaultUserImage}
-                    alt={proposedUser.getName()}
+                    src={defaultUserImage}
+                    alt="Pending User"
                     style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }}
                   />
                   <div>
-                    <p style={{ fontWeight: '600', margin: 0, color: '#2d3436' }}>{proposedUser.getName()}</p>
-                    <p style={{ fontSize: '12px', margin: 0, color: '#636e72' }}>{proposedUser.getAge()} years old</p>
+                    <p style={{ fontWeight: '600', margin: 0, color: '#2d3436' }}>Pending User</p>
+                    <p style={{ fontSize: '12px', margin: 0, color: '#636e72' }}>Age unknown</p>
                   </div>
                 </div>
                 
                 <p style={{ fontSize: '14px', color: '#636e72', marginBottom: '10px' }}>
-                  Votes: {votingStatus.yesVotes} yes, {votingStatus.noVotes} no 
-                  ({votingStatus.totalVotes}/{votingStatus.requiredVotes} required)
+                  Votes: 0 yes, 0 no (0/0 required)
                 </p>
                 
-                {!hasVoted && (
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button
-                      className="btn btn-success"
-                      onClick={() => handleVote(proposedUserId as string, 'yes')}
-                      style={{ fontSize: '12px', padding: '6px 12px' }}
-                    >
-                      Vote Yes
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleVote(proposedUserId as string, 'no')}
-                      style={{ fontSize: '12px', padding: '6px 12px' }}
-                    >
-                      Vote No
-                    </button>
-                  </div>
-                )}
-                
-                {hasVoted && (
-                  <p style={{ fontSize: '12px', color: '#00b894', margin: 0 }}>
-                    You have voted
-                  </p>
-                )}
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    className="btn btn-success"
+                    onClick={() => handleVote(proposedUserId as string, 'yes')}
+                    style={{ fontSize: '12px', padding: '6px 12px' }}
+                  >
+                    Vote Yes
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleVote(proposedUserId as string, 'no')}
+                    style={{ fontSize: '12px', padding: '6px 12px' }}
+                  >
+                    Vote No
+                  </button>
+                </div>
               </div>
             );
           })}

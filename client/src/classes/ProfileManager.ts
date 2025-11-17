@@ -1,19 +1,9 @@
 /**
- * PROFILE MANAGER CLASS - [CURRENTLY COMMENTED OUT] Local storage management for users and groups
- * Previously handled in-memory user and group storage using JavaScript Maps before MongoDB integration.
- * Provided business logic for user creation, group formation, member management, and profile searching.
- * Now replaced by API endpoints and database operations, but preserved for reference.
- * Contains useful business logic patterns that could be extracted as utility functions.
+ * PROFILE MANAGER CLASS - Local storage management for users and groups
+ * Handles in-memory user and group storage using JavaScript Maps.
+ * Provides business logic for user creation, group formation, member management, and profile searching.
+ * Can work alongside API endpoints for hybrid local/remote functionality.
  */
-/* 
-COMMENTED OUT - STORAGE FUNCTIONS NOT NEEDED WITH MONGODB
-This class primarily handles in-memory storage using Maps, which is redundant with MongoDB.
-The app now uses API endpoints for user and group management:
-- /api/auth for user registration and profile management
-- /api/groups for group operations
-- Database handles all persistence
-
-Some business logic methods from this class might be useful to extract as utility functions.
 
 import { User } from './User';
 import { Group } from './Group';
@@ -287,4 +277,3 @@ export class ProfileManager {
     };
   }
 }
-*/

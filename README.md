@@ -185,6 +185,13 @@ Follow these exact steps to get the application running:
    - You should see: "Connected to MongoDB"
    - Sample users (Alex, Sam, Mike) will be automatically created
 
+Note if too many authentication attempts: lsof -ti:3333 | xargs kill
+Note:  && npm start
+
+Reset server:
+lsof -ti:3333 -> check if server still running and get PID
+kill 37809 
+run in the sever folder: && node index.js &
 8. **Access the application**
    
    Open your browser and go to: **http://localhost:3333**
@@ -204,7 +211,7 @@ For development with hot reloading:
    cd server
    npm run dev
    ```
-
+NOTE: if issue with process, kill process on port 3333: lsof -ti:3333
 3. **Start the client development server** (in another terminal)
    ```bash
    cd client
@@ -567,3 +574,33 @@ MIT License - see LICENSE file for details
 - [ ] Password reset functionality
 - [ ] Photo cropping and filters
 - [ ] Location-based matching
+
+
+## Users and passwords:
+- all fake users:
+   first_name@example.com
+   password: password123
+
+   seanlai@gmail.com
+   password: abcd1234
+
+   ashikab@gmail.com
+   password: abcd1234
+
+   stephaniec.1646@gmail.com
+   password: abcd1234
+
+ALL USERS:
+'Stephanie Louise Campos',
+  'Mia C',
+  'Test User',
+  'Test User 2',
+  'Test User 3',
+  'Test User 4',
+  'Test User 5',
+  'Sean Lai',
+  'Ashika B',
+  'Sam Chen',
+  'Mike Rodriguez'
+  'Alex Johnson'
+

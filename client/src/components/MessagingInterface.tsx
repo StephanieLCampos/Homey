@@ -5,9 +5,10 @@
  * Shows conversation threads, message timestamps, and user info for each match.
  * Manages message state, conversation selection, and user profile popups for matches.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { User } from '../classes/User';
 import { authService } from '../services/authService';
+import { io, Socket } from 'socket.io-client';
 
 interface MessagingInterfaceProps {
   currentUser: User;
@@ -42,10 +43,68 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser }) 
   const [loading, setLoading] = useState(true);
   const [showProfile, setShowProfile] = useState<any | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
     loadConversations();
+    initializeSocket();
+    
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
   }, [currentUser]);
+
+  const initializeSocket = () => {
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+    }
+
+    socketRef.current = io(window.location.origin.replace('3000', '3333'), {
+      auth: {
+        token: authService.getToken()
+      }
+    });
+
+    socketRef.current.on('connect', () => {
+      console.log('Socket connected');
+      socketRef.current?.emit('join', currentUser.getId());
+    });
+
+    socketRef.current.on('message', (newMessage: Message) => {
+      console.log('New message received via socket:', newMessage);
+      
+      // Add message to current conversation if it matches
+      setMessages(prevMessages => {
+        // Check if this message belongs to the current conversation
+        if (selectedConversation) {
+          const conversationUserIds = selectedConversation.split('_');
+          const currentUserId = currentUser.getId();
+          const senderId = newMessage.senderId._id || newMessage.senderId;
+          const receiverId = newMessage.receiverId || currentUserId;
+          
+          // Message belongs to current conversation if sender or receiver is in the conversation
+          const messageInCurrentConversation = 
+            conversationUserIds.includes(senderId) && conversationUserIds.includes(currentUserId) ||
+            conversationUserIds.includes(receiverId) && conversationUserIds.includes(currentUserId);
+            
+          if (messageInCurrentConversation) {
+            return [...prevMessages, newMessage];
+          }
+        }
+        return prevMessages;
+      });
+    });
+
+    socketRef.current.on('disconnect', () => {
+      console.log('Socket disconnected');
+    });
+
+    socketRef.current.on('error', (error) => {
+      console.error('Socket error:', error);
+    });
+  };
 
   const loadConversations = async () => {
     try {
@@ -126,8 +185,8 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser }) 
         console.log('Message sent:', sentMessage);
         
         setNewMessage('');
-        // Reload messages to get the updated list
-        await loadMessages(selectedConversation);
+        // Add the sent message to the local state immediately for better UX
+        setMessages(prevMessages => [...prevMessages, sentMessage]);
       } else {
         console.error('Failed to send message');
       }
