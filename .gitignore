@@ -2,5 +2,3 @@ mongodb/
 node_modules/
 *.log
 dist/
-client/dist/
-client/dist/
