@@ -54,13 +54,13 @@ app.use(helmet({
   },
 }));
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: { error: 'Too many requests, please try again later.' }
-});
-app.use(limiter);
+// Rate limiting (disabled for development)
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // limit each IP to 100 requests per windowMs
+//   message: { error: 'Too many requests, please try again later.' }
+// });
+// app.use(limiter);
 
 // Middleware
 app.use(cors());
@@ -836,17 +836,49 @@ app.get('/api/messages/:conversationId', authMiddleware, async (req, res) => {
   }
 });
 
+// Socket.io authentication middleware
+io.use(async (socket, next) => {
+  try {
+    const token = socket.handshake.auth.token;
+    if (!token) {
+      return next(new Error('Authentication error: No token provided'));
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.userId).select('-password');
+    
+    if (!user || !user.isActive) {
+      return next(new Error('Authentication error: Invalid token or inactive user'));
+    }
+
+    socket.userId = user._id.toString();
+    socket.user = user;
+    next();
+  } catch (err) {
+    console.error('Socket authentication error:', err);
+    next(new Error('Authentication error'));
+  }
+});
+
 // Socket.io connection handling
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
+  console.log('User connected:', socket.id, 'User ID:', socket.userId);
+  
+  // Automatically join user to their own room for receiving messages
+  socket.join(socket.userId);
+  console.log(`User ${socket.userId} joined room`);
   
   socket.on('join', (userId) => {
-    socket.join(userId);
-    console.log(`User ${userId} joined room`);
+    // Additional join logic if needed, but user is already joined to their room
+    if (userId === socket.userId) {
+      console.log(`User ${userId} confirmed in room`);
+    } else {
+      console.log('Warning: User trying to join different room');
+    }
   });
   
   socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+    console.log('User disconnected:', socket.id, 'User ID:', socket.userId);
   });
 });
 
