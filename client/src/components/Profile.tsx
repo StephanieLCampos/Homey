@@ -25,6 +25,7 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
     preferences: { ...currentUser.getPreferences() }
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDeactivating, setIsDeactivating] = useState(false);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -92,6 +93,38 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
         ...prev,
         [field]: value
       }));
+    }
+  };
+
+  const handleDeactivateAccount = async () => {
+    if (!confirm('Are you sure you want to deactivate your account? You can reactivate it anytime by logging back in.')) {
+      return;
+    }
+
+    setIsDeactivating(true);
+    try {
+      const response = await fetch('/api/auth/deactivate', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${authService.getToken()}`
+        }
+      });
+
+      if (response.ok) {
+        alert('Account deactivated successfully. You will now be logged out.');
+        // Log out the user
+        authService.logout();
+        // Reload the page to show login screen
+        window.location.reload();
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Failed to deactivate account. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error deactivating account:', error);
+      alert('Error deactivating account. Please try again.');
+    } finally {
+      setIsDeactivating(false);
     }
   };
 
@@ -289,6 +322,51 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
               Edit Profile
             </button>
           )}
+        </div>
+
+        {/* Deactivate Account Section */}
+        <div className="deactivate-section" style={{
+          marginTop: '40px',
+          padding: '20px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px',
+          border: '1px solid #dee2e6'
+        }}>
+          <h3 style={{ 
+            color: '#dc3545', 
+            marginBottom: '10px',
+            fontSize: '18px',
+            fontWeight: '600'
+          }}>
+            Deactivate Account
+          </h3>
+          <p style={{ 
+            color: '#666',
+            marginBottom: '15px',
+            fontSize: '14px',
+            lineHeight: '1.4'
+          }}>
+            Deactivating your account will hide your profile from other users and log you out. 
+            You can reactivate anytime by logging back in.
+          </p>
+          <button 
+            className="btn btn-danger"
+            onClick={handleDeactivateAccount}
+            disabled={isDeactivating}
+            style={{
+              backgroundColor: '#dc3545',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '6px',
+              cursor: isDeactivating ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              opacity: isDeactivating ? 0.6 : 1
+            }}
+          >
+            {isDeactivating ? 'Deactivating...' : 'Deactivate Account'}
+          </button>
         </div>
       </div>
     </div>

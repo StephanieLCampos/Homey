@@ -1,3 +1,7 @@
+# GITHELP: moves all files from folder 1 to other github remote folder 2, deletes all files in folder 2 besides the .git file
+# type this command in folder 1
+ rsync -av --delete --exclude='.git' --exclude='.gitignore' . ~/Desktop/Homey/
+
 # Roommate Finder App
 
 A Tinder-like roommate finder application with group functionality, built with React, TypeScript, and Node.js.
@@ -574,33 +578,3 @@ MIT License - see LICENSE file for details
 - [ ] Password reset functionality
 - [ ] Photo cropping and filters
 - [ ] Location-based matching
-
-
-## Users and passwords:
-- all fake users:
-   first_name@example.com
-   password: password123
-
-   seanlai@gmail.com
-   password: abcd1234
-
-   ashikab@gmail.com
-   password: abcd1234
-
-   stephaniec.1646@gmail.com
-   password: abcd1234
-
-ALL USERS:
-'Stephanie Louise Campos',
-  'Mia C',
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5',
-  'Sean Lai',
-  'Ashika B',
-  'Sam Chen',
-  'Mike Rodriguez'
-  'Alex Johnson'
-

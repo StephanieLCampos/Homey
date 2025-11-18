@@ -16,6 +16,8 @@ export interface UserData {
   preferences: Preferences;
   isActive: boolean;
   groupId?: string;
+  status?: 'individual' | 'in_group' | 'seeking_group';
+  profileStatus?: 'active' | 'paused' | 'deactivated';
   createdAt: Date;
   updatedAt: Date;
 }

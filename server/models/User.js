@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email']
+    match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Please enter a valid email']
   },
   password: {
     type: String,
@@ -93,6 +93,11 @@ const userSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  profileStatus: {
+    type: String,
+    enum: ['active', 'paused', 'deactivated'],
+    default: 'active'
   },
   groupId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -186,7 +191,6 @@ userSchema.methods.toSafeObject = function() {
   return userObject;
 };
 
-userSchema.index({ email: 1 });
 userSchema.index({ 'preferences.location.city': 1, 'preferences.location.state': 1 });
 userSchema.index({ age: 1 });
 userSchema.index({ gender: 1 });

@@ -117,7 +117,6 @@ groupSchema.methods.removeMember = function(userId) {
   this.memberIds = this.memberIds.filter(id => !id.equals(userId));
 };
 
-groupSchema.index({ inviteCode: 1 });
 groupSchema.index({ memberIds: 1 });
 groupSchema.index({ isActive: 1 });
 

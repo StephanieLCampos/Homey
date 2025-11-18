@@ -16,7 +16,7 @@ const router = express.Router();
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs
+  max: 100, // Increased limit for development - change back to 5 for production
   message: { error: 'Too many authentication attempts, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -123,8 +123,11 @@ router.post('/login', authLimiter, [
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    if (!user.isActive) {
-      return res.status(401).json({ error: 'Account is deactivated' });
+    // Auto-reactivate deactivated accounts when user logs back in
+    if (user.profileStatus === 'deactivated') {
+      user.profileStatus = 'active';
+      user.isActive = true; // Keep for backward compatibility
+      user.deactivatedAt = null;
     }
 
     user.lastLogin = new Date();
@@ -245,7 +248,8 @@ router.post('/change-password', authMiddleware, [
 router.post('/deactivate', authMiddleware, async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.userId, { 
-      isActive: false,
+      profileStatus: 'deactivated',
+      isActive: false, // Keep for backward compatibility
       deactivatedAt: new Date()
     });
 
@@ -257,6 +261,37 @@ router.post('/deactivate', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Deactivate account error:', error);
     res.status(500).json({ error: 'Server error during account deactivation' });
+  }
+});
+
+// Update profile status (pause/activate profile)
+router.post('/profile-status', authMiddleware, async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    if (!['active', 'paused'].includes(status)) {
+      return res.status(400).json({ error: 'Status must be active or paused' });
+    }
+
+    // Don't allow manual status change if user is in a group
+    const user = await User.findById(req.userId);
+    if (user.status === 'in_group' && status === 'active') {
+      return res.status(400).json({ error: 'Cannot activate profile while in a group. Leave the group first.' });
+    }
+
+    await User.findByIdAndUpdate(req.userId, { 
+      profileStatus: status,
+      isActive: status === 'active' // Keep for backward compatibility
+    });
+
+    res.json({
+      success: true,
+      message: `Profile ${status === 'active' ? 'activated' : 'paused'} successfully`
+    });
+
+  } catch (error) {
+    console.error('Update profile status error:', error);
+    res.status(500).json({ error: 'Server error during profile status update' });
   }
 });
 

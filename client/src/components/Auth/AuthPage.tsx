@@ -20,7 +20,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
     <div className="auth-page">
       <div className="auth-container">
         <div className="auth-header">
-          <h1>🏠 Homey</h1>
+          <h1>Homey</h1>
           <p>Find your perfect roommate match</p>
         </div>
 

@@ -286,7 +286,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
                 justifyContent: 'center'
               }}
             >
-              {isUploading ? '📤' : '📷'}
+              {isUploading ? '+' : '+'}
             </button>
             <input
               ref={fileInputRef}

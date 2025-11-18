@@ -22,7 +22,7 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ error: 'Invalid token. User not found.' });
     }
 
-    if (!user.isActive) {
+    if (user.profileStatus === 'deactivated') {
       return res.status(401).json({ error: 'Account is deactivated.' });
     }
 
@@ -51,7 +51,7 @@ const optionalAuth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId).select('-password');
     
-    if (user && user.isActive) {
+    if (user && user.profileStatus !== 'deactivated') {
       req.user = user;
       req.userId = user._id.toString();
     }

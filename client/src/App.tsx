@@ -20,6 +20,7 @@ import MatchesList from './components/MatchesList';
 import GroupManagement from './components/GroupManagement';
 import MessagingInterface from './components/MessagingInterface';
 import { Profile } from './components/Profile';
+import FilterPanel, { FilterOptions } from './components/FilterPanel';
 import sampleUser1Image from './images/sample_user1.png';
 
 const App: React.FC = () => {
@@ -34,6 +35,8 @@ const App: React.FC = () => {
   const [matches, setMatches] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<'swipe' | 'matches' | 'groups' | 'messages' | 'profile'>('swipe');
   const [isLoading, setIsLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<FilterOptions>({});
 
   // Check authentication status on app load
   useEffect(() => {
@@ -94,17 +97,44 @@ const App: React.FC = () => {
     
     setCurrentUser(user);
     
-    // Load potential matches from API
-    await loadPotentialMatches(user);
-    
-    // Load matches from API
-    await loadMatches(user);
+    // Only load individual user data if the user is not in a group
+    if (userData.status !== 'in_group' && !userData.groupId) {
+      // Load potential matches from API
+      await loadPotentialMatches(user, activeFilters);
+      
+      // Load matches from API
+      await loadMatches(user);
+    } else {
+      // User is in a group, clear individual data
+      setPotentialMatches([]);
+      setMatches([]);
+    }
   };
 
-  const loadPotentialMatches = async (user: User) => {
+  const loadPotentialMatches = async (user: User, filters?: FilterOptions) => {
     try {
-      console.log('Loading potential matches for user:', user.getId());
-      const response = await fetch(`/api/users/${user.getId()}/potential-matches`, {
+      console.log('Loading potential matches for user:', user.getId(), 'with filters:', filters);
+      
+      // Build query parameters for filters
+      const queryParams = new URLSearchParams();
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            if (Array.isArray(value)) {
+              if (value.length > 0) {
+                queryParams.append(key, value.join(','));
+              }
+            } else {
+              queryParams.append(key, value.toString());
+            }
+          }
+        });
+      }
+      
+      const queryString = queryParams.toString();
+      const url = `/api/users/${user.getId()}/potential-matches${queryString ? `?${queryString}` : ''}`;
+      
+      const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${authService.getToken()}`
         }
@@ -157,6 +187,7 @@ const App: React.FC = () => {
 
   const loadMatches = async (user: User) => {
     try {
+      console.log('Loading matches for user:', user.getId());
       const response = await fetch(`/api/users/${user.getId()}/matches`, {
         headers: {
           'Authorization': `Bearer ${authService.getToken()}`
@@ -176,7 +207,8 @@ const App: React.FC = () => {
         console.log('Fixed matches data:', fixedMatches);
         setMatches(fixedMatches);
       } else {
-        console.error('Failed to load matches');
+        const errorText = await response.text();
+        console.error('Failed to load matches:', response.status, errorText);
         setMatches([]);
       }
     } catch (error) {
@@ -470,13 +502,29 @@ const App: React.FC = () => {
     try {
       console.log('Declining match:', matchId);
       
-      // For pending matches, we need to swipe left to decline
+      // Handle pending matches (those that start with 'pending_')
       if (matchId.startsWith('pending_')) {
         const pendingMatch = matches.find(m => m.id === matchId);
         if (pendingMatch) {
           // Swipe left on the user who liked us
           const targetUserId = pendingMatch.userId1 === currentUser.getId() ? pendingMatch.userId2 : pendingMatch.userId1;
           await handleSwipe(targetUserId, 'pass');
+        }
+      } else {
+        // Handle real matches using the new API endpoint
+        const response = await fetch(`/api/matches/${matchId}/decline`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authService.getToken()}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          console.log('Match declined successfully');
+        } else {
+          const errorData = await response.json();
+          console.error('Failed to decline match:', errorData.error);
         }
       }
       
@@ -503,13 +551,58 @@ const App: React.FC = () => {
     setCurrentView('swipe');
   };
 
+  const handleApplyFilters = async (filters: FilterOptions) => {
+    setActiveFilters(filters);
+    if (currentUser) {
+      await loadPotentialMatches(currentUser, filters);
+    }
+  };
+
+  const handleShowFilters = () => {
+    setShowFilters(true);
+  };
+
+  const handleCloseFilters = () => {
+    setShowFilters(false);
+  };
+
+  const hasActiveFilters = () => {
+    return Object.values(activeFilters).some(value => 
+      value !== undefined && 
+      value !== null && 
+      (Array.isArray(value) ? value.length > 0 : true)
+    );
+  };
+
+  const refreshUserData = async () => {
+    try {
+      console.log('Refreshing user data...');
+      const userData = await authService.getCurrentUser();
+      console.log('Updated user data:', userData);
+      setCurrentUserData(userData);
+      await initializeAuthenticatedApp(userData);
+      console.log('User data refresh completed');
+    } catch (error) {
+      console.error('Failed to refresh user data:', error);
+    }
+  };
+
   const handleViewChange = async (view: 'swipe' | 'matches' | 'groups' | 'messages' | 'profile') => {
     setCurrentView(view);
+    
+    // Refresh user data when switching to groups tab to check if user is in a group
+    if (view === 'groups') {
+      await refreshUserData();
+    }
     
     // Refresh potential matches when switching to discover/swipe tab
     if (view === 'swipe' && currentUser) {
       await loadPotentialMatches(currentUser);
     }
+  };
+
+  const handleGroupStatusChange = async () => {
+    await refreshUserData();
   };
 
   if (isLoading) {
@@ -546,28 +639,192 @@ const App: React.FC = () => {
       
       <div className="container">
         {currentView === 'swipe' && (
-          <div className="swipe-container">
-            <div className="card-stack">
-              {potentialMatches.length > 0 ? (
-                potentialMatches.map((user, index) => (
-                  <SwipeCard
-                    key={user.getId()}
-                    user={user}
-                    onSwipe={handleSwipe}
-                    style={{
-                      zIndex: potentialMatches.length - index,
-                      transform: `translateY(${index * 4}px) scale(${1 - index * 0.05})`
-                    }}
-                  />
-                ))
-              ) : (
-                <div className="empty-state">
-                  <h2>No more potential matches</h2>
-                  <p>Check back later for new profiles!</p>
+          <>
+            {/* Global style to prevent scrolling */}
+            <style>{`
+              body {
+                overflow: hidden !important;
+                height: 100vh !important;
+                margin: 0 !important;
+              }
+              html {
+                overflow: hidden !important;
+                height: 100% !important;
+              }
+              .app-layout {
+                height: 100vh !important;
+                overflow: hidden !important;
+              }
+              .container {
+                height: calc(100vh - 80px) !important;
+                overflow: hidden !important;
+              }
+            `}</style>
+            
+            <div style={{ 
+              position: 'fixed', // Changed from relative to fixed
+              top: '80px', // Account for header
+              left: 0,
+              right: 0,
+              bottom: 0,
+              overflow: 'hidden'
+            }}>
+              {/* Filter Button - Top Left Below Navigation */}
+              <div style={{
+                position: 'absolute',
+                top: '120px',
+                left: '40px',
+                zIndex: 10
+              }}>
+                <button
+                  onClick={handleShowFilters}
+                  style={{
+                    padding: '12px 20px',
+                    background: hasActiveFilters() ? '#6c757d' : '#495057',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.2s ease',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                  onMouseOver={(e) => {
+                    (e.target as HTMLButtonElement).style.background = hasActiveFilters() ? '#5a6268' : '#343a40';
+                  }}
+                  onMouseOut={(e) => {
+                    (e.target as HTMLButtonElement).style.background = hasActiveFilters() ? '#6c757d' : '#495057';
+                  }}
+                >
+                  Filters
+                  {hasActiveFilters() && (
+                    <span style={{
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      color: '#495057',
+                      borderRadius: '50%',
+                      width: '18px',
+                      height: '18px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '11px',
+                      fontWeight: '600',
+                      marginLeft: '4px'
+                    }}>
+                      {Object.values(activeFilters).filter(v => v !== undefined && v !== null && (Array.isArray(v) ? v.length > 0 : true)).length}
+                    </span>
+                  )}
+                </button>
+                
+                {hasActiveFilters() && (
+                  <div style={{ 
+                    color: '#666', 
+                    fontSize: '14px',
+                    marginTop: '8px',
+                    marginLeft: '4px'
+                  }}>
+                    {Object.values(activeFilters).filter(v => v !== undefined && v !== null && (Array.isArray(v) ? v.length > 0 : true)).length} filter(s) active
+                  </div>
+                )}
+              </div>
+
+              {/* Swipe Cards - Positioned Higher */}
+              <div className="swipe-container" style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '400px',
+                height: '600px'
+              }}>
+                <div className="card-stack" style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '100%'
+                }}>
+                  {potentialMatches.length > 0 ? (
+                    potentialMatches.slice(0, 3).reverse().map((user, reverseIndex) => {
+                      const index = 2 - reverseIndex;
+                      const actualIndex = potentialMatches.slice(0, 3).indexOf(user);
+                      const isTopCard = actualIndex === 0;
+                      
+                      return (
+                        <div 
+                          key={user.getId()}
+                          style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            zIndex: isTopCard ? 10 : 3 - actualIndex,
+                            transform: `translateY(${isTopCard ? 0 : actualIndex * 8}px) scale(${1 - actualIndex * 0.03})`,
+                            pointerEvents: isTopCard ? 'auto' : 'none',
+                            opacity: isTopCard ? 1 : 0.8,
+                            filter: isTopCard ? 'none' : 'brightness(0.9)'
+                          }}
+                        >
+                          <SwipeCard
+                            user={user}
+                            onSwipe={isTopCard ? handleSwipe : () => {}}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              boxShadow: isTopCard 
+                                ? '0 15px 35px rgba(0, 0, 0, 0.25)' 
+                                : '0 5px 15px rgba(0, 0, 0, 0.1)',
+                              borderRadius: '12px',
+                              background: 'white'
+                            }}
+                          />
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="empty-state" style={{
+                      textAlign: 'center',
+                      padding: '40px',
+                      backgroundColor: 'white',
+                      borderRadius: '12px',
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '90%'
+                    }}>
+                      <h2>No more potential matches</h2>
+                      <p>
+                        {hasActiveFilters() 
+                          ? 'No matches found with current filters. Try adjusting your criteria!' 
+                          : 'Check back later for new profiles!'
+                        }
+                      </p>
+                      {hasActiveFilters() && (
+                        <button
+                          onClick={() => handleApplyFilters({})}
+                          style={{
+                            marginTop: '15px',
+                            padding: '10px 20px',
+                            background: 'linear-gradient(45deg, #74b9ff, #0984e3)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '20px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Clear Filters
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
-          </div>
+          </>
         )}
 
         {currentView === 'matches' && (
@@ -580,10 +837,11 @@ const App: React.FC = () => {
             // profileManager={profileManager} // COMMENTED OUT - Using API instead
           />
         )}
-
+        
         {currentView === 'groups' && (
           <GroupManagement
             currentUser={currentUser}
+            key={`groups-${currentUserData?.id}-${Date.now()}`} // Force complete re-render
             // profileManager={profileManager} // COMMENTED OUT - Using API instead
             // matchingSystem={matchingSystem} // COMMENTED OUT - Using API instead
           />
@@ -592,6 +850,7 @@ const App: React.FC = () => {
         {currentView === 'messages' && (
           <MessagingInterface
             currentUser={currentUser}
+            onGroupStatusChange={handleGroupStatusChange}
           />
         )}
 
@@ -602,6 +861,14 @@ const App: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Filter Panel Modal */}
+      <FilterPanel
+        isOpen={showFilters}
+        onClose={handleCloseFilters}
+        onApplyFilters={handleApplyFilters}
+        currentFilters={activeFilters}
+      />
     </div>
   );
 };

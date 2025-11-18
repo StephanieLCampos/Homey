@@ -12,6 +12,7 @@ import { io, Socket } from 'socket.io-client';
 
 interface MessagingInterfaceProps {
   currentUser: User;
+  onGroupStatusChange?: () => void;
 }
 
 interface Conversation {
@@ -27,6 +28,24 @@ interface Conversation {
   updatedAt: string;
 }
 
+interface GroupRequest {
+  _id: string;
+  requester: {
+    _id: string;
+    name: string;
+    photos?: string[];
+  };
+  recipient: {
+    _id: string;
+    name: string;
+    photos?: string[];
+  };
+  status: 'pending' | 'accepted' | 'rejected';
+  message: string;
+  requestedAt: string;
+  respondedAt?: string;
+}
+
 interface Message {
   _id: string;
   senderId: any;
@@ -35,7 +54,7 @@ interface Message {
   createdAt: string;
 }
 
-const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser }) => {
+const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, onGroupStatusChange }) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
@@ -43,6 +62,8 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser }) 
   const [loading, setLoading] = useState(true);
   const [showProfile, setShowProfile] = useState<any | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [groupRequests, setGroupRequests] = useState<GroupRequest[]>([]);
+  const [requestLoading, setRequestLoading] = useState(false);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -103,6 +124,59 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser }) 
 
     socketRef.current.on('error', (error) => {
       console.error('Socket error:', error);
+    });
+
+    // Group request socket listeners
+    socketRef.current.on('groupRequestReceived', (data: any) => {
+      console.log('Group request received:', data);
+      // If the profile modal is open for this requester, reload requests
+      if (showProfile && showProfile.id === data.requester._id) {
+        loadGroupRequestsForConversation(data.requester._id);
+      }
+      // Show a notification
+      alert(`${data.requester.name} sent you a group request!`);
+    });
+
+    socketRef.current.on('groupRequestRejected', (data: any) => {
+      console.log('Group request rejected:', data);
+      // If the profile modal is open, reload requests
+      if (showProfile) {
+        loadGroupRequestsForConversation(showProfile.id);
+      }
+      alert(`${data.rejectedBy} rejected your group request.`);
+    });
+
+    socketRef.current.on('groupFormed', (data: any) => {
+      console.log('Group formed:', data);
+      alert(`Group "${data.groupName}" has been created successfully!`);
+      // Reload conversations as the users are now in a group
+      loadConversations();
+      setShowProfile(null);
+      // Force app refresh by reloading the page after a short delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    });
+
+    socketRef.current.on('leftGroup', (data: any) => {
+      console.log('Left group:', data);
+      alert(data.message);
+      // Reload conversations to show individual conversations again
+      loadConversations();
+    });
+
+    socketRef.current.on('groupDissolved', (data: any) => {
+      console.log('Group dissolved:', data);
+      alert(data.message);
+      // Reload conversations
+      loadConversations();
+    });
+
+    socketRef.current.on('memberLeft', (data: any) => {
+      console.log('Member left group:', data);
+      alert(`${data.leftUserName} has left the group.`);
+      // If we're in the group view, we might want to reload
+      loadConversations();
     });
   };
 
@@ -202,6 +276,67 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser }) 
     }
   };
 
+  const loadGroupRequestsForConversation = async (otherUserId: string) => {
+    try {
+      const response = await fetch(`/api/group-requests/conversation/${otherUserId}`, {
+        headers: {
+          'Authorization': `Bearer ${authService.getToken()}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setGroupRequests(data.requests || []);
+      } else {
+        console.error('Failed to load group requests');
+        setGroupRequests([]);
+      }
+    } catch (error) {
+      console.error('Error loading group requests:', error);
+      setGroupRequests([]);
+    }
+  };
+
+  const handleRespondToGroupRequest = async (requestId: string, action: 'accept' | 'reject') => {
+    try {
+      const response = await fetch(`/api/group-requests/${requestId}/respond`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authService.getToken()}`
+        },
+        body: JSON.stringify({ action })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (action === 'accept') {
+          alert('Group request accepted! Group created successfully.');
+          // The users will now be in a group, so we should refresh the conversations
+          loadConversations();
+          
+          // Notify parent component that group status has changed
+          if (onGroupStatusChange) {
+            onGroupStatusChange();
+          }
+        } else {
+          alert('Group request rejected.');
+        }
+        
+        // Reload group requests to update the UI
+        if (showProfile) {
+          loadGroupRequestsForConversation(showProfile.id);
+        }
+      } else {
+        const error = await response.json();
+        alert(error.error || `Failed to ${action} group request.`);
+      }
+    } catch (error) {
+      console.error(`Error ${action}ing group request:`, error);
+      alert(`Error ${action}ing group request. Please try again.`);
+    }
+  };
+
   const formatTime = (timestamp: string): string => {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
@@ -218,6 +353,8 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser }) 
       if (response.ok) {
         const userData = await response.json();
         setShowProfile(userData);
+        // Load group requests for this conversation
+        await loadGroupRequestsForConversation(userId);
       } else {
         console.error('Failed to load user profile');
       }
@@ -231,38 +368,86 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser }) 
   const handleRequestGroup = async () => {
     if (!showProfile) return;
     
+    setRequestLoading(true);
     try {
-      // Find the match ID for this conversation
-      const conversation = conversations.find(c => c.otherUser.id === showProfile.id);
-      if (!conversation) return;
-      
-      const groupName = `${currentUser.getName()} & ${showProfile.name}'s Group`;
-      const groupDescription = 'A new group for roommate matching';
-      
-      const response = await fetch('/api/groups', {
+      const response = await fetch('/api/group-requests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authService.getToken()}`
         },
         body: JSON.stringify({
-          name: groupName,
-          description: groupDescription,
-          memberIds: [currentUser.getId(), showProfile.id],
-          preferences: currentUser.getPreferences()
+          recipientId: showProfile.id,
+          message: `Hi ${showProfile.name}, would you like to form a group with me for roommate matching?`
         })
       });
       
       if (response.ok) {
-        alert('Group created successfully!');
+        alert('Group request sent successfully!');
         setShowProfile(null);
+        // Reload group requests to show the new request
+        loadGroupRequestsForConversation(showProfile.id);
       } else {
-        console.error('Failed to create group');
-        alert('Failed to create group. Please try again.');
+        const error = await response.json();
+        console.error('Failed to send group request:', error);
+        alert(error.error || 'Failed to send group request. Please try again.');
       }
     } catch (error) {
-      console.error('Error creating group:', error);
-      alert('Error creating group. Please try again.');
+      console.error('Error sending group request:', error);
+      alert('Error sending group request. Please try again.');
+    } finally {
+      setRequestLoading(false);
+    }
+  };
+
+  const handleLeaveGroup = async () => {
+    if (!showProfile) return;
+    
+    if (!confirm('Are you sure you want to leave this group? This will restore your individual profile and the group may be dissolved.')) {
+      return;
+    }
+    
+    try {
+      // Get current user's group ID
+      const userResponse = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${authService.getToken()}`
+        }
+      });
+      
+      if (!userResponse.ok) {
+        throw new Error('Failed to get user info');
+      }
+      
+      const userData = await userResponse.json();
+      if (!userData.user.groupId) {
+        alert('You are not currently in a group');
+        return;
+      }
+
+      const response = await fetch(`/api/groups/${userData.user.groupId}/leave`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${authService.getToken()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        alert(result.message);
+        setShowProfile(null);
+        setSelectedConversation(null);
+        // Reload conversations to reflect the change
+        loadConversations();
+      } else {
+        const error = await response.json();
+        console.error('Failed to leave group:', error);
+        alert(error.error || 'Failed to leave group. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error leaving group:', error);
+      alert('Error leaving group. Please try again.');
     }
   };
 
@@ -585,44 +770,220 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser }) 
               </div>
             )}
 
+            {/* Group Requests Section */}
+            {groupRequests.length > 0 && (
+              <div style={{ marginBottom: '25px' }}>
+                <h4 style={{ color: '#2d3436', marginBottom: '15px' }}>Group Requests</h4>
+                <div style={{ 
+                  background: '#f8f9fa',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  maxHeight: '200px',
+                  overflowY: 'auto'
+                }}>
+                  {groupRequests.map((request) => {
+                    const isCurrentUserRequester = request.requester._id === currentUser.getId();
+                    const otherUser = isCurrentUserRequester ? request.recipient : request.requester;
+                    
+                    return (
+                      <div key={request._id} style={{
+                        marginBottom: '12px',
+                        padding: '12px',
+                        background: 'white',
+                        borderRadius: '6px',
+                        border: `2px solid ${
+                          request.status === 'pending' ? '#74b9ff' :
+                          request.status === 'accepted' ? '#00b894' : '#e17055'
+                        }`
+                      }}>
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between', 
+                          alignItems: 'flex-start',
+                          marginBottom: '8px'
+                        }}>
+                          <div>
+                            <strong>
+                              {isCurrentUserRequester ? 'You' : otherUser.name} requested to form a group
+                            </strong>
+                            <div style={{ fontSize: '12px', color: '#636e72', marginTop: '4px' }}>
+                              {new Date(request.requestedAt).toLocaleDateString()} at {new Date(request.requestedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                          </div>
+                          <span style={{
+                            padding: '4px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            color: 'white',
+                            background: 
+                              request.status === 'pending' ? '#74b9ff' :
+                              request.status === 'accepted' ? '#00b894' : '#e17055'
+                          }}>
+                            {request.status.toUpperCase()}
+                          </span>
+                        </div>
+                        
+                        {request.message && (
+                          <div style={{ 
+                            fontSize: '14px', 
+                            color: '#636e72', 
+                            fontStyle: 'italic',
+                            marginBottom: '10px' 
+                          }}>
+                            "{request.message}"
+                          </div>
+                        )}
+                        
+                        {/* Show accept/reject buttons only if current user is recipient and request is pending */}
+                        {!isCurrentUserRequester && request.status === 'pending' && (
+                          <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                            <button
+                              onClick={() => handleRespondToGroupRequest(request._id, 'accept')}
+                              style={{
+                                background: '#00b894',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                padding: '6px 12px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                                fontWeight: '600'
+                              }}
+                            >
+                              Accept
+                            </button>
+                            <button
+                              onClick={() => handleRespondToGroupRequest(request._id, 'reject')}
+                              style={{
+                                background: '#e17055',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                padding: '6px 12px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                                fontWeight: '600'
+                              }}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Show response date if request has been responded to */}
+                        {request.respondedAt && (
+                          <div style={{ fontSize: '12px', color: '#636e72', marginTop: '8px' }}>
+                            Responded on {new Date(request.respondedAt).toLocaleDateString()}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Action Buttons */}
             <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
-              <button
-                onClick={handleRequestGroup}
-                style={{
-                  background: '#00b894',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '12px 24px',
-                  fontSize: '16px',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  transition: 'background 0.2s ease'
-                }}
-                onMouseOver={(e) => (e.target as HTMLButtonElement).style.background = '#00a085'}
-                onMouseOut={(e) => (e.target as HTMLButtonElement).style.background = '#00b894'}
-              >
-                Request Group
-              </button>
-              <button
-                onClick={handleUnmatch}
-                style={{
-                  background: '#e17055',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '12px 24px',
-                  fontSize: '16px',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  transition: 'background 0.2s ease'
-                }}
-                onMouseOver={(e) => (e.target as HTMLButtonElement).style.background = '#d63031'}
-                onMouseOut={(e) => (e.target as HTMLButtonElement).style.background = '#e17055'}
-              >
-                Unmatch
-              </button>
+              {(() => {
+                const hasPendingRequest = groupRequests.some(req => req.status === 'pending');
+                const hasAcceptedRequest = groupRequests.some(req => req.status === 'accepted');
+                
+                if (hasAcceptedRequest) {
+                  // User is in a group, show "Leave Group" button
+                  return (
+                    <>
+                      <div style={{
+                        background: '#00b894',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '12px 24px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        ✓ Group Formed
+                      </div>
+                      <button
+                        onClick={handleLeaveGroup}
+                        style={{
+                          background: '#e17055',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '12px 24px',
+                          fontSize: '16px',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          transition: 'background 0.2s ease'
+                        }}
+                        onMouseOver={(e) => (e.target as HTMLButtonElement).style.background = '#d63031'}
+                        onMouseOut={(e) => (e.target as HTMLButtonElement).style.background = '#e17055'}
+                      >
+                        Leave Group
+                      </button>
+                    </>
+                  );
+                }
+                
+                return (
+                  <>
+                    <button
+                      onClick={handleRequestGroup}
+                      disabled={hasPendingRequest || requestLoading}
+                      style={{
+                        background: hasPendingRequest || requestLoading ? '#95a5a6' : '#00b894',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '12px 24px',
+                        fontSize: '16px',
+                        cursor: hasPendingRequest || requestLoading ? 'not-allowed' : 'pointer',
+                        fontWeight: '600',
+                        transition: 'background 0.2s ease',
+                        opacity: hasPendingRequest || requestLoading ? 0.7 : 1
+                      }}
+                      onMouseOver={(e) => {
+                        if (!hasPendingRequest && !requestLoading) {
+                          (e.target as HTMLButtonElement).style.background = '#00a085';
+                        }
+                      }}
+                      onMouseOut={(e) => {
+                        if (!hasPendingRequest && !requestLoading) {
+                          (e.target as HTMLButtonElement).style.background = '#00b894';
+                        }
+                      }}
+                    >
+                      {requestLoading ? 'Sending...' : 
+                       hasPendingRequest ? 'Request Pending' : 
+                       'Request Group'}
+                    </button>
+                    
+                    <button
+                      onClick={handleUnmatch}
+                      style={{
+                        background: '#e17055',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '12px 24px',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        transition: 'background 0.2s ease'
+                      }}
+                      onMouseOver={(e) => (e.target as HTMLButtonElement).style.background = '#d63031'}
+                      onMouseOut={(e) => (e.target as HTMLButtonElement).style.background = '#e17055'}
+                    >
+                      Unmatch
+                    </button>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>
