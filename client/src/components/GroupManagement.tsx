@@ -129,14 +129,21 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
     socketRef.current.on('groupJoinRequest', (data: any) => {
       try {
         console.log('Received groupJoinRequest socket event:', data);
+
+        // Normalize incoming groupId to string (handle ObjectId vs string)
+        const incomingGroupId = String(data.groupId?._id || data.groupId);
+  const convGroupId = String((groupConversation && groupConversation.groupId) ? groupConversation.groupId : '');
+        const groupDataId = String(groupData?._id || '');
+
         // If we're viewing the same group conversation, reload join requests
-        if (groupConversation && data.groupId === groupConversation.groupId) {
-          loadJoinRequests(data.groupId);
+        if (groupConversation && incomingGroupId && incomingGroupId === convGroupId) {
+          loadJoinRequests(incomingGroupId);
+        } else if (groupDataId && incomingGroupId === groupDataId) {
+          // If we have groupData loaded (e.g., viewing profile), reload
+          loadJoinRequests(incomingGroupId);
         } else {
-          // Otherwise, still attempt to refresh if groupData matches
-          if (groupData && groupData._id && data.groupId === groupData._id) {
-            loadJoinRequests(data.groupId);
-          }
+          // Fall back: if groupConversation or groupData are not set, do nothing
+          console.log('groupJoinRequest not for the active group view; incomingGroupId=', incomingGroupId);
         }
       } catch (err) {
         console.error('Error handling groupJoinRequest socket event', err);
@@ -491,43 +498,70 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
                   <div style={{ fontSize: '13px', color: '#ccc' }}>{req.message || ''}</div>
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={async () => {
-                    try {
-                      const r = await fetch(`/api/groups/${groupData._id}/join-request/${req._id}/respond`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authService.getToken()}` },
-                        body: JSON.stringify({ action: 'accept' })
-                      });
-                      if (r.ok) {
-                        await loadJoinRequests(groupData._id);
-                        await loadGroupConversation();
-                      } else {
-                        console.error('Failed to accept join request', await r.text());
-                        alert('Failed to accept request');
+                  <button
+                    onClick={async () => {
+                      try {
+                        // Use groupData._id when available, otherwise fall back to the active conversation's groupId
+                        const gid = (groupData && groupData._id) ? groupData._id : (groupConversation ? groupConversation.groupId : null);
+                        if (!gid) {
+                          console.error('No group id available to accept join request');
+                          alert('Unable to accept request: no group selected');
+                          return;
+                        }
+
+                        const r = await fetch(`/api/groups/${gid}/join-request/${req._id}/respond`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authService.getToken()}` },
+                          body: JSON.stringify({ action: 'accept' })
+                        });
+                        if (r.ok) {
+                          await loadJoinRequests(gid);
+                          await loadGroupConversation();
+                        } else {
+                          console.error('Failed to accept join request', await r.text());
+                          alert('Failed to accept request');
+                        }
+                      } catch (err) {
+                        console.error('Accept join request error', err);
+                        alert('Error accepting request');
                       }
-                    } catch (err) {
-                      console.error('Accept join request error', err);
-                      alert('Error accepting request');
-                    }
-                  }} style={{ background: '#2ecc71', border: 'none', padding: '6px 10px', borderRadius: '6px', color: 'white', cursor: 'pointer' }}>Accept</button>
-                  <button onClick={async () => {
-                    try {
-                      const r = await fetch(`/api/groups/${groupData._id}/join-request/${req._id}/respond`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authService.getToken()}` },
-                        body: JSON.stringify({ action: 'reject' })
-                      });
-                      if (r.ok) {
-                        await loadJoinRequests(groupData._id);
-                      } else {
-                        console.error('Failed to reject join request', await r.text());
-                        alert('Failed to reject request');
+                    }}
+                    disabled={req.status !== 'pending'}
+                    style={{ background: req.status === 'pending' ? '#2ecc71' : '#9adfa9', border: 'none', padding: '6px 10px', borderRadius: '6px', color: 'white', cursor: req.status === 'pending' ? 'pointer' : 'not-allowed' }}
+                  >
+                    {req.status === 'pending' ? 'Accept' : req.status === 'accepted' ? 'Accepted' : 'Rejected'}
+                  </button>
+                  <button
+                    onClick={async () => {
+                      try {
+                        const gid = (groupData && groupData._id) ? groupData._id : (groupConversation ? groupConversation.groupId : null);
+                        if (!gid) {
+                          console.error('No group id available to reject join request');
+                          alert('Unable to reject request: no group selected');
+                          return;
+                        }
+
+                        const r = await fetch(`/api/groups/${gid}/join-request/${req._id}/respond`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authService.getToken()}` },
+                          body: JSON.stringify({ action: 'reject' })
+                        });
+                        if (r.ok) {
+                          await loadJoinRequests(gid);
+                        } else {
+                          console.error('Failed to reject join request', await r.text());
+                          alert('Failed to reject request');
+                        }
+                      } catch (err) {
+                        console.error('Reject join request error', err);
+                        alert('Error rejecting request');
                       }
-                    } catch (err) {
-                      console.error('Reject join request error', err);
-                      alert('Error rejecting request');
-                    }
-                  }} style={{ background: '#e74c3c', border: 'none', padding: '6px 10px', borderRadius: '6px', color: 'white', cursor: 'pointer' }}>Reject</button>
+                    }}
+                    disabled={req.status !== 'pending'}
+                    style={{ background: req.status === 'pending' ? '#e74c3c' : '#f5a6a6', border: 'none', padding: '6px 10px', borderRadius: '6px', color: 'white', cursor: req.status === 'pending' ? 'pointer' : 'not-allowed' }}
+                  >
+                    {req.status === 'pending' ? 'Reject' : req.status === 'accepted' ? 'Accepted' : 'Rejected'}
+                  </button>
                 </div>
               </div>
             ))}

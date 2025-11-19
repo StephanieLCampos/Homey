@@ -76,6 +76,32 @@ app.use(express.static('../client/dist'));
 // Auth routes
 app.use('/api/auth', authRoutes);
 
+// DEV: impersonation endpoint to mint tokens for testing (only enabled in non-production)
+if (process.env.NODE_ENV !== 'production') {
+  app.post('/api/dev/impersonate/:userId', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userId).select('-password');
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      const token = jwt.sign({ userId: user._id.toString() }, process.env.JWT_SECRET || 'devsecret', { expiresIn: '7d' });
+      res.json({ token, user: user.toSafeObject ? user.toSafeObject() : user });
+    } catch (err) {
+      console.error('Dev impersonate error', err);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+
+  // DEV: list all groups for debugging
+  app.get('/api/dev/groups', async (req, res) => {
+    try {
+      const groups = await Group.find({}).lean();
+      res.json({ count: groups.length, groups });
+    } catch (err) {
+      console.error('Dev groups error', err);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+}
+
 // Debug route to see all users (remove in production)
 app.get('/api/debug/users', async (req, res) => {
   try {
@@ -315,9 +341,11 @@ app.get('/api/users/:id/potential-matches', authMiddleware, async (req, res) => 
 
       console.log('Potential-matches: found candidateGroups count=', (candidateGroups || []).length);
 
-      const groupEntries = candidateGroups
-        .filter(g => (Array.isArray(g.memberIds) ? g.memberIds.length : 0) < (g.maxMembers || 4))
-        .map(g => ({
+      // Include groups even if full; client will display isFull flag and disable join actions
+      const groupEntries = (candidateGroups || []).map(g => {
+        const memberCount = Array.isArray(g.memberIds) ? g.memberIds.length : 0;
+        const maxMembers = g.maxMembers || 4;
+        return {
           id: `group_${g._id}`,
           _id: `group_${g._id}`,
           isGroup: true,
@@ -331,8 +359,12 @@ app.get('/api/users/:id/potential-matches', authMiddleware, async (req, res) => 
           preferences: g.preferences || {},
           isActive: g.isActive,
           createdAt: g.createdAt,
-          updatedAt: g.updatedAt
-        }));
+          updatedAt: g.updatedAt,
+          isFull: memberCount >= maxMembers,
+          memberCount,
+          maxMembers
+        };
+      });
 
       const combined = [...result, ...groupEntries];
       console.log(`Added ${groupEntries.length} group(s) into potential matches for user ${req.params.id}`);
@@ -486,9 +518,10 @@ app.get('/api/users/:id/matches', authMiddleware, async (req, res) => {
         memberIds: { $nin: [req.params.id] }
       }).limit(50).lean();
 
-      const groupMatches = candidateGroups
-        .filter(g => (Array.isArray(g.memberIds) ? g.memberIds.length : 0) < (g.maxMembers || 4))
-        .map(g => ({
+      const groupMatches = (candidateGroups || []).map(g => {
+        const memberCount = Array.isArray(g.memberIds) ? g.memberIds.length : 0;
+        const maxMembers = g.maxMembers || 4;
+        return {
           id: `group_${g._id}`,
           type: 'group',
           groupId: g._id,
@@ -499,8 +532,12 @@ app.get('/api/users/:id/matches', authMiddleware, async (req, res) => {
           preferences: g.preferences || {},
           createdAt: g.createdAt,
           updatedAt: g.updatedAt,
-          status: 'group_available'
-        }));
+          status: 'group_available',
+          isFull: memberCount >= maxMembers,
+          memberCount,
+          maxMembers
+        };
+      });
 
       allMatches.push(...groupMatches);
       console.log(`Added ${groupMatches.length} group(s) to matches for user ${req.params.id}`);
@@ -1218,22 +1255,39 @@ app.post('/api/groups/:groupId/leave', authMiddleware, async (req, res) => {
       const { groupId, requestId } = req.params;
       const userId = req.userId;
 
+      console.log('Respond to join-request called:', { userId, groupId, requestId, action });
+
       if (!['accept', 'reject'].includes(action)) {
+        console.warn('Invalid action provided for join-request respond:', action);
         return res.status(400).json({ error: 'Invalid action' });
       }
 
       const group = await Group.findById(groupId);
-      if (!group) return res.status(404).json({ error: 'Group not found' });
+      if (!group) {
+        console.warn('Group not found for join-request respond:', groupId);
+        return res.status(404).json({ error: 'Group not found' });
+      }
+
+      console.log('Group memberIds:', group.memberIds.map(id => id.toString()));
 
       // Only existing group members can respond
       if (!group.memberIds.map(id => id.toString()).includes(userId)) {
+        console.warn('User is not a member and attempted to respond to join request', { userId, groupId });
         return res.status(403).json({ error: 'Only group members can respond to join requests' });
       }
 
       const joinRequest = await GroupJoinRequest.findById(requestId);
-      if (!joinRequest) return res.status(404).json({ error: 'Request not found' });
+      if (!joinRequest) {
+        console.warn('Join request not found:', requestId);
+        return res.status(404).json({ error: 'Request not found' });
+      }
 
-      if (joinRequest.status !== 'pending') return res.status(400).json({ error: 'Request already handled' });
+      console.log('Join request current status:', joinRequest.status, 'requester:', joinRequest.requester.toString());
+
+      if (joinRequest.status !== 'pending') {
+        console.warn('Join request already handled:', requestId, 'status:', joinRequest.status);
+        return res.status(400).json({ error: 'Request already handled' });
+      }
 
       if (action === 'accept') {
         // Add to group

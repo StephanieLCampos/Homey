@@ -2,2458 +2,3400 @@
 > roommate-finder-server@1.0.0 start
 > node index.js
 
-[dotenv@17.2.3] injecting env (4) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
-(node:93583) [MONGOOSE] Warning: Duplicate schema index on {"email":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
-(Use `node --trace-warnings ...` to show where the warning was created)
-(node:93583) [MONGOOSE] Warning: Duplicate schema index on {"inviteCode":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+[dotenv@17.2.3] injecting env (4) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+Running database migrations...
 Server running on http://0.0.0.0:3333
 Local access: http://localhost:3333
 Network access: http://10.0.0.204:3333
 Connected to MongoDB
+All users already have profileStatus field set
+Checking for users incorrectly deactivated by group creation...
+Database migrations completed successfully
 Initializing sample data...
 Sample data initialized successfully
+User connected: 7TKQt47LT4wdOFFHAAAB User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+User 691d1382cba0dec781cec5c2 confirmed in room
+User disconnected: 7TKQt47LT4wdOFFHAAAB User ID: 691d1382cba0dec781cec5c2
 Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
 }
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
-Matched user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('6912c0436817d2294e60ddaa')
+Current user: Shawn Lie mrseanlai@gmail.com
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
 ]
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
+    }
+  ]
+}
 Found potential matches: 3
 User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 3 matches
-Returning matches for user: 691424d26baa75e349cc38b8
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Loading matches for user: 691d1382cba0dec781cec5c2 requested by: 691d1382cba0dec781cec5c2
+Finding matches in database...
+Found 4 actual matches
+Finding incoming likes...
+Found 4 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d1382cba0dec781cec5c2
+Real matches: 4
+Pending matches: 0
+Added 0 group(s) to matches for user 691d1382cba0dec781cec5c2
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+User connected: ST5y1C-1eryhu1G9AAAD User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+User disconnected: ST5y1C-1eryhu1G9AAAD User ID: 691d1382cba0dec781cec5c2
+Auth check: {
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
+}
+Current user: Shawn Lie mrseanlai@gmail.com
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
+    }
+  ]
+}
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+User connected: sUpuhvB_E8cZckUTAAAF User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+User 691d1382cba0dec781cec5c2 confirmed in room
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+Loading matches for user: 691d1382cba0dec781cec5c2 requested by: 691d1382cba0dec781cec5c2
+Finding matches in database...
+User connected: tPXlKv9dbxObf9onAAAH User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+User 691d1382cba0dec781cec5c2 confirmed in room
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Found 4 actual matches
+Finding incoming likes...
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Found 4 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d1382cba0dec781cec5c2
+Real matches: 4
+Pending matches: 0
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+Added 0 group(s) to matches for user 691d1382cba0dec781cec5c2
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+User connected: e0J_ga4YaKtddhBTAAAJ User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+User 691d1382cba0dec781cec5c2 confirmed in room
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User disconnected: sUpuhvB_E8cZckUTAAAF User ID: 691d1382cba0dec781cec5c2
+User disconnected: tPXlKv9dbxObf9onAAAH User ID: 691d1382cba0dec781cec5c2
+User disconnected: e0J_ga4YaKtddhBTAAAJ User ID: 691d1382cba0dec781cec5c2
+User connected: vbeoNhmIFGaQ2SR3AAAL User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+User 691d1382cba0dec781cec5c2 confirmed in room
+User disconnected: vbeoNhmIFGaQ2SR3AAAL User ID: 691d1382cba0dec781cec5c2
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+User connected: uh6X1o2C2pwBPj7MAAAN User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+User connected: 6Ki0vYAvyOaVTKeRAAAP User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+User disconnected: uh6X1o2C2pwBPj7MAAAN User ID: 691d1382cba0dec781cec5c2
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Auth check: {
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
+}
+User 691d1382cba0dec781cec5c2 confirmed in room
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+Current user: Shawn Lie mrseanlai@gmail.com
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
+    }
+  ]
+}
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+Loading matches for user: 691d1382cba0dec781cec5c2 requested by: 691d1382cba0dec781cec5c2
+Finding matches in database...
+User connected: 5xUhlAKbsY1arvqSAAAR User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Found 4 actual matches
+Finding incoming likes...
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Found 4 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d1382cba0dec781cec5c2
+Real matches: 4
+Pending matches: 0
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Added 0 group(s) to matches for user 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 confirmed in room
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User connected: v4QAUhVNoXWQNfc3AAAT User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 confirmed in room
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User disconnected: 6Ki0vYAvyOaVTKeRAAAP User ID: 691d1382cba0dec781cec5c2
+User disconnected: 5xUhlAKbsY1arvqSAAAR User ID: 691d1382cba0dec781cec5c2
+User disconnected: v4QAUhVNoXWQNfc3AAAT User ID: 691d1382cba0dec781cec5c2
+Auth check: {
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
+}
+Current user: Shawn Lie mrseanlai@gmail.com
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
+    }
+  ]
+}
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+User connected: ZmRY7wocmmMtq6p3AAAX User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Auth check: {
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
+}
+User 691d1382cba0dec781cec5c2 confirmed in room
+Current user: Shawn Lie mrseanlai@gmail.com
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
+    }
+  ]
+}
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Loading matches for user: 691d1382cba0dec781cec5c2 requested by: 691d1382cba0dec781cec5c2
+Finding matches in database...
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User connected: dlVF9-RgSzp3nK4iAAAZ User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Found 4 actual matches
+Finding incoming likes...
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Found 4 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d1382cba0dec781cec5c2
+Real matches: 4
+Pending matches: 0
+Added 0 group(s) to matches for user 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 confirmed in room
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+User connected: m-8abDBcAVHfeYIiAAAb User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User 691d1382cba0dec781cec5c2 confirmed in room
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User disconnected: ZmRY7wocmmMtq6p3AAAX User ID: 691d1382cba0dec781cec5c2
+User disconnected: dlVF9-RgSzp3nK4iAAAZ User ID: 691d1382cba0dec781cec5c2
+User disconnected: m-8abDBcAVHfeYIiAAAb User ID: 691d1382cba0dec781cec5c2
+Auth check: {
+  reqUserId: '691d5dc09213d6b06d61cc0f',
+  paramsId: '691d5dc09213d6b06d61cc0f'
+}
+Current user: GP anyone@gmail.com
+Swiped user IDs: [
+  new ObjectId('691d1382cba0dec781cec5c2'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5efea699c96b9011e516'),
+  new ObjectId('691d5effa699c96b9011e51e'),
+  new ObjectId('691d5effa699c96b9011e521')
+]
+Matched user IDs: [ new ObjectId('691d1382cba0dec781cec5c2') ]
+All excluded user IDs: [
+  new ObjectId('691d1382cba0dec781cec5c2'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5efea699c96b9011e516'),
+  new ObjectId('691d5effa699c96b9011e51e'),
+  new ObjectId('691d5effa699c96b9011e521'),
+  new ObjectId('691d1382cba0dec781cec5c2')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d5dc09213d6b06d61cc0f",
+    "$nin": [
+      "691d1382cba0dec781cec5c2",
+      "691d1437cba0dec781cec6c8",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5efea699c96b9011e516",
+      "691d5effa699c96b9011e51e",
+      "691d5effa699c96b9011e521",
+      "691d1382cba0dec781cec5c2"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
+    }
+  ]
+}
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Potential-matches: found candidateGroups count= 1
+Added 1 group(s) into potential matches for user 691d5dc09213d6b06d61cc0f
+Loading matches for user: 691d5dc09213d6b06d61cc0f requested by: 691d5dc09213d6b06d61cc0f
+Finding matches in database...
+Found 1 actual matches
+Finding incoming likes...
+Found 1 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d5dc09213d6b06d61cc0f
 Real matches: 1
 Pending matches: 0
-Returning conversations for user: 691424d26baa75e349cc38b8 1
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+Added 1 group(s) to matches for user 691d5dc09213d6b06d61cc0f
+Loading group conversations for user: 691d5dc09213d6b06d61cc0f
+User connected: fcoZP3FRL3aMRacIAAAd User ID: 691d5dc09213d6b06d61cc0f
+User 691d5dc09213d6b06d61cc0f joined room
+Current user: GP groupId: null status: individual
+User not in group, returning empty array
+User disconnected: fcoZP3FRL3aMRacIAAAd User ID: 691d5dc09213d6b06d61cc0f
+Auth check: {
+  reqUserId: '691d5dc09213d6b06d61cc0f',
+  paramsId: '691d5dc09213d6b06d61cc0f'
+}
+User connected: zOfpSxwXc9zetT8fAAAf User ID: 691d5dc09213d6b06d61cc0f
+User 691d5dc09213d6b06d61cc0f joined room
+Current user: GP anyone@gmail.com
+Loading group conversations for user: 691d5dc09213d6b06d61cc0f
+User 691d5dc09213d6b06d61cc0f confirmed in room
+Swiped user IDs: [
+  new ObjectId('691d1382cba0dec781cec5c2'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5efea699c96b9011e516'),
+  new ObjectId('691d5effa699c96b9011e51e'),
+  new ObjectId('691d5effa699c96b9011e521')
+]
+Current user: GP groupId: null status: individual
+User not in group, returning empty array
+Matched user IDs: [ new ObjectId('691d1382cba0dec781cec5c2') ]
+All excluded user IDs: [
+  new ObjectId('691d1382cba0dec781cec5c2'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5efea699c96b9011e516'),
+  new ObjectId('691d5effa699c96b9011e51e'),
+  new ObjectId('691d5effa699c96b9011e521'),
+  new ObjectId('691d1382cba0dec781cec5c2')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d5dc09213d6b06d61cc0f",
+    "$nin": [
+      "691d1382cba0dec781cec5c2",
+      "691d1437cba0dec781cec6c8",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5efea699c96b9011e516",
+      "691d5effa699c96b9011e51e",
+      "691d5effa699c96b9011e521",
+      "691d1382cba0dec781cec5c2"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
     {
-      "groupId": null
+      "groupId": {
+        "$exists": false
+      }
     },
     {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
+      "groupId": null
     }
   ]
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Returning conversations for user: 691424d26baa75e349cc38b8 1
-Auth check: {
-  reqUserId: '6912c0436817d2294e60ddaa',
-  paramsId: '6912c0436817d2294e60ddaa'
-}
-Current user: Stephanie Louise Campos stephaniec1646@gmail.com
-Swiped user IDs: [
-  new ObjectId('691424d26baa75e349cc38b8'),
-  new ObjectId('691428270354fa2597b4da5e'),
-  new ObjectId('691428270354fa2597b4da6a'),
-  new ObjectId('691428280354fa2597b4da6e')
-]
-Matched user IDs: [ new ObjectId('691424d26baa75e349cc38b8') ]
-All excluded user IDs: [
-  new ObjectId('691424d26baa75e349cc38b8'),
-  new ObjectId('691428270354fa2597b4da5e'),
-  new ObjectId('691428270354fa2597b4da6a'),
-  new ObjectId('691428280354fa2597b4da6e'),
-  new ObjectId('691424d26baa75e349cc38b8')
-]
 Found potential matches: 3
 User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 3 matches
-Returning matches for user: 6912c0436817d2294e60ddaa
+Potential-matches: found candidateGroups count= 1
+Added 1 group(s) into potential matches for user 691d5dc09213d6b06d61cc0f
+Loading matches for user: 691d5dc09213d6b06d61cc0f requested by: 691d5dc09213d6b06d61cc0f
+Finding matches in database...
+User connected: WT_8gJEfZWqf49xvAAAh User ID: 691d5dc09213d6b06d61cc0f
+User 691d5dc09213d6b06d61cc0f joined room
+Loading group conversations for user: 691d5dc09213d6b06d61cc0f
+Current user: GP groupId: null status: individual
+User not in group, returning empty array
+Found 1 actual matches
+Finding incoming likes...
+User 691d5dc09213d6b06d61cc0f confirmed in room
+Found 1 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d5dc09213d6b06d61cc0f
 Real matches: 1
 Pending matches: 0
-Returning conversations for user: 6912c0436817d2294e60ddaa 1
+Added 1 group(s) to matches for user 691d5dc09213d6b06d61cc0f
+Loading group conversations for user: 691d5dc09213d6b06d61cc0f
+User connected: DBTSboXo1oJHX5dEAAAj User ID: 691d5dc09213d6b06d61cc0f
+User 691d5dc09213d6b06d61cc0f joined room
+Current user: GP groupId: null status: individual
+User not in group, returning empty array
+User 691d5dc09213d6b06d61cc0f confirmed in room
+User disconnected: zOfpSxwXc9zetT8fAAAf User ID: 691d5dc09213d6b06d61cc0f
+User disconnected: WT_8gJEfZWqf49xvAAAh User ID: 691d5dc09213d6b06d61cc0f
+User disconnected: DBTSboXo1oJHX5dEAAAj User ID: 691d5dc09213d6b06d61cc0f
+Skipping user in group: Shawn Lie
+Returning conversations for user: 691d5dc09213d6b06d61cc0f 0
+User connected: t7kCmKgSJJiAMIaPAAAl User ID: 691d5dc09213d6b06d61cc0f
+User 691d5dc09213d6b06d61cc0f joined room
+User 691d5dc09213d6b06d61cc0f confirmed in room
+User disconnected: t7kCmKgSJJiAMIaPAAAl User ID: 691d5dc09213d6b06d61cc0f
+Loading group conversations for user: 691d5dc09213d6b06d61cc0f
+Current user: GP groupId: null status: individual
+User not in group, returning empty array
+User connected: EvsgsjuvquX3u40mAAAn User ID: 691d5dc09213d6b06d61cc0f
+User 691d5dc09213d6b06d61cc0f joined room
+User disconnected: EvsgsjuvquX3u40mAAAn User ID: 691d5dc09213d6b06d61cc0f
 Auth check: {
-  reqUserId: '6912c0436817d2294e60ddaa',
-  paramsId: '6912c0436817d2294e60ddaa'
+  reqUserId: '691d5dc09213d6b06d61cc0f',
+  paramsId: '691d5dc09213d6b06d61cc0f'
 }
-Current user: Stephanie Louise Campos stephaniec1646@gmail.com
+Current user: GP anyone@gmail.com
+Loading group conversations for user: 691d5dc09213d6b06d61cc0f
+User connected: KJHqki8LxvuJIvwOAAAp User ID: 691d5dc09213d6b06d61cc0f
+User 691d5dc09213d6b06d61cc0f joined room
 Swiped user IDs: [
-  new ObjectId('691424d26baa75e349cc38b8'),
-  new ObjectId('691428270354fa2597b4da5e'),
-  new ObjectId('691428270354fa2597b4da6a'),
-  new ObjectId('691428280354fa2597b4da6e')
+  new ObjectId('691d1382cba0dec781cec5c2'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5efea699c96b9011e516'),
+  new ObjectId('691d5effa699c96b9011e51e'),
+  new ObjectId('691d5effa699c96b9011e521')
 ]
-Matched user IDs: [ new ObjectId('691424d26baa75e349cc38b8') ]
+Current user: GP groupId: null status: individual
+User not in group, returning empty array
+User 691d5dc09213d6b06d61cc0f confirmed in room
+Matched user IDs: [ new ObjectId('691d1382cba0dec781cec5c2') ]
 All excluded user IDs: [
-  new ObjectId('691424d26baa75e349cc38b8'),
-  new ObjectId('691428270354fa2597b4da5e'),
-  new ObjectId('691428270354fa2597b4da6a'),
-  new ObjectId('691428280354fa2597b4da6e'),
-  new ObjectId('691424d26baa75e349cc38b8')
+  new ObjectId('691d1382cba0dec781cec5c2'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5efea699c96b9011e516'),
+  new ObjectId('691d5effa699c96b9011e51e'),
+  new ObjectId('691d5effa699c96b9011e521'),
+  new ObjectId('691d1382cba0dec781cec5c2')
 ]
-Found potential matches: 3
-User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 3 matches
-Returning conversations for user: 6912c0436817d2294e60ddaa 1
-Returning conversations for user: 6912c0436817d2294e60ddaa 1
-Returning conversations for user: 6912c0436817d2294e60ddaa 1
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 6912c0436817d2294e60ddaa
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+Filter query: {
+  "_id": {
+    "$ne": "691d5dc09213d6b06d61cc0f",
+    "$nin": [
+      "691d1382cba0dec781cec5c2",
+      "691d1437cba0dec781cec6c8",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5efea699c96b9011e516",
+      "691d5effa699c96b9011e51e",
+      "691d5effa699c96b9011e521",
+      "691d1382cba0dec781cec5c2"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
     {
-      "groupId": null
+      "groupId": {
+        "$exists": false
+      }
     },
     {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
+      "groupId": null
     }
   ]
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Auth check: {
-  reqUserId: '6912c0436817d2294e60ddaa',
-  paramsId: '6912c0436817d2294e60ddaa'
-}
-Current user: Stephanie Louise Campos stephaniec1646@gmail.com
-Swiped user IDs: [
-  new ObjectId('691424d26baa75e349cc38b8'),
-  new ObjectId('691428270354fa2597b4da5e'),
-  new ObjectId('691428270354fa2597b4da6a'),
-  new ObjectId('691428280354fa2597b4da6e'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('691439b48bd89a641b2c2301')
-]
-Matched user IDs: [ new ObjectId('691424d26baa75e349cc38b8') ]
-All excluded user IDs: [
-  new ObjectId('691424d26baa75e349cc38b8'),
-  new ObjectId('691428270354fa2597b4da5e'),
-  new ObjectId('691428270354fa2597b4da6a'),
-  new ObjectId('691428280354fa2597b4da6e'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('691439b48bd89a641b2c2301'),
-  new ObjectId('691424d26baa75e349cc38b8')
-]
-Found potential matches: 0
-User names: []
-Returning: 0 matches
-Auth check: {
-  reqUserId: '6912c0436817d2294e60ddaa',
-  paramsId: '6912c0436817d2294e60ddaa'
-}
-Current user: Stephanie Louise Campos stephaniec1646@gmail.com
-Swiped user IDs: [
-  new ObjectId('691424d26baa75e349cc38b8'),
-  new ObjectId('691428270354fa2597b4da5e'),
-  new ObjectId('691428270354fa2597b4da6a'),
-  new ObjectId('691428280354fa2597b4da6e'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('691439b48bd89a641b2c2301')
-]
-Matched user IDs: [ new ObjectId('691424d26baa75e349cc38b8') ]
-All excluded user IDs: [
-  new ObjectId('691424d26baa75e349cc38b8'),
-  new ObjectId('691428270354fa2597b4da5e'),
-  new ObjectId('691428270354fa2597b4da6a'),
-  new ObjectId('691428280354fa2597b4da6e'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('691439b48bd89a641b2c2301'),
-  new ObjectId('691424d26baa75e349cc38b8')
-]
-Found potential matches: 0
-User names: []
-Returning: 0 matches
-Auth check: {
-  reqUserId: '691439b38bd89a641b2c22eb',
-  paramsId: '691439b38bd89a641b2c22eb'
-}
-Current user: Alex Johnson alex@example.com
-Swiped user IDs: []
-Matched user IDs: []
-All excluded user IDs: []
-Found potential matches: 4
-User names: [ 'Stephanie Louise Campos', 'Mia C', 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 4 matches
-Returning matches for user: 691439b38bd89a641b2c22eb
-Real matches: 0
-Pending matches: 0
-Returning conversations for user: 691439b38bd89a641b2c22eb 0
-Auth check: {
-  reqUserId: '691439b38bd89a641b2c22eb',
-  paramsId: '691439b38bd89a641b2c22eb'
-}
-Current user: Alex Johnson alex@example.com
-Swiped user IDs: []
-Matched user IDs: []
-All excluded user IDs: []
-Found potential matches: 4
-User names: [ 'Stephanie Louise Campos', 'Mia C', 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 4 matches
-Returning conversations for user: 691439b38bd89a641b2c22eb 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
-Matched user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('6912c0436817d2294e60ddaa')
-]
 Found potential matches: 3
 User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 3 matches
-Returning matches for user: 691424d26baa75e349cc38b8
+Potential-matches: found candidateGroups count= 1
+Added 1 group(s) into potential matches for user 691d5dc09213d6b06d61cc0f
+Loading matches for user: 691d5dc09213d6b06d61cc0f requested by: 691d5dc09213d6b06d61cc0f
+Finding matches in database...
+Loading group conversations for user: 691d5dc09213d6b06d61cc0f
+User connected: AvLVo3Zv_pr6UYJWAAAr User ID: 691d5dc09213d6b06d61cc0f
+User 691d5dc09213d6b06d61cc0f joined room
+Current user: GP groupId: null status: individual
+User not in group, returning empty array
+User 691d5dc09213d6b06d61cc0f confirmed in room
+Found 1 actual matches
+Finding incoming likes...
+Found 1 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d5dc09213d6b06d61cc0f
 Real matches: 1
-Pending matches: 1
+Pending matches: 0
+Added 1 group(s) to matches for user 691d5dc09213d6b06d61cc0f
+Loading group conversations for user: 691d5dc09213d6b06d61cc0f
+User connected: gmcQJ2QsxMWKbMB5AAAt User ID: 691d5dc09213d6b06d61cc0f
+User 691d5dc09213d6b06d61cc0f joined room
+Current user: GP groupId: null status: individual
+User not in group, returning empty array
+User 691d5dc09213d6b06d61cc0f confirmed in room
+User disconnected: KJHqki8LxvuJIvwOAAAp User ID: 691d5dc09213d6b06d61cc0f
+User disconnected: AvLVo3Zv_pr6UYJWAAAr User ID: 691d5dc09213d6b06d61cc0f
+User disconnected: gmcQJ2QsxMWKbMB5AAAt User ID: 691d5dc09213d6b06d61cc0f
 Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
+  reqUserId: '691d5dc09213d6b06d61cc0f',
+  paramsId: '691d5dc09213d6b06d61cc0f'
 }
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
-Matched user IDs: [ new ObjectId('6912c0436817d2294e60ddaa') ]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('6912c0436817d2294e60ddaa')
+Current user: GP anyone@gmail.com
+Swiped user IDs: [
+  new ObjectId('691d1382cba0dec781cec5c2'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5efea699c96b9011e516'),
+  new ObjectId('691d5effa699c96b9011e51e'),
+  new ObjectId('691d5effa699c96b9011e521')
 ]
+Matched user IDs: [ new ObjectId('691d1382cba0dec781cec5c2') ]
+All excluded user IDs: [
+  new ObjectId('691d1382cba0dec781cec5c2'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5efea699c96b9011e516'),
+  new ObjectId('691d5effa699c96b9011e51e'),
+  new ObjectId('691d5effa699c96b9011e521'),
+  new ObjectId('691d1382cba0dec781cec5c2')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d5dc09213d6b06d61cc0f",
+    "$nin": [
+      "691d1382cba0dec781cec5c2",
+      "691d1437cba0dec781cec6c8",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5efea699c96b9011e516",
+      "691d5effa699c96b9011e51e",
+      "691d5effa699c96b9011e521",
+      "691d1382cba0dec781cec5c2"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
+    }
+  ]
+}
 Found potential matches: 3
 User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 3 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Match accepted: new ObjectId('6914b8248bd89a641b2c23a8') status: accepted
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Returning conversations for user: 691424d26baa75e349cc38b8 2
-Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+Potential-matches: found candidateGroups count= 1
+Added 1 group(s) into potential matches for user 691d5dc09213d6b06d61cc0f
+Auth check: {
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
+}
+Current user: Shawn Lie mrseanlai@gmail.com
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
     {
-      "groupId": null
+      "groupId": {
+        "$exists": false
+      }
     },
     {
-      "$or": [
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "691439b38bd89a641b2c22eb"
-        },
-        {
-          "senderId": "691439b38bd89a641b2c22eb",
-          "receiverId": "691424d26baa75e349cc38b8"
-        }
-      ]
+      "groupId": null
     }
   ]
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Loading matches for user: 691d1382cba0dec781cec5c2 requested by: 691d1382cba0dec781cec5c2
+Finding matches in database...
+Found 4 actual matches
+Finding incoming likes...
+Found 4 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d1382cba0dec781cec5c2
+Real matches: 4
+Pending matches: 0
+Added 0 group(s) to matches for user 691d1382cba0dec781cec5c2
+User connected: LIBP1FzRl-GT4YsRAAAv User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+User disconnected: LIBP1FzRl-GT4YsRAAAv User ID: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
   },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+User connected: xaCP5gT0Iv9ksFS0AAAx User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Auth check: {
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
+}
+User 691d1382cba0dec781cec5c2 confirmed in room
+Current user: Shawn Lie mrseanlai@gmail.com
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
 ]
-Simple query returned 0 messages
-Null groupId query returned 0 messages
-Query returned 0 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
-Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
     {
-      "groupId": null
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "691439b38bd89a641b2c22eb"
-        },
-        {
-          "senderId": "691439b38bd89a641b2c22eb",
-          "receiverId": "691424d26baa75e349cc38b8"
-        }
-      ]
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
     }
   ]
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
   },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 0 messages
-Null groupId query returned 0 messages
-Query returned 0 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
-Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Loading matches for user: 691d1382cba0dec781cec5c2 requested by: 691d1382cba0dec781cec5c2
+Finding matches in database...
+User connected: S1BrctskLQHGQwyeAAAz User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
     {
-      "groupId": null
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "691439b38bd89a641b2c22eb"
-        },
-        {
-          "senderId": "691439b38bd89a641b2c22eb",
-          "receiverId": "691424d26baa75e349cc38b8"
-        }
-      ]
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+Found 4 actual matches
+Finding incoming likes...
+User 691d1382cba0dec781cec5c2 confirmed in room
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Found 4 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d1382cba0dec781cec5c2
+Real matches: 4
+Pending matches: 0
+Added 0 group(s) to matches for user 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+User connected: QNhe9IISDmv8CKg5AAA1 User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User 691d1382cba0dec781cec5c2 confirmed in room
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User disconnected: xaCP5gT0Iv9ksFS0AAAx User ID: 691d1382cba0dec781cec5c2
+User disconnected: S1BrctskLQHGQwyeAAAz User ID: 691d1382cba0dec781cec5c2
+User disconnected: QNhe9IISDmv8CKg5AAA1 User ID: 691d1382cba0dec781cec5c2
+Auth check: {
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
+}
+Current user: Shawn Lie mrseanlai@gmail.com
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
     }
   ]
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+User connected: j-kRVBELJm8os-cxAAA3 User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+User disconnected: j-kRVBELJm8os-cxAAA3 User ID: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
   },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Auth check: {
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
+}
+User connected: ice0Hhz5NH91VQFWAAA5 User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Current user: Shawn Lie mrseanlai@gmail.com
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+User 691d1382cba0dec781cec5c2 confirmed in room
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
 ]
-Simple query returned 0 messages
-Null groupId query returned 0 messages
-Query returned 0 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
-Message send request: {
-  senderId: '691424d26baa75e349cc38b8',
-  receiverId: '691439b38bd89a641b2c22eb',
-  groupId: undefined,
-  content: 'HI!'
-}
-Message saved successfully: {
-  senderId: new ObjectId('691424d26baa75e349cc38b8'),
-  receiverId: new ObjectId('691439b38bd89a641b2c22eb'),
-  groupId: null,
-  content: 'HI!',
-  messageType: 'text',
-  isRead: false,
-  isDeleted: false,
-  _id: new ObjectId('6914b8748bd89a641b2c23ce'),
-  readBy: [],
-  createdAt: 2025-11-12T16:40:20.730Z,
-  updatedAt: 2025-11-12T16:40:20.730Z,
-  __v: 0
-}
-Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
     {
-      "groupId": null
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "691439b38bd89a641b2c22eb"
-        },
-        {
-          "senderId": "691439b38bd89a641b2c22eb",
-          "receiverId": "691424d26baa75e349cc38b8"
-        }
-      ]
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
     }
   ]
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
   },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 1 messages
-Null groupId query returned 1 messages
-Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Loading matches for user: 691d1382cba0dec781cec5c2 requested by: 691d1382cba0dec781cec5c2
+Finding matches in database...
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+User connected: CJrCNCZgy7t3ItWGAAA7 User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
     {
-      "groupId": null
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+Found 4 actual matches
+Finding incoming likes...
+User 691d1382cba0dec781cec5c2 confirmed in room
+Found 4 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d1382cba0dec781cec5c2
+Real matches: 4
+Pending matches: 0
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Added 0 group(s) to matches for user 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+User connected: OGpiSFR1V6woUsZLAAA9 User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User 691d1382cba0dec781cec5c2 confirmed in room
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
+  },
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
+    {
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
+    },
+    {
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User disconnected: ice0Hhz5NH91VQFWAAA5 User ID: 691d1382cba0dec781cec5c2
+User disconnected: CJrCNCZgy7t3ItWGAAA7 User ID: 691d1382cba0dec781cec5c2
+User disconnected: OGpiSFR1V6woUsZLAAA9 User ID: 691d1382cba0dec781cec5c2
+Auth check: {
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
+}
+Current user: Shawn Lie mrseanlai@gmail.com
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
     }
   ]
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Loading matches for user: 691d1382cba0dec781cec5c2 requested by: 691d1382cba0dec781cec5c2
+Finding matches in database...
+Found 4 actual matches
+Finding incoming likes...
+Found 4 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d1382cba0dec781cec5c2
+Real matches: 4
+Pending matches: 0
+Added 0 group(s) to matches for user 691d1382cba0dec781cec5c2
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
   },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Auth check: {
+  reqUserId: '691d1382cba0dec781cec5c2',
+  paramsId: '691d1382cba0dec781cec5c2'
+}
+User connected: P7C5XsnkzRqlbPZcAABB User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Current user: Shawn Lie mrseanlai@gmail.com
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
     {
-      "groupId": null
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "691439b38bd89a641b2c22eb"
-        },
-        {
-          "senderId": "691439b38bd89a641b2c22eb",
-          "receiverId": "691424d26baa75e349cc38b8"
-        }
-      ]
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
+    },
+    {
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
+    }
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
+}
+User 691d1382cba0dec781cec5c2 confirmed in room
+Swiped user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Matched user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+All excluded user IDs: [
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d343bfe7e098b52a7feb3'),
+  new ObjectId('691d343bfe7e098b52a7feb6'),
+  new ObjectId('691d343bfe7e098b52a7feb9'),
+  new ObjectId('691d38c3ad0c995fb3a01728'),
+  new ObjectId('691d38c3ad0c995fb3a0172b'),
+  new ObjectId('691d38c3ad0c995fb3a0172e'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d3da3796be381169080a0'),
+  new ObjectId('691d3da3796be381169080a3'),
+  new ObjectId('691d3da3796be381169080a6'),
+  new ObjectId('691d436deb95ba2eb77bde9c'),
+  new ObjectId('691d436eeb95ba2eb77bdea0'),
+  new ObjectId('691d436eeb95ba2eb77bdea3'),
+  new ObjectId('691d448149ea33cd4f742c30'),
+  new ObjectId('691d448249ea33cd4f742c34'),
+  new ObjectId('691d448249ea33cd4f742c37'),
+  new ObjectId('691d45fade5a530af2fd9f07'),
+  new ObjectId('691d45fade5a530af2fd9f0a'),
+  new ObjectId('691d45fbde5a530af2fd9f0d'),
+  new ObjectId('691d5c1b71aa885073ad8ff0'),
+  new ObjectId('691d5c1b71aa885073ad8ff3'),
+  new ObjectId('691d5c1b71aa885073ad8ff6'),
+  new ObjectId('691d5dc09213d6b06d61cc0f'),
+  new ObjectId('691c100ced21222d71af861d'),
+  new ObjectId('691d1437cba0dec781cec6c8'),
+  new ObjectId('691d3c0aa6e032485cc196ea'),
+  new ObjectId('691d5dc09213d6b06d61cc0f')
+]
+Filter query: {
+  "_id": {
+    "$ne": "691d1382cba0dec781cec5c2",
+    "$nin": [
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d343bfe7e098b52a7feb3",
+      "691d343bfe7e098b52a7feb6",
+      "691d343bfe7e098b52a7feb9",
+      "691d38c3ad0c995fb3a01728",
+      "691d38c3ad0c995fb3a0172b",
+      "691d38c3ad0c995fb3a0172e",
+      "691d3c0aa6e032485cc196ea",
+      "691d3da3796be381169080a0",
+      "691d3da3796be381169080a3",
+      "691d3da3796be381169080a6",
+      "691d436deb95ba2eb77bde9c",
+      "691d436eeb95ba2eb77bdea0",
+      "691d436eeb95ba2eb77bdea3",
+      "691d448149ea33cd4f742c30",
+      "691d448249ea33cd4f742c34",
+      "691d448249ea33cd4f742c37",
+      "691d45fade5a530af2fd9f07",
+      "691d45fade5a530af2fd9f0a",
+      "691d45fbde5a530af2fd9f0d",
+      "691d5c1b71aa885073ad8ff0",
+      "691d5c1b71aa885073ad8ff3",
+      "691d5c1b71aa885073ad8ff6",
+      "691d5dc09213d6b06d61cc0f",
+      "691c100ced21222d71af861d",
+      "691d1437cba0dec781cec6c8",
+      "691d3c0aa6e032485cc196ea",
+      "691d5dc09213d6b06d61cc0f"
+    ]
+  },
+  "profileStatus": "active",
+  "isActive": true,
+  "$or": [
+    {
+      "groupId": {
+        "$exists": false
+      }
+    },
+    {
+      "groupId": null
     }
   ]
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Found potential matches: 3
+User names: [ 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+Returning: 3 matches
+Potential-matches: found candidateGroups count= 0
+Added 0 group(s) into potential matches for user 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
   },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 1 messages
-Null groupId query returned 1 messages
-Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Loading matches for user: 691d1382cba0dec781cec5c2 requested by: 691d1382cba0dec781cec5c2
+Finding matches in database...
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
     {
-      "groupId": null
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
-    }
-  ]
-}
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
-    {
-      "groupId": null
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
     }
-  ]
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
+User connected: Yaq9HIqdTa0RQR_5AABD User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Found 4 actual matches
+Finding incoming likes...
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Found 4 incoming likes
+Processing pending matches...
+Created 0 pending matches
+Returning matches for user: 691d1382cba0dec781cec5c2
+Real matches: 4
+Pending matches: 0
+Added 0 group(s) to matches for user 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 confirmed in room
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
   },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+User connected: J0HvH-zpL96_YK07AABF User ID: 691d1382cba0dec781cec5c2
+User 691d1382cba0dec781cec5c2 joined room
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+User 691d1382cba0dec781cec5c2 confirmed in room
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
     {
-      "groupId": null
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "691439b38bd89a641b2c22eb"
-        },
-        {
-          "senderId": "691439b38bd89a641b2c22eb",
-          "receiverId": "691424d26baa75e349cc38b8"
-        }
-      ]
-    }
-  ]
-}
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 1 messages
-Null groupId query returned 1 messages
-Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
-    {
-      "groupId": null
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
     }
-  ]
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
   },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 4
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai' ]
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
     {
-      "groupId": null
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "691439b38bd89a641b2c22eb"
-        },
-        {
-          "senderId": "691439b38bd89a641b2c22eb",
-          "receiverId": "691424d26baa75e349cc38b8"
-        }
-      ]
-    }
-  ]
-}
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 1 messages
-Null groupId query returned 1 messages
-Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
-Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
-    {
-      "groupId": null
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "691439b38bd89a641b2c22eb"
-        },
-        {
-          "senderId": "691439b38bd89a641b2c22eb",
-          "receiverId": "691424d26baa75e349cc38b8"
-        }
-      ]
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
     }
-  ]
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:02:31.562Z,
+  isGroup: true
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
+User disconnected: P7C5XsnkzRqlbPZcAABB User ID: 691d1382cba0dec781cec5c2
+User disconnected: Yaq9HIqdTa0RQR_5AABD User ID: 691d1382cba0dec781cec5c2
+Respond to join-request called: {
+  userId: '691d1382cba0dec781cec5c2',
+  groupId: '691d3c57a6e032485cc197cf',
+  requestId: '691d632102cfe909a008b58c',
+  action: 'accept'
+}
+Group memberIds: [
+  '691d1382cba0dec781cec5c2',
+  '691d3c0aa6e032485cc196ea',
+  '691c100ced21222d71af861d',
+  '691d4a3292692caf277fdf40'
+]
+Join request current status: pending requester: 691d5dc09213d6b06d61cc0f
+Loading group conversations for user: 691d1382cba0dec781cec5c2
+Current user: Shawn Lie groupId: {
+  preferences: {
+    location: { city: 'Santa Clara', state: 'CA', zipCode: '' },
+    minAge: 18,
+    maxAge: 35,
+    preferredGender: [ 'male', 'female', 'non-binary', 'other' ],
+    maxRent: 2000,
+    cleanlinessLevel: 3,
+    noiseTolerance: 3,
+    petFriendly: false,
+    smokingAllowed: false
   },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 1 messages
-Null groupId query returned 1 messages
-Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Returning conversations for user: 691424d26baa75e349cc38b8 2
-Processing direct message conversation. UserIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '691424d26baa75e349cc38b8', '691439b38bd89a641b2c22eb' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
+  _id: new ObjectId('691d3c57a6e032485cc197cf'),
+  name: 'HOMEYS',
+  description: 'Group formed by Shawn Lie and Jack',
+  memberIds: [
+    new ObjectId('691d1382cba0dec781cec5c2'),
+    new ObjectId('691d3c0aa6e032485cc196ea'),
+    new ObjectId('691c100ced21222d71af861d'),
+    new ObjectId('691d4a3292692caf277fdf40'),
+    new ObjectId('691d5dc09213d6b06d61cc0f')
+  ],
+  photos: [],
+  isActive: true,
+  maxMembers: 4,
+  pendingVotes: Map(0) {},
+  createdAt: 2025-11-19T03:41:11.195Z,
+  updatedAt: 2025-11-19T06:30:01.497Z,
+  inviteCode: 'RMN9GKWZ',
+  __v: 5
+} status: in_group
+Found group: HOMEYS with members: [ 'Shawn Lie', 'Jack', 'Sean Lai', 'GP' ]
+Returning group conversation: {
+  id: 'group_691d3c57a6e032485cc197cf',
+  groupId: new ObjectId('691d3c57a6e032485cc197cf'),
+  groupName: 'HOMEYS',
+  members: [
     {
-      "groupId": null
+      id: new ObjectId('691d1382cba0dec781cec5c2'),
+      name: 'Shawn Lie',
+      photo: '/default_user.png',
+      email: 'mrseanlai@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "691439b38bd89a641b2c22eb"
-        },
-        {
-          "senderId": "691439b38bd89a641b2c22eb",
-          "receiverId": "691424d26baa75e349cc38b8"
-        }
-      ]
-    }
-  ]
-}
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 1 messages
-Null groupId query returned 1 messages
-Query returned 1 messages for conversation: 691424d26baa75e349cc38b8_691439b38bd89a641b2c22eb
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
-    {
-      "groupId": null
+      id: new ObjectId('691d3c0aa6e032485cc196ea'),
+      name: 'Jack',
+      photo: '/default_user.png',
+      email: 'someone@gmail.com'
     },
     {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
-    }
-  ]
-}
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
-    {
-      "groupId": null
+      id: new ObjectId('691c100ced21222d71af861d'),
+      name: 'Sean Lai',
+      photo: '/default_user.png',
+      email: 'slai3@scu.edu'
     },
     {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
+      id: new ObjectId('691d5dc09213d6b06d61cc0f'),
+      name: 'GP',
+      photo: '/default_user.png',
+      email: 'anyone@gmail.com'
     }
-  ]
+  ],
+  lastMessage: null,
+  updatedAt: 2025-11-19T06:30:01.497Z,
+  isGroup: true
 }
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Returning conversations for user: 691424d26baa75e349cc38b8 2
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
-    {
-      "groupId": null
-    },
-    {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
-    }
-  ]
-}
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Returning conversations for user: 691424d26baa75e349cc38b8 2
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Returning conversations for user: 691424d26baa75e349cc38b8 2
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
-    {
-      "groupId": null
-    },
-    {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
-    }
-  ]
-}
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Returning conversations for user: 691424d26baa75e349cc38b8 2
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
-    {
-      "groupId": null
-    },
-    {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
-    }
-  ]
-}
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 2
-User names: [ 'Sam Chen', 'Mike Rodriguez' ]
-Returning: 2 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 7
-User names: [
-  'Sam Chen',
-  'Mike Rodriguez',
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5'
-]
-Returning: 7 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 6
-User names: [
-  'Mike Rodriguez',
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5'
-]
-Returning: 6 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 6
-User names: [
-  'Mike Rodriguez',
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5'
-]
-Returning: 6 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 6
-User names: [
-  'Mike Rodriguez',
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5'
-]
-Returning: 6 matches
-Returning conversations for user: 691424d26baa75e349cc38b8 2
-Returning conversations for user: 691424d26baa75e349cc38b8 2
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 6
-User names: [
-  'Mike Rodriguez',
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5'
-]
-Returning: 6 matches
-Returning conversations for user: 691424d26baa75e349cc38b8 2
-Processing direct message conversation. UserIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-Request userId: 691424d26baa75e349cc38b8
-Creating ObjectId query for userIds: [ '6912c0436817d2294e60ddaa', '691424d26baa75e349cc38b8' ]
-ObjectId query created successfully
-Message query: {
-  "$and": [
-    {
-      "groupId": null
-    },
-    {
-      "$or": [
-        {
-          "senderId": "6912c0436817d2294e60ddaa",
-          "receiverId": "691424d26baa75e349cc38b8"
-        },
-        {
-          "senderId": "691424d26baa75e349cc38b8",
-          "receiverId": "6912c0436817d2294e60ddaa"
-        }
-      ]
-    }
-  ]
-}
-Actual query with ObjectIds: { '$and': [ { groupId: null }, { '$or': [Array] } ] }
-Sample messages in database: [
-  {
-    id: new ObjectId('691433f7ac7daef89c500abd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'HI!'
-  },
-  {
-    id: new ObjectId('69143459106d2e96723f8cfe'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi!'
-  },
-  {
-    id: new ObjectId('69143482106d2e96723f8d04'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914354dd39f1a7bcf1465dd'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'hi'
-  },
-  {
-    id: new ObjectId('6914359752daa7ec52b18d65'),
-    senderId: new ObjectId('691424d26baa75e349cc38b8'),
-    receiverId: new ObjectId('6912c0436817d2294e60ddaa'),
-    content: 'Hi !'
-  }
-]
-Simple query returned 15 messages
-Null groupId query returned 15 messages
-Query returned 15 messages for conversation: 6912c0436817d2294e60ddaa_691424d26baa75e349cc38b8
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 6
-User names: [
-  'Mike Rodriguez',
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5'
-]
-Returning: 6 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 6
-User names: [
-  'Mike Rodriguez',
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5'
-]
-Returning: 6 matches
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 6
-User names: [
-  'Mike Rodriguez',
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5'
-]
-Returning: 6 matches
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Returning matches for user: 691424d26baa75e349cc38b8
-Real matches: 2
-Pending matches: 0
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 8
-User names: [
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5',
-  'Alex Johnson',
-  'Sam Chen',
-  'Mike Rodriguez'
-]
-Returning: 8 matches
-Get matches error: TypeError: Cannot read properties of null (reading '_id')
-    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:356:55
-    at Array.some (<anonymous>)
-    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:355:36
-    at Array.filter (<anonymous>)
-    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:355:8
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-Get conversations error: TypeError: Cannot read properties of null (reading '_id')
-    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:682:39
-    at Array.map (<anonymous>)
-    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:678:39
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-Get conversations error: TypeError: Cannot read properties of null (reading '_id')
-    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:682:39
-    at Array.map (<anonymous>)
-    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:678:39
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 8
-User names: [
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5',
-  'Alex Johnson',
-  'Sam Chen',
-  'Mike Rodriguez'
-]
-Returning: 8 matches
-Get conversations error: TypeError: Cannot read properties of null (reading '_id')
-    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:682:39
-    at Array.map (<anonymous>)
-    at /Users/steph/Desktop/software_eng_project/roommate-finder-app/Homey/server/index.js:678:39
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-Auth check: {
-  reqUserId: '691424d26baa75e349cc38b8',
-  paramsId: '691424d26baa75e349cc38b8'
-}
-Current user: Mia C mialcarter04@gmail.com
-Swiped user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe')
-]
-Matched user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-All excluded user IDs: [
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb'),
-  new ObjectId('691439b48bd89a641b2c22fe'),
-  new ObjectId('6912c0436817d2294e60ddaa'),
-  new ObjectId('691439b38bd89a641b2c22eb')
-]
-Found potential matches: 8
-User names: [
-  'Test User',
-  'Test User 2',
-  'Test User 3',
-  'Test User 4',
-  'Test User 5',
-  'Alex Johnson',
-  'Sam Chen',
-  'Mike Rodriguez'
-]
-Returning: 8 matches
+User disconnected: J0HvH-zpL96_YK07AABF User ID: 691d1382cba0dec781cec5c2
