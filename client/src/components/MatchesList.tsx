@@ -7,6 +7,7 @@
  */
 import React, { useState } from 'react';
 import { User } from '../classes/User';
+import { authService } from '../services/authService';
 // import { ProfileManager } from '../classes/ProfileManager'; // COMMENTED OUT - Using API instead
 
 interface Match {
@@ -73,6 +74,8 @@ const MatchesList: React.FC<MatchesListProps> = ({ matches, currentUser, onCreat
   const pendingMatches = matches.filter(match => match.status === 'pending');
   // Don't show accepted matches - they should only appear in messages
   const groupCreatedMatches = matches.filter(match => match.status === 'group_created');
+  // Server-returned group-type matches
+  const serverGroupMatches = matches.filter((m: any) => m.type === 'group' || m.isGroup);
 
   return (
     <div style={{ color: 'white' }}>
@@ -164,6 +167,50 @@ const MatchesList: React.FC<MatchesListProps> = ({ matches, currentUser, onCreat
                 <p style={{ fontSize: '14px', color: '#636e72' }}>
                   Created on {new Date(match.updatedAt).toLocaleDateString()}
                 </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {serverGroupMatches.length > 0 && (
+        <div style={{ marginBottom: '30px' }}>
+          <h3 style={{ marginBottom: '15px', color: '#55efc4' }}>Available Groups</h3>
+          {serverGroupMatches.map((g: any) => {
+            const name = g.name || 'Group';
+            return (
+              <div key={g.id || g.groupId} className="card" style={{ marginBottom: '15px', padding: '20px' }}>
+                <p style={{ marginBottom: '10px', color: 'white', fontWeight: '600' }}>{name}</p>
+                <p style={{ fontSize: '14px', color: '#636e72' }}>{g.description || ''}</p>
+                <p style={{ fontSize: '13px', color: '#636e72' }}>Members: {(g.members || []).slice(0,4).join(', ')}</p>
+                <div style={{ marginTop: '10px' }}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={async () => {
+                      // Send join request
+                      const groupId = g.groupId || (String(g.id || '').replace('group_', ''));
+                      try {
+                        const resp = await fetch(`/api/groups/${groupId}/join-request`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authService.getToken()}` },
+                          body: JSON.stringify({ message: 'Hi, I would like to join this group.' })
+                        });
+                        if (resp.ok) {
+                          alert('Join request sent');
+                        } else {
+                          const err = await resp.json().catch(() => ({}));
+                          alert(err.error || 'Failed to send join request');
+                        }
+                      } catch (err) {
+                        console.error('Error sending join request:', err);
+                        alert('Error sending join request');
+                      }
+                    }}
+                    style={{ fontSize: '14px', padding: '8px 16px' }}
+                  >
+                    Request to join
+                  </button>
+                </div>
               </div>
             );
           })}

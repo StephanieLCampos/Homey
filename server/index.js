@@ -26,6 +26,7 @@ const Match = require('./models/Match');
 const SwipeAction = require('./models/SwipeAction');
 const Message = require('./models/Message');
 const GroupRequest = require('./models/GroupRequest');
+const GroupJoinRequest = require('./models/GroupJoinRequest');
 const authRoutes = require('./routes/auth');
 const { authMiddleware, optionalAuth } = require('./middleware/auth');
 
@@ -305,7 +306,42 @@ app.get('/api/users/:id/potential-matches', authMiddleware, async (req, res) => 
 
     const result = potentialMatches.map(user => user.toSafeObject());
     console.log('Returning:', result.length, 'matches');
-    res.json(result);
+    // ----- NEW: also include active group summaries so groups appear in swipe feed -----
+    try {
+      const candidateGroups = await Group.find({
+        isActive: true,
+        memberIds: { $nin: [req.params.id] }
+      }).limit(50).lean();
+
+      console.log('Potential-matches: found candidateGroups count=', (candidateGroups || []).length);
+
+      const groupEntries = candidateGroups
+        .filter(g => (Array.isArray(g.memberIds) ? g.memberIds.length : 0) < (g.maxMembers || 4))
+        .map(g => ({
+          id: `group_${g._id}`,
+          _id: `group_${g._id}`,
+          isGroup: true,
+          groupId: g._id,
+          name: g.name,
+          email: '',
+          age: null,
+          gender: 'group',
+          bio: g.description || '',
+          photos: g.photos || [],
+          preferences: g.preferences || {},
+          isActive: g.isActive,
+          createdAt: g.createdAt,
+          updatedAt: g.updatedAt
+        }));
+
+      const combined = [...result, ...groupEntries];
+      console.log(`Added ${groupEntries.length} group(s) into potential matches for user ${req.params.id}`);
+      res.json(combined);
+    } catch (err) {
+      console.error('Error loading candidate groups for potential matches:', err);
+      res.json(result);
+    }
+    // --------------------------------------------------------------------------
   } catch (error) {
     console.error('Get potential matches error:', error);
     res.status(500).json({ error: 'Server error' });
@@ -443,6 +479,36 @@ app.get('/api/users/:id/matches', authMiddleware, async (req, res) => {
     console.log('Real matches:', userMatches.length);
     console.log('Pending matches:', pendingMatches.length);
     
+    // ----- NEW: include active candidate group profiles so users can see groups on their feed -----
+    try {
+      const candidateGroups = await Group.find({
+        isActive: true,
+        memberIds: { $nin: [req.params.id] }
+      }).limit(50).lean();
+
+      const groupMatches = candidateGroups
+        .filter(g => (Array.isArray(g.memberIds) ? g.memberIds.length : 0) < (g.maxMembers || 4))
+        .map(g => ({
+          id: `group_${g._id}`,
+          type: 'group',
+          groupId: g._id,
+          name: g.name,
+          description: g.description,
+          members: (g.memberIds || []).slice(0, 4),
+          photos: g.photos || [],
+          preferences: g.preferences || {},
+          createdAt: g.createdAt,
+          updatedAt: g.updatedAt,
+          status: 'group_available'
+        }));
+
+      allMatches.push(...groupMatches);
+      console.log(`Added ${groupMatches.length} group(s) to matches for user ${req.params.id}`);
+    } catch (err) {
+      console.error('Error loading candidate groups for matches:', err);
+    }
+    // --------------------------------------------------------------------------
+
     res.json(allMatches);
   } catch (error) {
     console.error('Get matches error:', error);
@@ -475,7 +541,26 @@ app.post('/api/groups', authMiddleware, async (req, res) => {
     });
     
     await group.save();
-    
+
+    // ----- NEW: mark existing matches between group members as group matches -----
+    try {
+      const memberIdsArray = (group.memberIds || []).map(id => id.toString());
+      for (let i = 0; i < memberIdsArray.length; i++) {
+        for (let j = i + 1; j < memberIdsArray.length; j++) {
+          const a = memberIdsArray[i];
+          const b = memberIdsArray[j];
+          await Match.updateOne(
+            { $or: [{ userId1: a, userId2: b }, { userId1: b, userId2: a }] },
+            { $set: { status: 'group', groupId: group._id } }
+          );
+        }
+      }
+      console.log('Updated matches to reference new group for members:', memberIdsArray);
+    } catch (err) {
+      console.error('Failed updating matches for new group (create-group):', err);
+    }
+    // --------------------------------------------------------------------------
+
     // Update member users
     await User.updateMany(
       { _id: { $in: memberIds } },
@@ -486,7 +571,7 @@ app.post('/api/groups', authMiddleware, async (req, res) => {
         isActive: true // Users in groups should still be able to login
       }
     );
-    
+
     res.json(group);
   } catch (error) {
     console.error('Create group error:', error);
@@ -847,7 +932,25 @@ app.post('/api/group-requests/:requestId/respond', authMiddleware, async (req, r
       
       await group.save();
       console.log('Group saved successfully with ID:', group._id);
-
+     // ----- NEW: mark existing matches between group members as group matches -----
+      try {
+        const Match = require('./models/Match');
+        const memberIdsArray = (group.memberIds || []).map(id => id.toString());
+        for (let i = 0; i < memberIdsArray.length; i++) {
+          for (let j = i + 1; j < memberIdsArray.length; j++) {
+            const a = memberIdsArray[i];
+            const b = memberIdsArray[j];
+            await Match.updateOne(
+              { $or: [{ userId1: a, userId2: b }, { userId1: b, userId2: a }] },
+              { $set: { status: 'group', groupId: group._id } }
+            );
+          }
+        }
+        console.log('Updated matches to reference new group for members:', memberIdsArray);
+      } catch (err) {
+        console.error('Failed updating matches for new group:', err);
+      }
+      // --------------------------------------------------------------------------
       // Update both users' status and groupId
       console.log('Updating users to in_group status:', {
         requester: groupRequest.requester._id,
@@ -1061,6 +1164,126 @@ app.post('/api/groups/:groupId/leave', authMiddleware, async (req, res) => {
   }
 });
 
+  // Send join request to a group
+  app.post('/api/groups/:groupId/join-request', authMiddleware, async (req, res) => {
+    try {
+      const { message } = req.body;
+      const groupId = req.params.groupId;
+      const requesterId = req.userId;
+
+      const group = await Group.findById(groupId);
+      if (!group || !group.isActive) {
+        return res.status(404).json({ error: 'Group not found or inactive' });
+      }
+
+      // Cannot join if already member
+      if (group.memberIds.map(id => id.toString()).includes(requesterId)) {
+        return res.status(400).json({ error: 'Already a member of the group' });
+      }
+
+      // Prevent duplicate pending requests
+      const existing = await GroupJoinRequest.findOne({ groupId, requester: requesterId, status: 'pending' });
+      if (existing) {
+        return res.status(400).json({ error: 'Join request already pending' });
+      }
+
+      const joinRequest = new GroupJoinRequest({ groupId, requester: requesterId, message: message || '' });
+      await joinRequest.save();
+
+      // Populate requester info so clients receive meaningful data via socket
+      await joinRequest.populate('requester', 'name photos email');
+
+      // Notify group members (emit to each member) with populated requester info
+      group.memberIds.forEach(memberId => {
+        io.to(memberId.toString()).emit('groupJoinRequest', {
+          requestId: joinRequest._id,
+          groupId: group._id,
+          requester: joinRequest.requester, // populated object
+          message: joinRequest.message,
+          createdAt: joinRequest.createdAt
+        });
+      });
+
+      res.status(201).json({ success: true, request: joinRequest });
+    } catch (err) {
+      console.error('Send join request error:', err);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+
+  // Admin endpoint for group members to accept/reject join requests
+  app.post('/api/groups/:groupId/join-request/:requestId/respond', authMiddleware, async (req, res) => {
+    try {
+      const { action } = req.body; // 'accept' or 'reject'
+      const { groupId, requestId } = req.params;
+      const userId = req.userId;
+
+      if (!['accept', 'reject'].includes(action)) {
+        return res.status(400).json({ error: 'Invalid action' });
+      }
+
+      const group = await Group.findById(groupId);
+      if (!group) return res.status(404).json({ error: 'Group not found' });
+
+      // Only existing group members can respond
+      if (!group.memberIds.map(id => id.toString()).includes(userId)) {
+        return res.status(403).json({ error: 'Only group members can respond to join requests' });
+      }
+
+      const joinRequest = await GroupJoinRequest.findById(requestId);
+      if (!joinRequest) return res.status(404).json({ error: 'Request not found' });
+
+      if (joinRequest.status !== 'pending') return res.status(400).json({ error: 'Request already handled' });
+
+      if (action === 'accept') {
+        // Add to group
+        group.memberIds.push(joinRequest.requester);
+        await group.save();
+
+        // Update user
+        await User.findByIdAndUpdate(joinRequest.requester, {
+          groupId: group._id,
+          status: 'in_group',
+          profileStatus: 'paused',
+          isActive: true
+        });
+
+        // Mark joinRequest accepted
+        joinRequest.status = 'accepted';
+        await joinRequest.save();
+
+        // Update existing matches between group members and the new member
+        try {
+          const memberIdsArray = (group.memberIds || []).map(id => id.toString());
+          for (let i = 0; i < memberIdsArray.length; i++) {
+            for (let j = i + 1; j < memberIdsArray.length; j++) {
+              const a = memberIdsArray[i];
+              const b = memberIdsArray[j];
+              await Match.updateOne(
+                { $or: [{ userId1: a, userId2: b }, { userId1: b, userId2: a }] },
+                { $set: { status: 'group', groupId: group._id } }
+              );
+            }
+          }
+        } catch (err) {
+          console.error('Failed updating matches for join-accept:', err);
+        }
+
+        // Notify requester
+        io.to(joinRequest.requester.toString()).emit('joinRequestAccepted', { groupId: group._id, groupName: group.name });
+        res.json({ success: true, accepted: true, group });
+      } else {
+        joinRequest.status = 'rejected';
+        await joinRequest.save();
+        io.to(joinRequest.requester.toString()).emit('joinRequestRejected', { groupId: group._id });
+        res.json({ success: true, accepted: false });
+      }
+    } catch (err) {
+      console.error('Respond to join request error:', err);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+
 // Send message
 app.post('/api/messages', authMiddleware, async (req, res) => {
   try {
@@ -1125,6 +1348,27 @@ app.post('/api/messages', authMiddleware, async (req, res) => {
     res.json(message);
   } catch (error) {
     console.error('Send message error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get join requests for a group (only visible to group members)
+app.get('/api/groups/:groupId/join-requests', authMiddleware, async (req, res) => {
+  try {
+    const groupId = req.params.groupId;
+    const userId = req.userId;
+
+    const group = await Group.findById(groupId);
+    if (!group) return res.status(404).json({ error: 'Group not found' });
+
+    if (!group.memberIds.map(id => id.toString()).includes(userId)) {
+      return res.status(403).json({ error: 'Only group members can view join requests' });
+    }
+
+    const requests = await GroupJoinRequest.find({ groupId }).populate('requester', 'name photos email');
+    res.json({ success: true, requests });
+  } catch (err) {
+    console.error('Get group join requests error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

@@ -97,6 +97,7 @@ const App: React.FC = () => {
     
     setCurrentUser(user);
     
+    /*
     // Only load individual user data if the user is not in a group
     if (userData.status !== 'in_group' && !userData.groupId) {
       // Load potential matches from API
@@ -109,6 +110,10 @@ const App: React.FC = () => {
       setPotentialMatches([]);
       setMatches([]);
     }
+      */
+     // Always load potential matches and matches so group members can still see others
+     await loadPotentialMatches(user, activeFilters).catch(err => console.error('loadPotentialMatches error', err));
+     await loadMatches(user).catch(err => console.error('loadMatches error', err));
   };
 
   const loadPotentialMatches = async (user: User, filters?: FilterOptions) => {
@@ -161,16 +166,37 @@ const App: React.FC = () => {
             location: { city: 'Unknown', state: 'Unknown' }
           };
           
-          return new User(
-            userData.id || userData._id,
-            userData.email,
-            userData.name,
-            userData.age,
-            userData.gender,
-            userData.bio || '',
-            userData.photos || [],
-            userData.preferences || defaultPreferences
-          );
+            // If the server returned a group entry, represent it with a special User-like object
+            if (userData.isGroup || (userData.id && String(userData.id).startsWith('group_'))) {
+              const gId = userData.groupId || (userData.id && userData.id.replace('group_', ''));
+              // Create a lightweight User object with group marker
+              const groupUser = new User(
+                `group_${gId}`,
+                '',
+                userData.name || 'Group',
+                userData.age || 0,
+                'other',
+                userData.bio || '',
+                userData.photos || [],
+                userData.preferences || defaultPreferences
+              );
+              // @ts-ignore - attach group metadata
+              (groupUser as any).isGroup = true;
+              // @ts-ignore
+              (groupUser as any).groupId = gId;
+              return groupUser;
+            }
+
+            return new User(
+              userData.id || userData._id,
+              userData.email,
+              userData.name,
+              userData.age,
+              userData.gender,
+              userData.bio || '',
+              userData.photos || [],
+              userData.preferences || defaultPreferences
+            );
         });
         console.log('Converted potential matches:', potential);
         setPotentialMatches(potential);
@@ -352,7 +378,31 @@ const App: React.FC = () => {
     if (!currentUser) return;
 
     try {
-      // Send swipe to API
+      // If this is a group card (group_ prefix), send a group join request instead of a swipe
+      if (String(userId).startsWith('group_')) {
+        if (action === 'like') {
+          const groupId = String(userId).replace('group_', '');
+          const resp = await fetch(`/api/groups/${groupId}/join-request`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authService.getToken()}`
+            },
+            body: JSON.stringify({ message: 'Hi, I would like to join your group!' })
+          });
+          if (resp.ok) {
+            alert('Join request sent to the group owners.');
+          } else {
+            const err = await resp.json().catch(() => ({}));
+            alert(err.error || 'Failed to send join request');
+          }
+        }
+        // Remove the group card from the stack
+        setPotentialMatches(prev => prev.filter(u => u.getId() !== userId));
+        return;
+      }
+
+      // Send swipe to API for individual users
       const response = await fetch('/api/swipe', {
         method: 'POST',
         headers: {
