@@ -131,6 +131,12 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ user, onSwipe, style }) => {
             {user.getBio() && (
               <p className="profile-bio">{user.getBio()}</p>
             )}
+            {/* Show group counts when this card represents a group */}
+            { (user as any).isGroup && (
+              <div style={{ marginTop: '8px', color: '#666', fontSize: '13px' }}>
+                Current: {(user as any).memberCount ?? '—'} • Target: {(user as any).maxMembers ?? '—'}
+              </div>
+            )}
             
             <div className="preferences">
               <span className="preference-tag">

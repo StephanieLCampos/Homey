@@ -62,9 +62,10 @@ const groupSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: function(v) {
-        return /^https?:\/\/.+/.test(v);
+        // Accept absolute http(s) URLs, relative paths like /images/..., or data URLs (base64)
+        return /^https?:\/\/.+/.test(v) || /^\/[^\/].+/.test(v) || /^data:image\/.+;base64,/.test(v);
       },
-      message: 'Photo must be a valid URL'
+      message: 'Photo must be a valid URL, relative path, or data URL'
     }
   }],
   isActive: {

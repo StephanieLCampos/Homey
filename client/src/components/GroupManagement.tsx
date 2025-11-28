@@ -188,7 +188,9 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
         setEditData({
           name: data.name || '',
           description: data.description || '',
-          preferences: data.preferences || {}
+          preferences: data.preferences || {},
+          maxMembers: data.maxMembers || 4,
+          photo: (data.photos && data.photos.length > 0) ? data.photos[0] : null
         });
       } else {
         const errorText = await response.text();
@@ -199,6 +201,29 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
       console.error('Error loading group data:', error);
       alert('Error loading group data. Please try again.');
     }
+  };
+
+  // Handle uploading a single photo for the group profile (client-side base64 conversion)
+  const handleGroupPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setEditData((prev: any) => ({
+        ...prev,
+        photo: base64
+      }));
+    };
+    reader.onerror = (err) => {
+      console.error('Failed to read file', err);
+      alert('Failed to read image file. Please try a different image.');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveGroupPhoto = () => {
+    setEditData((prev: any) => ({ ...prev, photo: null }));
   };
 
   const loadJoinRequests = async (groupId: string) => {
@@ -344,13 +369,22 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
     if (!groupConversation || !editData) return;
 
     try {
+      // Build payload: send photos as an array with single photo (or empty array)
+      const payload = {
+        name: editData.name,
+        description: editData.description,
+        preferences: editData.preferences,
+        maxMembers: editData.maxMembers,
+        photos: editData.photo ? [editData.photo] : []
+      };
+
       const response = await fetch(`/api/groups/${groupConversation.groupId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authService.getToken()}`
         },
-        body: JSON.stringify(editData)
+        body: JSON.stringify(payload)
       });
 
       if (response.ok) {
@@ -470,9 +504,21 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
             <div style={{ color: '#ddd', fontSize: '12px' }}>
               Members: {groupConversation.members.map(m => m.name).join(', ')}
             </div>
+              <div style={{ color: '#ddd', fontSize: '12px', marginTop: '4px' }}>
+                { /* Show current/target members: use loaded groupData if available for maxMembers */ }
+                Current: {groupConversation.members.length} / Target: {groupData?.maxMembers ?? '—'}
+              </div>
           </div>
           <button
-            onClick={() => setShowGroupProfile(true)}
+                  onClick={async () => {
+                    // Load full group data before showing profile so we can display maxMembers
+                    try {
+                      await loadGroupData(groupConversation.groupId);
+                    } catch (err) {
+                      console.error('Failed to load group data for profile view', err);
+                    }
+                    setShowGroupProfile(true);
+                  }}
             style={{
               background: 'rgba(255, 255, 255, 0.2)',
               border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -893,6 +939,28 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
                   placeholder="Describe your group..."
                 />
               </div>
+
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', color: '#2d3436', fontWeight: '600' }}>
+                  Target Group Size (max members):
+                </label>
+                <select
+                  value={editData.maxMembers || 4}
+                  onChange={(e) => handleEditChange('maxMembers', parseInt(e.target.value))}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    background: 'white'
+                  }}
+                >
+                  {[2,3,4,5,6,7,8].map(n => (
+                    <option key={n} value={n}>{n} {n === 1 ? 'member' : 'members'}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {/* Group Preferences */}
@@ -1027,6 +1095,29 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
                 </div>
               </div>
             )}
+
+            {/* Photos */}
+            <div style={{ marginBottom: '25px' }}>
+              <h3 style={{ color: '#2d3436', marginBottom: '15px' }}>Photos</h3>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                {editData.photo ? (
+                  <div style={{ position: 'relative' }}>
+                    <img src={editData.photo} alt="group-photo" style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }} />
+                    <button
+                      onClick={handleRemoveGroupPhoto}
+                      style={{ position: 'absolute', top: '-8px', right: '-8px', background: '#e74c3c', border: 'none', color: 'white', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer' }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : (
+                  <label style={{ width: '120px', height: '120px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed #ccc', borderRadius: '8px', cursor: 'pointer', color: '#636e72' }}>
+                    <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleGroupPhotoUpload} />
+                    +
+                  </label>
+                )}
+              </div>
+            </div>
 
             {/* Action Buttons */}
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>

@@ -116,6 +116,28 @@ const App: React.FC = () => {
      await loadMatches(user).catch(err => console.error('loadMatches error', err));
   };
 
+  // Helper to normalize various ID shapes returned from server (string, ObjectId, { $oid }, etc.)
+  const normalizeId = (val: any): string | undefined => {
+    if (!val && val !== 0) return undefined;
+    if (typeof val === 'string') return val;
+    if (typeof val === 'object') {
+      // mongoose ObjectId has toString()
+      if (typeof val.toString === 'function' && !Array.isArray(val)) {
+        const s = val.toString();
+        // toString on objects may return '[object Object]'; guard that
+        if (s && !s.startsWith('[object')) return s;
+      }
+      // Some serializers use { $oid: '...' }
+      if (val.$oid && typeof val.$oid === 'string') return val.$oid;
+      if (val._id && typeof val._id === 'string') return val._id;
+      if (val._id && typeof val._id === 'object' && typeof val._id.toString === 'function') {
+        const s = val._id.toString();
+        if (s && !s.startsWith('[object')) return s;
+      }
+    }
+    try { return String(val); } catch (e) { return undefined; }
+  };
+
   const loadPotentialMatches = async (user: User, filters?: FilterOptions) => {
     try {
       console.log('Loading potential matches for user:', user.getId(), 'with filters:', filters);
@@ -184,6 +206,9 @@ const App: React.FC = () => {
               (groupUser as any).isGroup = true;
               // @ts-ignore
               (groupUser as any).groupId = gId;
+              // include member counts so swipe card can display current/target
+              (groupUser as any).memberCount = userData.memberCount ?? (userData.members ? userData.members.length : 0);
+              (groupUser as any).maxMembers = userData.maxMembers ?? userData.max_size ?? 4;
               return groupUser;
             }
 
@@ -378,8 +403,13 @@ const App: React.FC = () => {
     if (!currentUser) return;
 
     try {
+  // Normalize userId shapes (in case caller passed an object)
+  const normalizedTarget = normalizeId(userId) || (typeof userId === 'string' ? userId : undefined);
+  console.log('handleSwipe: normalized target id:', normalizedTarget, 'original:', userId);
+  const targetToUse: any = normalizedTarget || userId;
+
       // If this is a group card (group_ prefix), send a group join request instead of a swipe
-      if (String(userId).startsWith('group_')) {
+  if (String(targetToUse).startsWith('group_')) {
         if (action === 'like') {
           const groupId = String(userId).replace('group_', '');
           const resp = await fetch(`/api/groups/${groupId}/join-request`, {
@@ -410,12 +440,12 @@ const App: React.FC = () => {
           'Authorization': `Bearer ${authService.getToken()}`
         },
         body: JSON.stringify({
-          targetUserId: userId,
+          targetUserId: targetToUse,
           action: action === 'like' ? 'like' : 'dislike'
         })
       });
 
-      if (response.ok) {
+  if (response.ok) {
         const result = await response.json();
         
         // Remove swiped user from potential matches
@@ -426,6 +456,16 @@ const App: React.FC = () => {
           await loadMatches(currentUser);
         }
       } else {
+        // If the server says we already swiped, refresh matches (this can happen if state was out of sync)
+        if (response.status === 400) {
+          const bodyText = await response.text().catch(() => '');
+          console.warn('Swipe returned 400:', bodyText);
+          if (bodyText && bodyText.includes('Already swiped')) {
+            console.log('Refreshing matches after Already swiped response');
+            await loadMatches(currentUser);
+            return;
+          }
+        }
         console.error('Failed to record swipe');
       }
     } catch (error) {
@@ -494,11 +534,32 @@ const App: React.FC = () => {
     }
 
     try {
+      // Ensure we have an auth token
+      const token = authService.getToken();
+      if (!token) {
+        console.error('No auth token found when accepting match');
+        alert('You must be logged in to accept matches');
+        return;
+      }
       console.log('Accepting match:', matchId);
-      
+
       // Find the match object to understand what type it is
-      const match = matches.find(m => m.id === matchId || (m as any)._id === matchId);
+      const match = matches.find(m => {
+        const mid = normalizeId((m as any).id || (m as any)._id);
+        return mid === matchId;
+      });
       console.log('Found match object:', match);
+      console.groupCollapsed('Accept debug');
+      try {
+        console.log('Auth token present?', !!authService.getToken());
+        console.log('Matches count:', matches.length);
+        console.log('Matches snippet:', matches.slice(0,5));
+        console.log('Requested matchId:', matchId);
+        console.log('Resolved match object:', match);
+      } catch (e) {
+        console.error('Error logging accept debug info', e);
+      }
+      console.groupEnd();
       
       if (!match) {
         console.error('Match not found in matches array');
@@ -506,28 +567,43 @@ const App: React.FC = () => {
       }
       
       // For pending matches (one-way likes), we need to swipe back to create the actual match
-      if (matchId.startsWith('pending_')) {
-        // This is a pending match created by the frontend
-        const targetUserId = (match as any).userId1 === currentUser.getId() ? (match as any).userId2 : (match as any).userId1;
-        console.log('Swiping right on pending match target:', targetUserId);
-        await handleSwipe(targetUserId, 'like');
+      if (matchId && matchId.startsWith('pending_')) {
+        // This is a pending match created by the frontend; swipe back on the user who liked us
+        const userA = (match as any).userId1;
+        const userB = (match as any).userId2;
+        const uidA = normalizeId(userA);
+        const uidB = normalizeId(userB);
+        const targetUserId = uidA === currentUser.getId() ? uidB : uidA;
+        console.log('Swiping right on pending match target (resolved):', { uidA, uidB, targetUserId });
+        if (!targetUserId) {
+          console.error('Unable to resolve target user id for pending match:', match);
+          alert('Could not accept pending match: target user id is malformed');
+        } else {
+          await handleSwipe(targetUserId, 'like');
+        }
       } else {
         // This is a real match from the database - call the accept endpoint
         console.log('Accepting real match via API:', matchId);
         
-        const response = await fetch(`/api/matches/${matchId}/accept`, {
+        const url = `/api/matches/${matchId}/accept`;
+        console.log('Sending POST to', url);
+        const response = await fetch(url, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${authService.getToken()}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         });
-        
+        const text = await response.text();
+        let json;
+        try { json = text ? JSON.parse(text) : null; } catch (e) { json = null; }
+
         if (response.ok) {
-          const result = await response.json();
-          console.log('Match accepted successfully:', result);
+          console.log('Match accepted successfully:', json || 'no-json');
+          alert('Match accepted successfully');
         } else {
-          console.error('Failed to accept match:', response.status);
+          console.error('Failed to accept match:', response.status, json || text);
+          alert((json && json.error) || `Failed to accept match: ${response.status} - ${text}`);
         }
       }
       

@@ -397,19 +397,27 @@ app.post('/api/swipe', authMiddleware, async (req, res) => {
     }
 
     // Check if already swiped
-    const existingSwipe = await SwipeAction.findOne({ userId, targetUserId });
+    let existingSwipe = await SwipeAction.findOne({ userId, targetUserId });
     if (existingSwipe) {
-      return res.status(400).json({ error: 'Already swiped on this user' });
-    }
+      // If the existing swipe already matches the requested action, treat it as a no-op
+      if (existingSwipe.action === action) {
+        return res.status(400).json({ error: 'Already swiped on this user' });
+      }
 
-    // Create swipe action
-    const swipeAction = new SwipeAction({
-      userId,
-      targetUserId,
-      action
-    });
-    
-    await swipeAction.save();
+      // Otherwise, update the existing swipe to the new action (e.g., user changed from dislike -> like)
+      console.log('Updating existing swipe action from', existingSwipe.action, 'to', action);
+      existingSwipe.action = action;
+      await existingSwipe.save();
+    } else {
+      // Create swipe action
+      const swipeAction = new SwipeAction({
+        userId,
+        targetUserId,
+        action
+      });
+      await swipeAction.save();
+      existingSwipe = swipeAction;
+    }
     
     // Check for match if it's a like
     if (action === 'like' || action === 'superlike') {
@@ -1097,6 +1105,23 @@ app.put('/api/groups/:groupId', authMiddleware, async (req, res) => {
     if (description !== undefined) group.description = description;
     if (preferences) group.preferences = { ...group.preferences, ...preferences };
 
+    // Support updating photos array (client sends single photo as photos: [photo] or [])
+    if (req.body.photos !== undefined) {
+      if (Array.isArray(req.body.photos)) {
+        group.photos = req.body.photos;
+      } else if (typeof req.body.photos === 'string') {
+        group.photos = [req.body.photos];
+      }
+    }
+
+      if (req.body.maxMembers !== undefined) {
+        const mm = parseInt(req.body.maxMembers, 10);
+        if (!isNaN(mm)) {
+          // Clamp to allowed UI limits (2..8)
+          group.maxMembers = Math.max(2, Math.min(8, mm));
+        }
+      }
+
     await group.save();
 
     // Return populated group
@@ -1251,8 +1276,9 @@ app.post('/api/groups/:groupId/leave', authMiddleware, async (req, res) => {
   // Admin endpoint for group members to accept/reject join requests
   app.post('/api/groups/:groupId/join-request/:requestId/respond', authMiddleware, async (req, res) => {
     try {
-      const { action } = req.body; // 'accept' or 'reject'
-      const { groupId, requestId } = req.params;
+    console.log('Join-request respond incoming payload:', { params: req.params, body: req.body, userId: req.userId });
+    const { action } = req.body; // 'accept' or 'reject'
+    const { groupId, requestId } = req.params;
       const userId = req.userId;
 
       console.log('Respond to join-request called:', { userId, groupId, requestId, action });
@@ -1290,21 +1316,41 @@ app.post('/api/groups/:groupId/leave', authMiddleware, async (req, res) => {
       }
 
       if (action === 'accept') {
+        console.log('Accepting join request:', requestId, 'for group:', groupId, 'requester:', joinRequest.requester.toString());
         // Add to group
-        group.memberIds.push(joinRequest.requester);
-        await group.save();
+        try {
+          group.memberIds.push(joinRequest.requester);
+          console.log('Group memberIds before save count:', group.memberIds.length);
+          await group.save();
+          console.log('Group saved successfully after adding member');
+        } catch (err) {
+          console.error('Error saving group when accepting join request:', err);
+          throw err;
+        }
 
         // Update user
-        await User.findByIdAndUpdate(joinRequest.requester, {
-          groupId: group._id,
-          status: 'in_group',
-          profileStatus: 'paused',
-          isActive: true
-        });
+        try {
+          await User.findByIdAndUpdate(joinRequest.requester, {
+            groupId: group._id,
+            status: 'in_group',
+            profileStatus: 'paused',
+            isActive: true
+          });
+          console.log('User updated successfully for new group member:', joinRequest.requester.toString());
+        } catch (err) {
+          console.error('Error updating user when accepting join request:', err);
+          throw err;
+        }
 
         // Mark joinRequest accepted
-        joinRequest.status = 'accepted';
-        await joinRequest.save();
+        try {
+          joinRequest.status = 'accepted';
+          await joinRequest.save();
+          console.log('JoinRequest marked accepted and saved:', joinRequest._id.toString());
+        } catch (err) {
+          console.error('Error saving joinRequest after accept:', err);
+          throw err;
+        }
 
         // Update existing matches between group members and the new member
         try {
@@ -1334,7 +1380,11 @@ app.post('/api/groups/:groupId/leave', authMiddleware, async (req, res) => {
       }
     } catch (err) {
       console.error('Respond to join request error:', err);
-      res.status(500).json({ error: 'Server error' });
+      // Return the error message in response to help debugging in dev
+      const message = (err && err.message) ? err.message : 'Server error';
+      // Also log stack if available
+      if (err && err.stack) console.error(err.stack);
+      res.status(500).json({ error: 'Server error', details: message });
     }
   });
 

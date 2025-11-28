@@ -109,31 +109,41 @@ const MatchesList: React.FC<MatchesListProps> = ({ matches, currentUser, onCreat
                   Liked you on {new Date(match.createdAt).toLocaleDateString()}
                 </p>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                  <button
-                    className="btn btn-success"
-                    onClick={() => {
-                      console.log('Accepting match - full object:', match);
-                      console.log('Match ID:', match.id);
-                      if (match.id) {
-                        onAcceptMatch(match.id);
-                      } else {
-                        console.error('Match ID is undefined!');
-                      }
-                    }}
-                    style={{ fontSize: '14px', padding: '8px 16px' }}
-                  >
-                    Accept Match
-                  </button>
+                  {(() => {
+                    const computedId = match.id || ((match as any)._id ? (typeof (match as any)._id === 'object' ? String((match as any)._id) : (match as any)._id) : undefined);
+                    const disabled = !computedId;
+                    return (
+                      <button
+                        className="btn btn-success"
+                        onClick={() => {
+                          console.log('Accept button clicked for match:', match);
+                          console.log('Computed Match ID:', computedId);
+                          if (!computedId) {
+                            console.error('Computed id is missing, will not call accept API');
+                            alert('Unable to accept match: missing match id');
+                            return;
+                          }
+                          onAcceptMatch(computedId as string);
+                        }}
+                        disabled={disabled}
+                        style={{ fontSize: '14px', padding: '8px 16px' }}
+                      >
+                        {disabled ? 'Unavailable' : 'Accept Match'}
+                      </button>
+                    );
+                  })()}
                   {onDeclineMatch && (
                     <button
                       className="btn btn-danger"
                       onClick={() => {
                         console.log('Declining match - full object:', match);
-                        console.log('Match ID:', match.id);
-                        if (match.id) {
-                          onDeclineMatch(match.id);
+                        const computedId = match.id || ((match as any)._id ? (typeof (match as any)._id === 'object' ? String((match as any)._id) : (match as any)._id) : undefined);
+                        console.log('Computed Match ID for decline:', computedId);
+                        if (computedId && onDeclineMatch) {
+                          onDeclineMatch(computedId);
                         } else {
-                          console.error('Match ID is undefined!');
+                          console.error('Match ID is undefined or decline handler missing!');
+                          alert('Unable to decline match: missing match id');
                         }
                       }}
                       style={{ 
