@@ -8,8 +8,8 @@
 import React from 'react';
 
 interface HeaderProps {
-  currentView: 'swipe' | 'matches' | 'groups' | 'messages' | 'profile';
-  onViewChange: (view: 'swipe' | 'matches' | 'groups' | 'messages' | 'profile') => void;
+  currentView: 'swipe' | 'matches' | 'groups' | 'messages' | 'profile' | 'search';
+  onViewChange: (view: 'swipe' | 'matches' | 'groups' | 'messages' | 'profile' | 'search') => void;
   unreadCount: number;
   onLogout?: () => void;
 }
@@ -53,6 +53,13 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange, unreadCount,
           style={{ fontSize: '12px', padding: '8px 16px' }}
         >
           Groups
+        </button>
+        <button
+          className={`btn ${currentView === 'search' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => onViewChange('search')}
+          style={{ fontSize: '12px', padding: '8px 16px' }}
+        >
+          Search
         </button>
         <button
           className={`btn ${currentView === 'messages' ? 'btn-primary' : 'btn-secondary'}`}

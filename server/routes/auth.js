@@ -123,8 +123,8 @@ router.post('/login', authLimiter, [
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Auto-reactivate paused accounts when user logs back in
-    if (user.profileStatus === 'paused') {
+    // Auto-reactivate paused and deactivated accounts when user logs back in
+    if (user.profileStatus === 'paused' || user.profileStatus === 'deactivated') {
       user.profileStatus = 'active';
       user.isActive = true; // Keep for backward compatibility
     }

@@ -127,7 +127,7 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
   };
 
   const handleDeactivateAccount = async () => {
-    if (!confirm('Are you sure you want to deactivate your account? You can reactivate it anytime by logging back in.')) {
+    if (!confirm('Are you sure you want to deactivate your account? This will remove you from any group and delete all your matches/messages. You can reactivate it anytime by logging back in.')) {
       return;
     }
 
@@ -142,7 +142,8 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
       });
 
       if (response.ok) {
-        alert('Account deactivated successfully. You will now be logged out.');
+        const result = await response.json();
+        alert(result.message);
         // Log out the user
         authService.logout();
         // Reload the page to show login screen
@@ -377,8 +378,8 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
             fontSize: '14px',
             lineHeight: '1.4'
           }}>
-            Deactivating your account will hide your profile from other users and log you out. 
-            You can reactivate anytime by logging back in.
+            Deactivating your account will remove you from any group, delete all your matches and messages, 
+            and hide your profile from other users. You can reactivate anytime by logging back in.
           </p>
           <button 
             className="btn btn-danger"

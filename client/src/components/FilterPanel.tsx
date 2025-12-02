@@ -5,7 +5,7 @@
  * Integrates with the discovery system to filter potential matches based on criteria.
  * Includes reset functionality and clear visual indicators for active filters.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export interface FilterOptions {
   minAge?: number;
@@ -18,6 +18,7 @@ export interface FilterOptions {
   preferredGender?: string[];
   city?: string;
   state?: string;
+  profileType?: 'all' | 'individual' | 'groups'; // new filter for profile type
 }
 
 interface FilterPanelProps {
@@ -33,7 +34,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   onApplyFilters, 
   currentFilters 
 }) => {
-  const [filters, setFilters] = useState<FilterOptions>(currentFilters);
+  const [filters, setFilters] = useState<FilterOptions>({ ...currentFilters, profileType: currentFilters.profileType || 'all' });
+
+  // Update local state when currentFilters prop changes
+  useEffect(() => {
+    setFilters({ ...currentFilters, profileType: currentFilters.profileType || 'all' });
+  }, [currentFilters]);
 
   const handleFilterChange = (key: keyof FilterOptions, value: any) => {
     setFilters(prev => ({
@@ -74,7 +80,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       smokingAllowed: null,
       preferredGender: [],
       city: undefined,
-      state: undefined
+      state: undefined,
+      profileType: 'all'
     };
     setFilters(resetFilters);
   };
@@ -132,6 +139,42 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           >
             ×
           </button>
+        </div>
+
+        {/* Profile Type Filter */}
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#2c3e50' }}>
+            Profile Type
+          </label>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            {[
+              { value: 'all', label: 'All Profiles', icon: '👥' },
+              { value: 'individual', label: 'Individual Only', icon: '👤' },
+              { value: 'groups', label: 'Groups Only', icon: '🏠' }
+            ].map(({ value, label, icon }) => (
+              <button
+                key={value}
+                onClick={() => handleFilterChange('profileType', value)}
+                style={{
+                  padding: '10px 16px',
+                  border: filters.profileType === value ? '2px solid #74b9ff' : '2px solid #ecf0f1',
+                  borderRadius: '8px',
+                  background: filters.profileType === value ? '#e8f4f8' : 'white',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: filters.profileType === value ? '#0984e3' : '#2c3e50',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <span>{icon}</span>
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Age Range */}

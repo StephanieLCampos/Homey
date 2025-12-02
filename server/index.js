@@ -254,48 +254,130 @@ app.post('/api/user/:id/deactivate', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     
-    // Can't deactivate if user is in a group
-    if (user.status === 'in_group') {
-      return res.status(400).json({ error: 'Please leave your group before deactivating your account' });
+    // Handle group removal if user is in a group
+    let groupRemovalMessage = '';
+    if (user.status === 'in_group' && user.groupId) {
+      console.log('User is in a group. Removing from group...');
+      
+      try {
+        const group = await Group.findById(user.groupId);
+        if (group) {
+          // Remove user from group
+          group.memberIds = group.memberIds.filter(memberId => memberId.toString() !== userId);
+          
+          // Update group status based on new member count
+          group.target_status = group.memberIds.length >= group.maxMembers ? 'full' : 'not_full';
+          group.group_status = group.target_status === 'full' ? 'paused' : 'active';
+          
+          await group.save();
+          groupRemovalMessage = ' You have been removed from your group.';
+          console.log(`User ${userId} removed from group ${user.groupId}`);
+          
+          // Add system message to group chat that user has left
+          const systemMessage = new Message({
+            senderId: null, // System message
+            groupId: user.groupId,
+            content: `${user.name} has left the group chat`,
+            messageType: 'system'
+          });
+          await systemMessage.save();
+          
+          // Notify remaining group members via Socket.io
+          group.memberIds.forEach(memberId => {
+            io.to(memberId.toString()).emit('memberLeft', {
+              groupId: group._id,
+              leftUserId: userId,
+              leftUserName: user.name
+            });
+            
+            // Send the system message to group chat
+            io.to(memberId.toString()).emit('message', systemMessage);
+          });
+          
+          console.log(`System message sent to ${group.memberIds.length} remaining group members`);
+        }
+      } catch (groupError) {
+        console.error('Error removing user from group:', groupError);
+        // Continue with deactivation even if group removal fails
+      }
     }
     
     console.log('User can be deactivated. Cleaning up data...');
     
-    // Delete all SwipeActions involving this user
+    // Delete all SwipeActions involving this user (individual and group swipes)
     const deletedSwipes = await SwipeAction.deleteMany({ 
       $or: [
-        { userId: userId },
-        { targetUserId: userId }
+        { userId: userId },                    // Swipes sent by this user
+        { targetUserId: userId },              // Swipes received by this user
+        { groupId: user.groupId },             // Swipes sent by user's group (if they were in one)
+        { targetGroupId: user.groupId }        // Swipes received by user's group (if they were in one)
       ]
     });
     console.log(`Deleted ${deletedSwipes.deletedCount} swipe actions`);
     
-    // Delete all matches involving this user  
+    // Delete all individual matches involving this user (pending and accepted)
     const deletedMatches = await Match.deleteMany({
       $or: [
-        { userId1: userId, status: { $in: ['pending', 'accepted'] } },
-        { userId2: userId, status: { $in: ['pending', 'accepted'] } }
+        { userId1: userId },
+        { userId2: userId }
       ]
     });
-    console.log(`Deleted ${deletedMatches.deletedCount} matches`);
+    console.log(`Deleted ${deletedMatches.deletedCount} individual matches`);
     
-    // Delete all group matches for this user (including accepted ones that might be incomplete)
+    // Delete all group matches involving this user or their group
     const deletedGroupMatches = await GroupMatch.deleteMany({
-      userId: userId
+      $or: [
+        { userId: userId },                    // Group matches where this user was the target
+        { groupId: user.groupId }              // Group matches involving user's group (if they were in one)
+      ]
     });
     console.log(`Deleted ${deletedGroupMatches.deletedCount} group matches`);
     
-    // Update user status to paused
+    // Delete only private messages (1-on-1), keep group messages
+    const deletedMessages = await Message.deleteMany({
+      $or: [
+        // Private messages sent by this user (has receiverId, no groupId)
+        { senderId: userId, receiverId: { $exists: true, $ne: null }, groupId: { $exists: false } },
+        // Private messages received by this user (has receiverId, no groupId)  
+        { receiverId: userId, groupId: { $exists: false } }
+      ]
+    });
+    console.log(`Deleted ${deletedMessages.deletedCount} private messages (group messages preserved)`);
+    
+    // Delete all group requests involving this user (sent or received)
+    const deletedGroupRequests = await GroupRequest.deleteMany({
+      $or: [
+        { requester: userId },
+        { recipient: userId }
+      ]
+    });
+    console.log(`Deleted ${deletedGroupRequests.deletedCount} group requests`);
+    
+    // Delete all group join requests involving this user
+    const deletedJoinRequests = await GroupJoinRequest.deleteMany({
+      requester: userId
+    });
+    console.log(`Deleted ${deletedJoinRequests.deletedCount} group join requests`);
+    
+    // Delete user group history records
+    const deletedHistory = await UserGroupHistory.deleteMany({
+      userId: userId
+    });
+    console.log(`Deleted ${deletedHistory.deletedCount} user group history records`);
+    
+    // Update user status to deactivated and remove from group
     await User.findByIdAndUpdate(userId, {
-      profileStatus: 'paused',
-      isActive: false
+      profileStatus: 'deactivated',
+      isActive: false,
+      status: 'individual',  // Reset to individual status
+      groupId: null          // Remove group association
     });
     
     console.log(`User ${userId} account deactivated successfully`);
     
     res.json({ 
       success: true, 
-      message: 'Account deactivated successfully. You have been logged out.' 
+      message: `Account deactivated successfully.${groupRemovalMessage} You have been logged out.`
     });
   } catch (error) {
     console.error('Deactivate account error:', error);
@@ -447,6 +529,32 @@ app.get('/api/users/:id/potential-matches', authMiddleware, async (req, res) => 
     // --------------------------------------------------------------------------
   } catch (error) {
     console.error('Get potential matches error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Search users by email
+app.get('/api/users/search', authMiddleware, async (req, res) => {
+  try {
+    const { email } = req.query;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email parameter is required' });
+    }
+
+    // Search for users by email (case insensitive, exact match)
+    const users = await User.find({
+      email: new RegExp(`^${email.trim()}$`, 'i'),
+      _id: { $ne: req.userId }, // Exclude the current user
+    });
+
+    // Return safe user objects
+    const results = users.map(user => user.toSafeObject());
+    
+    console.log(`Search for email "${email}" returned ${results.length} results`);
+    res.json(results);
+  } catch (error) {
+    console.error('Search users error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -1942,6 +2050,173 @@ app.post('/api/groups/:groupId/leave', authMiddleware, async (req, res) => {
       res.status(500).json({ error: 'Server error', details: message });
     }
   });
+
+// Invite a user to an existing group (same as group liking the user)
+app.post('/api/groups/:groupId/invite', authMiddleware, async (req, res) => {
+  try {
+    const { targetUserId, message } = req.body;
+    const groupId = req.params.groupId;
+    const inviterId = req.userId;
+
+    // Check if group exists and user is a member
+    const group = await Group.findById(groupId);
+    if (!group || !group.isActive) {
+      return res.status(404).json({ error: 'Group not found or inactive' });
+    }
+
+    if (!group.memberIds.map(id => id.toString()).includes(inviterId)) {
+      return res.status(403).json({ error: 'Only group members can send invitations' });
+    }
+
+    // Use the same logic as group swipe to create a group match
+    // This will make the invitation show up in the target user's matches tab
+    const swipeBody = {
+      targetUserId: targetUserId,
+      action: 'like'
+    };
+
+    // Call the group swipe logic directly by making an internal request
+    const swipeReq = {
+      body: swipeBody,
+      params: { groupId },
+      userId: inviterId
+    };
+
+    // Simulate the group swipe endpoint logic
+    if (!['like', 'dislike', 'superlike'].includes(swipeBody.action)) {
+      return res.status(400).json({ error: 'Invalid swipe action' });
+    }
+
+    // Check if group can send likes (not full/paused)
+    const validMembers = [];
+    for (const memberId of group.memberIds) {
+      const member = await User.findById(memberId);
+      if (member) {
+        validMembers.push(memberId);
+      }
+    }
+    
+    if (validMembers.length !== group.memberIds.length) {
+      group.memberIds = validMembers;
+      group.target_status = group.memberIds.length >= group.maxMembers ? 'full' : 'not_full';
+      group.group_status = group.target_status === 'full' ? 'paused' : 'active';
+      await group.save();
+    }
+    
+    if (!group.canSendLikes()) {
+      return res.status(400).json({ 
+        error: 'Sorry, your group is full. You cannot send anymore likes!' 
+      });
+    }
+
+    // Check if target user exists and is active and individual
+    const targetUser = await User.findById(targetUserId);
+    if (!targetUser || !targetUser.isActive || targetUser.status !== 'individual') {
+      return res.status(404).json({ error: 'Target user not found, inactive, or already in a group' });
+    }
+
+    // Check if group already swiped on this user
+    let existingSwipe = await SwipeAction.findOne({ 
+      groupId,
+      targetUserId: targetUserId
+    });
+
+    if (existingSwipe) {
+      return res.status(400).json({ error: 'Group has already swiped on this user' });
+    }
+
+    // Create the group swipe action
+    const swipeAction = new SwipeAction({
+      groupId,
+      targetUserId: targetUserId,
+      action: swipeBody.action,
+      swipeType: 'group_to_user'
+    });
+    await swipeAction.save();
+
+    // Create a group match (invitation) for the target user
+    const groupMatch = new GroupMatch({
+      groupId,
+      userId: targetUserId,
+      initiatedBy: 'group',
+      groupMemberInitiator: inviterId,
+      status: 'pending'
+    });
+    await groupMatch.save();
+
+    // Notify the target user
+    io.to(targetUserId).emit('newGroupMatch', {
+      groupId: group._id,
+      groupName: group.name,
+      matchId: groupMatch._id
+    });
+
+    res.json({ 
+      success: true, 
+      message: 'Group invitation sent successfully',
+      groupMatch: true 
+    });
+  } catch (error) {
+    console.error('Group invite error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Send group formation invitation (for users not in groups)
+app.post('/api/group-invites/send', authMiddleware, async (req, res) => {
+  try {
+    const { targetUserId, message } = req.body;
+    const inviterId = req.userId;
+
+    // Check if inviter is not in a group
+    const inviter = await User.findById(inviterId);
+    if (!inviter || inviter.status === 'in_group') {
+      return res.status(400).json({ error: 'You must be an individual user to send group formation invitations' });
+    }
+
+    // Check if target user exists and is not in a group
+    const targetUser = await User.findById(targetUserId);
+    if (!targetUser || !targetUser.isActive) {
+      return res.status(404).json({ error: 'Target user not found or inactive' });
+    }
+
+    if (targetUser.status === 'in_group') {
+      return res.status(400).json({ error: 'Target user is already in a group' });
+    }
+
+    // Create a group request (invitation to form a new group)
+    const existing = await GroupRequest.findOne({
+      $or: [
+        { requester: inviterId, recipient: targetUserId },
+        { requester: targetUserId, recipient: inviterId }
+      ],
+      status: 'pending'
+    });
+
+    if (existing) {
+      return res.status(400).json({ error: 'Group formation request already exists between these users' });
+    }
+
+    const groupRequest = new GroupRequest({
+      requester: inviterId,
+      recipient: targetUserId,
+      message: message || 'Would you like to form a roommate group together?'
+    });
+    await groupRequest.save();
+
+    // Notify the target user
+    io.to(targetUserId).emit('groupFormationInvite', {
+      inviterId: inviterId,
+      inviterName: inviter.name,
+      message
+    });
+
+    res.json({ success: true, message: 'Group formation invitation sent successfully' });
+  } catch (error) {
+    console.error('Group formation invite error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // Send message
 app.post('/api/messages', authMiddleware, async (req, res) => {

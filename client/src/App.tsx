@@ -21,6 +21,7 @@ import MatchesList from './components/MatchesList';
 import GroupManagement from './components/GroupManagement';
 import MessagingInterface from './components/MessagingInterface';
 import { Profile } from './components/Profile';
+import Search from './components/Search';
 import FilterPanel, { FilterOptions } from './components/FilterPanel';
 import sampleUser1Image from './images/sample_user1.png';
 
@@ -34,10 +35,10 @@ const App: React.FC = () => {
   const [currentUserData, setCurrentUserData] = useState<UserData | null>(null);
   const [potentialMatches, setPotentialMatches] = useState<User[]>([]);
   const [matches, setMatches] = useState<any[]>([]);
-  const [currentView, setCurrentView] = useState<'swipe' | 'matches' | 'groups' | 'messages' | 'profile'>('swipe');
+  const [currentView, setCurrentView] = useState<'swipe' | 'matches' | 'groups' | 'messages' | 'profile' | 'search'>('swipe');
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<FilterOptions>({});
+  const [activeFilters, setActiveFilters] = useState<FilterOptions>({ profileType: 'all' });
   const [userGroupData, setUserGroupData] = useState<any>(null);
   const socketRef = useRef<Socket | null>(null);
 
@@ -393,7 +394,19 @@ const App: React.FC = () => {
             );
         });
         console.log('Converted potential matches:', potential);
-        setPotentialMatches(potential);
+        
+        // Apply client-side profile type filtering
+        let filteredPotential = potential;
+        if (filters?.profileType && filters.profileType !== 'all') {
+          if (filters.profileType === 'individual') {
+            filteredPotential = potential.filter((user: User) => !(user as any).isGroup);
+          } else if (filters.profileType === 'groups') {
+            filteredPotential = potential.filter((user: User) => (user as any).isGroup);
+          }
+          console.log(`Filtered potential matches by profile type (${filters.profileType}):`, filteredPotential);
+        }
+        
+        setPotentialMatches(filteredPotential);
       } else {
         const errorData = await response.text();
         console.error('Failed to load potential matches:', response.status, errorData);
@@ -1090,7 +1103,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleViewChange = async (view: 'swipe' | 'matches' | 'groups' | 'messages' | 'profile') => {
+  const handleViewChange = async (view: 'swipe' | 'matches' | 'groups' | 'messages' | 'profile' | 'search') => {
     setCurrentView(view);
     
     // Refresh user data when switching to groups tab to check if user is in a group
@@ -1504,6 +1517,12 @@ const App: React.FC = () => {
             key={`groups-${currentUserData?.id}-${Date.now()}`} // Force complete re-render
             // profileManager={profileManager} // COMMENTED OUT - Using API instead
             // matchingSystem={matchingSystem} // COMMENTED OUT - Using API instead
+          />
+        )}
+
+        {currentView === 'search' && (
+          <Search
+            currentUser={currentUser}
           />
         )}
 
