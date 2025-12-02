@@ -5,7 +5,8 @@
  * Coordinates with authService for JWT authentication and provides unified interface for all app features.
  * Converts API user data to User class instances and manages real-time match updates.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { io, Socket } from 'socket.io-client';
 import { authService } from './services/authService';
 import { AuthPage } from './components/Auth/AuthPage';
 // COMMENTED OUT - Using MongoDB/API instead of local memory storage
@@ -37,11 +38,166 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState<FilterOptions>({});
+  const [userGroupData, setUserGroupData] = useState<any>(null);
+  const socketRef = useRef<Socket | null>(null);
+
+  // Function to check if user's group is full
+  const isUserGroupFull = (): boolean => {
+    if (!currentUserData || currentUserData.status !== 'in_group' || !userGroupData) {
+      return false;
+    }
+    return userGroupData.memberIds?.length >= userGroupData.maxMembers;
+  };
+
+  // Function to load user's group data
+  const loadUserGroupData = async () => {
+    if (!currentUser || !currentUserData || currentUserData.status !== 'in_group' || !currentUserData.groupId) {
+      setUserGroupData(null);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/groups/${currentUserData.groupId}`, {
+        headers: {
+          'Authorization': `Bearer ${authService.getToken()}`
+        }
+      });
+      
+      if (response.ok) {
+        const groupData = await response.json();
+        setUserGroupData(groupData);
+      } else {
+        console.warn('Failed to load user group data');
+        setUserGroupData(null);
+      }
+    } catch (error) {
+      console.error('Error loading user group data:', error);
+      setUserGroupData(null);
+    }
+  };
 
   // Check authentication status on app load
   useEffect(() => {
     checkAuthStatus();
   }, []);
+
+  // Load group data when user data changes
+  useEffect(() => {
+    if (currentUserData && currentUserData.status === 'in_group') {
+      loadUserGroupData();
+    } else {
+      setUserGroupData(null);
+    }
+  }, [currentUserData?.status, currentUserData?.groupId]);
+
+  // Force refresh all data when switching views
+  useEffect(() => {
+    if (currentUser && isAuthenticated) {
+      // Reload data when view changes
+      loadPotentialMatches(currentUser, activeFilters).catch(err => console.error('loadPotentialMatches error', err));
+      loadMatches(currentUser).catch(err => console.error('loadMatches error', err));
+      // Reload group data if user is in a group
+      if (currentUserData?.status === 'in_group') {
+        loadUserGroupData();
+      }
+    }
+  }, [currentView]);
+
+  // Initialize socket for real-time match invalidation
+  useEffect(() => {
+    if (currentUser && isAuthenticated) {
+      initializeSocket();
+    }
+    
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
+  }, [currentUser, isAuthenticated]);
+
+  const initializeSocket = () => {
+    // Clean up existing socket
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+
+    try {
+      socketRef.current = io(window.location.origin.replace('3000', '3333'), {
+        auth: {
+          token: authService.getToken()
+        }
+      });
+
+      socketRef.current.on('connect', () => {
+        console.log('App socket connected');
+        if (currentUser) {
+          socketRef.current?.emit('join', currentUser.getId());
+        }
+      });
+
+      // Listen for match invalidation events
+      socketRef.current.on('matchInvalidated', (data: { matchId: string; reason: string }) => {
+        console.log('Match invalidated:', data);
+        
+        // Remove the invalidated match from the matches list
+        setMatches(prevMatches => {
+          const filtered = prevMatches.filter(match => {
+            const matchId = match.id || match._id;
+            return matchId !== data.matchId;
+          });
+          console.log(`Removed invalidated match ${data.matchId}. Remaining matches:`, filtered.length);
+          return filtered;
+        });
+
+        // Show notification to user
+        if (data.reason === 'User joined a group') {
+          // Don't show intrusive alert, just log it
+          console.log('A pending match was removed because the user joined a group');
+        }
+      });
+
+      socketRef.current.on('disconnect', () => {
+        console.log('App socket disconnected');
+      });
+
+      socketRef.current.on('error', (error) => {
+        console.error('App socket error:', error);
+      });
+
+      // Listen for group updates (member joins/leaves)
+      socketRef.current.on('groupUpdated', (data: { groupId: string; action: string }) => {
+        console.log('Group updated:', data);
+        // Reload group data if this affects the current user's group
+        if (currentUserData?.groupId === data.groupId) {
+          loadUserGroupData().then(() => {
+            // Reload potential matches after group data is updated
+            if (currentUser) {
+              loadPotentialMatches(currentUser, activeFilters);
+            }
+          });
+        }
+      });
+
+      // Listen for group member changes
+      socketRef.current.on('memberLeft', (data: { groupId: string; leftUserId: string }) => {
+        console.log('Member left group:', data);
+        // Reload group data if this is the current user's group
+        if (currentUserData?.groupId === data.groupId) {
+          loadUserGroupData().then(() => {
+            // Reload potential matches after group data is updated
+            if (currentUser) {
+              loadPotentialMatches(currentUser, activeFilters);
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Failed to initialize socket:', error);
+    }
+  };
 
   const checkAuthStatus = async () => {
     try {
@@ -53,7 +209,13 @@ const App: React.FC = () => {
       }
     } catch (error) {
       console.error('Auth check failed:', error);
+      // Force logout and clear all auth state
       authService.logout();
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+      setCurrentUserData(null);
+      setPotentialMatches([]);
+      setMatches([]);
     } finally {
       setIsLoading(false);
     }
@@ -141,6 +303,13 @@ const App: React.FC = () => {
   const loadPotentialMatches = async (user: User, filters?: FilterOptions) => {
     try {
       console.log('Loading potential matches for user:', user.getId(), 'with filters:', filters);
+      
+      // Don't load potential matches if user's group is full
+      if (isUserGroupFull()) {
+        console.log('Group is full, skipping potential matches loading');
+        setPotentialMatches([]);
+        return;
+      }
       
       // Build query parameters for filters
       const queryParams = new URLSearchParams();
@@ -248,6 +417,10 @@ const App: React.FC = () => {
       if (response.ok) {
         const matchesData = await response.json();
         console.log('Raw matches data from server:', matchesData);
+        console.log('📊 Match types breakdown:');
+        matchesData.forEach((match: any, i: number) => {
+          console.log(`  ${i+1}. Type: ${match.type || 'user_match'}, Status: ${match.status}, ID: ${match.id || match._id}`);
+        });
         
         // Fix the ID field for matches that might have _id instead of id
         const fixedMatches = matchesData.map((match: any) => ({
@@ -260,7 +433,15 @@ const App: React.FC = () => {
       } else {
         const errorText = await response.text();
         console.error('Failed to load matches:', response.status, errorText);
+        // Clear any cached matches on error
         setMatches([]);
+        
+        // If we get a 404, it might mean the user doesn't exist anymore
+        if (response.status === 404) {
+          console.log('User not found, clearing all data');
+          setPotentialMatches([]);
+          setMatches([]);
+        }
       }
     } catch (error) {
       console.error('Error loading matches:', error);
@@ -399,17 +580,64 @@ const App: React.FC = () => {
   };
   */
 
-  const handleSwipe = async (userId: string, action: 'like' | 'pass') => {
+  const handleSwipe = async (userId: string, action: 'like' | 'pass', showCongratulations: boolean = true) => {
     if (!currentUser) return;
 
     try {
-  // Normalize userId shapes (in case caller passed an object)
-  const normalizedTarget = normalizeId(userId) || (typeof userId === 'string' ? userId : undefined);
-  console.log('handleSwipe: normalized target id:', normalizedTarget, 'original:', userId);
-  const targetToUse: any = normalizedTarget || userId;
+      // Normalize userId shapes (in case caller passed an object)
+      const normalizedTarget = normalizeId(userId) || (typeof userId === 'string' ? userId : undefined);
+      console.log('handleSwipe: normalized target id:', normalizedTarget, 'original:', userId);
+      const targetToUse: any = normalizedTarget || userId;
 
+      // First check if current user is allowed to swipe
+      // TEMPORARY: Add bypass flag for testing
+      const BYPASS_USER_CHECK = true; // Set to false to enable user checks
+      
+      if (!BYPASS_USER_CHECK) {
+        try {
+          const currentUserCheck = await fetch(`/api/users/${currentUser.getId()}`, {
+            headers: {
+              'Authorization': `Bearer ${authService.getToken()}`
+            }
+          });
+          
+          if (currentUserCheck.ok) {
+            const userData = await currentUserCheck.json();
+            if (userData.status === 'in_group') {
+              alert('You cannot swipe on other users while in a group. Please leave your group first.');
+              return;
+            }
+            if (userData.profileStatus !== 'active' || !userData.isActive) {
+              alert('Your profile is not active. Please check your profile settings.');
+              return;
+            }
+          } else if (currentUserCheck.status === 404) {
+            console.error('Current user not found in database:', currentUser.getId());
+            console.log('User data is out of sync - forcing re-authentication');
+            
+            // Clear all cached data
+            authService.logout();
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Force page reload to get fresh data
+            alert('Your session has expired. The page will reload to refresh your login.');
+            window.location.reload();
+            return;
+          } else {
+            console.warn('Failed to check current user status:', currentUserCheck.status);
+            // Continue with swipe anyway - the server will validate
+          }
+        } catch (error) {
+          console.error('Error checking user status:', error);
+          // Continue with swipe - server will validate
+        }
+      } else {
+        console.log('User check bypassed for testing - proceeding with swipe');
+      }
+      
       // If this is a group card (group_ prefix), send a group join request instead of a swipe
-  if (String(targetToUse).startsWith('group_')) {
+      if (String(targetToUse).startsWith('group_')) {
         if (action === 'like') {
           const groupId = String(userId).replace('group_', '');
           const resp = await fetch(`/api/groups/${groupId}/join-request`, {
@@ -432,29 +660,72 @@ const App: React.FC = () => {
         return;
       }
 
-      // Send swipe to API for individual users
-      const response = await fetch('/api/swipe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authService.getToken()}`
-        },
-        body: JSON.stringify({
-          targetUserId: targetToUse,
-          action: action === 'like' ? 'like' : 'dislike'
-        })
-      });
+      // Check if user is in a group and use appropriate endpoint
+      let response;
+      if (currentUserData?.status === 'in_group' && currentUserData?.groupId) {
+        // User is in a group, use group swipe endpoint
+        response = await fetch(`/api/group/${currentUserData.groupId}/swipe`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authService.getToken()}`
+          },
+          body: JSON.stringify({
+            targetUserId: targetToUse,
+            action: action === 'like' ? 'like' : 'dislike'
+          })
+        });
+      } else {
+        // Send swipe to API for individual users
+        response = await fetch('/api/swipe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authService.getToken()}`
+          },
+          body: JSON.stringify({
+            targetUserId: targetToUse,
+            action: action === 'like' ? 'like' : 'dislike'
+          })
+        });
+      }
 
-  if (response.ok) {
+      if (response.ok) {
         const result = await response.json();
+        
+        // DEBUG: Log the server response for group swipes
+        if (currentUserData?.status === 'in_group') {
+          console.log('🔍 Group swipe result:', result);
+        }
+        
+        // Handle success cases
+        if (result.match || result.groupMatch) {
+          console.log('🔄 Auto-match detected, reloading matches and switching to messages...');
+          await loadMatches(currentUser);
+          
+          // Switch to messages tab to show the new match
+          if (result.match) {
+            setCurrentView('messages');
+          }
+          
+          // Show success messages (only for discover tab swipes)
+          if (showCongratulations) {
+            if (result.match) {
+              alert('🎉 Congratulations! This person liked you as well and you guys have automatically matched!');
+            } else if (result.groupMatch) {
+              alert('🎉 Group invite has been sent to this user!');
+            }
+          }
+        } else if (currentUserData?.status === 'in_group' && action === 'like') {
+          // Group liked someone but no immediate match - show success message
+          if (showCongratulations) {
+            alert('🎉 Group invite has been sent to this user!');
+          }
+        }
         
         // Remove swiped user from potential matches
         setPotentialMatches(prev => prev.filter(user => user.getId() !== userId));
-        
-        // If there was a match, reload matches
-        if (result.match) {
-          await loadMatches(currentUser);
-        }
+        console.log('✅ Removed user from potential matches:', userId);
       } else {
         // If the server says we already swiped, refresh matches (this can happen if state was out of sync)
         if (response.status === 400) {
@@ -463,10 +734,29 @@ const App: React.FC = () => {
           if (bodyText && bodyText.includes('Already swiped')) {
             console.log('Refreshing matches after Already swiped response');
             await loadMatches(currentUser);
+            setPotentialMatches(prev => prev.filter(u => u.getId() !== userId));
             return;
           }
         }
-        console.error('Failed to record swipe');
+        
+        const errorData = await response.json().catch(() => null);
+        console.error('Failed to record swipe:', errorData);
+        
+        // Provide specific error messages
+        if (errorData?.error) {
+          if (errorData.error.includes('not found') || errorData.error.includes('inactive')) {
+            alert('This user is no longer available for matching.');
+            // Still remove from potential matches to avoid confusion
+            setPotentialMatches(prev => prev.filter(u => u.getId() !== userId));
+          } else if (errorData.error.includes('Already swiped')) {
+            alert('You have already swiped on this user.');
+            setPotentialMatches(prev => prev.filter(u => u.getId() !== userId));
+          } else {
+            alert(`Error: ${errorData.error}`);
+          }
+        } else {
+          alert('Failed to record swipe. Please try again.');
+        }
       }
     } catch (error) {
       console.error('Error recording swipe:', error);
@@ -568,19 +858,70 @@ const App: React.FC = () => {
       
       // For pending matches (one-way likes), we need to swipe back to create the actual match
       if (matchId && matchId.startsWith('pending_')) {
-        // This is a pending match created by the frontend; swipe back on the user who liked us
-        const userA = (match as any).userId1;
-        const userB = (match as any).userId2;
-        const uidA = normalizeId(userA);
-        const uidB = normalizeId(userB);
-        const targetUserId = uidA === currentUser.getId() ? uidB : uidA;
-        console.log('Swiping right on pending match target (resolved):', { uidA, uidB, targetUserId });
+        // This is a pending match created by the frontend
+        // Check if it has likedBy field (pending match from API)
+        let targetUserId;
+        if ((match as any).likedBy && (match as any).likedBy._id) {
+          targetUserId = (match as any).likedBy._id;
+        } else if ((match as any).likedBy && typeof (match as any).likedBy === 'string') {
+          targetUserId = (match as any).likedBy;
+        } else {
+          // Fallback to userId1/userId2 with normalization
+          const userA = (match as any).userId1;
+          const userB = (match as any).userId2;
+          const uidA = normalizeId(userA);
+          const uidB = normalizeId(userB);
+          targetUserId = uidA === currentUser.getId() ? uidB : uidA;
+        }
+        
+        console.log('Swiping right on pending match target:', targetUserId, 'from match:', match);
         if (!targetUserId) {
           console.error('Unable to resolve target user id for pending match:', match);
           alert('Could not accept pending match: target user id is malformed');
-        } else {
-          await handleSwipe(targetUserId, 'like');
+          return;
         }
+        
+        await handleSwipe(targetUserId, 'like', false); // Don't show congratulations for accepting pending matches
+        
+        // The handleSwipe will create the match, so we need to reload and redirect
+        await loadMatches(currentUser);
+        setCurrentView('messages');
+        alert('Match accepted! You can now message each other.');
+        return;
+      } else if (matchId && matchId.startsWith('group_match_')) {
+        // This is a group match - user accepting invitation to join a group
+        console.log('Accepting group match via API:', matchId);
+        
+        const actualGroupMatchId = matchId.replace('group_match_', '');
+        const url = `/api/group-matches/${actualGroupMatchId}/accept`;
+        console.log('Sending POST to', url);
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const text = await response.text();
+        let json;
+        try { json = text ? JSON.parse(text) : null; } catch (e) { json = null; }
+
+        if (response.ok) {
+          console.log('Group match accepted successfully:', json || 'no-json');
+          
+          // Show success feedback
+          alert('Group match accepted! You have joined the group.');
+          
+          // Reload user data since they joined a group
+          await refreshUserData();
+          
+          // Switch to groups view
+          setCurrentView('groups');
+        } else {
+          console.error('Failed to accept group match:', response.status, json || text);
+          alert((json && json.error) || `Failed to accept group match: ${response.status} - ${text}`);
+        }
+        return;
       } else {
         // This is a real match from the database - call the accept endpoint
         console.log('Accepting real match via API:', matchId);
@@ -600,20 +941,23 @@ const App: React.FC = () => {
 
         if (response.ok) {
           console.log('Match accepted successfully:', json || 'no-json');
-          alert('Match accepted successfully');
+          
+          // Show success feedback
+          alert('Match accepted! You can now message each other.');
+          
+          // Reload matches to get the updated state
+          await loadMatches(currentUser);
+          
+          // Switch to messages view
+          setCurrentView('messages');
         } else {
           console.error('Failed to accept match:', response.status, json || text);
           alert((json && json.error) || `Failed to accept match: ${response.status} - ${text}`);
         }
       }
-      
-      // Reload matches to get the updated state
-      await loadMatches(currentUser);
-      
-      // Switch to messages view
-      setCurrentView('messages');
     } catch (error) {
       console.error('Error accepting match:', error);
+      alert('An error occurred while accepting the match. Please try again.');
     }
   };
 
@@ -628,12 +972,40 @@ const App: React.FC = () => {
     try {
       console.log('Declining match:', matchId);
       
+      // Handle group matches (those that start with 'group_match_')
+      if (matchId.startsWith('group_match_')) {
+        console.log('Declining group match:', matchId);
+        const groupMatchId = matchId.replace('group_match_', '');
+        const response = await fetch(`/api/group-matches/${groupMatchId}/decline`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authService.getToken()}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to decline group match');
+        }
+        
+        // Remove the group match from the UI
+        setMatches(prevMatches => prevMatches.filter(m => m.id !== matchId));
+        console.log('Group match declined successfully');
+        
       // Handle pending matches (those that start with 'pending_')
-      if (matchId.startsWith('pending_')) {
+      } else if (matchId.startsWith('pending_')) {
         const pendingMatch = matches.find(m => m.id === matchId);
         if (pendingMatch) {
           // Swipe left on the user who liked us
-          const targetUserId = pendingMatch.userId1 === currentUser.getId() ? pendingMatch.userId2 : pendingMatch.userId1;
+          let targetUserId;
+          if ((pendingMatch as any).likedBy && (pendingMatch as any).likedBy._id) {
+            targetUserId = (pendingMatch as any).likedBy._id;
+          } else if ((pendingMatch as any).likedBy && typeof (pendingMatch as any).likedBy === 'string') {
+            targetUserId = (pendingMatch as any).likedBy;
+          } else {
+            // Fallback to userId1/userId2
+            targetUserId = pendingMatch.userId1 === currentUser.getId() ? pendingMatch.userId2 : pendingMatch.userId1;
+          }
           await handleSwipe(targetUserId, 'pass');
         }
       } else {
@@ -659,6 +1031,11 @@ const App: React.FC = () => {
     } catch (error) {
       console.error('Error declining match:', error);
     }
+  };
+
+  const handleRemoveMatch = (matchId: string) => {
+    console.log('Removing match from state:', matchId);
+    setMatches(prevMatches => prevMatches.filter(match => match.id !== matchId));
   };
 
   const handleProfileUpdate = (updatedUser: User) => {
@@ -763,6 +1140,110 @@ const App: React.FC = () => {
         onLogout={handleLogout}
       />
       
+      {/* Debug/Refresh Button */}
+      <button
+        onClick={async () => {
+          console.log('🧹 Force clearing ALL cached data...');
+          
+          // Clear all React state
+          setMatches([]);
+          setPotentialMatches([]);
+          setCurrentUserData(null);
+          
+          // Clear browser storage
+          localStorage.clear();
+          sessionStorage.clear();
+          
+          // Clear any cached requests
+          if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => caches.delete(name)));
+          }
+          
+          console.log('✅ All cache cleared, reloading...');
+          
+          // Force complete page reload
+          window.location.href = window.location.href;
+        }}
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          zIndex: 1000,
+          padding: '10px 15px',
+          background: '#e74c3c',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          fontSize: '12px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+        }}
+      >
+        🧹 Clear All Cache
+      </button>
+
+      {/* Reset All Users Button */}
+      <button
+        onClick={async () => {
+          if (!window.confirm('⚠️ WARNING: This will reset ALL users to a fresh state!\n\nThis will delete:\n- All matches\n- All groups\n- All messages\n- All swipe actions\n- All group requests\n\nUsers and their profiles will be preserved but reset to individual status.\n\nAre you sure you want to continue?')) {
+            return;
+          }
+
+          console.log('🚨 Resetting all users...');
+          
+          try {
+            const response = await fetch('/api/admin/reset-all', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authService.getToken()}`
+              }
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              console.log('✅ Reset successful:', result);
+              alert(`✅ Reset completed successfully!\n\n${result.message}\n\nUsers reset: ${result.resetCounts.usersReset}\nGroups deleted: ${result.resetCounts.groups}\nMatches deleted: ${result.resetCounts.matches}\nMessages deleted: ${result.resetCounts.messages}\n\nThe page will now reload.`);
+              
+              // Clear all local state
+              setMatches([]);
+              setPotentialMatches([]);
+              setCurrentUserData(null);
+              localStorage.clear();
+              sessionStorage.clear();
+              
+              // Reload page to reflect changes
+              window.location.reload();
+            } else {
+              const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+              console.error('Reset failed:', errorData);
+              alert(`❌ Reset failed: ${errorData.error}`);
+            }
+          } catch (error) {
+            console.error('Reset error:', error);
+            alert('❌ Reset failed: Network error');
+          }
+        }}
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          left: '20px',
+          zIndex: 1000,
+          padding: '10px 15px',
+          background: '#ff6b6b',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          fontSize: '12px',
+          fontWeight: 'bold',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+        }}
+      >
+        🚨 Reset All Users
+      </button>
+      
       <div className="container">
         {currentView === 'swipe' && (
           <>
@@ -795,13 +1276,14 @@ const App: React.FC = () => {
               bottom: 0,
               overflow: 'hidden'
             }}>
-              {/* Filter Button - Top Left Below Navigation */}
-              <div style={{
-                position: 'absolute',
-                top: '120px',
-                left: '40px',
-                zIndex: 10
-              }}>
+              {/* Filter Button - Top Left Below Navigation (Hidden when group is full) */}
+              {!isUserGroupFull() && (
+                <div style={{
+                  position: 'absolute',
+                  top: '120px',
+                  left: '40px',
+                  zIndex: 10
+                }}>
                 <button
                   onClick={handleShowFilters}
                   style={{
@@ -857,23 +1339,70 @@ const App: React.FC = () => {
                     {Object.values(activeFilters).filter(v => v !== undefined && v !== null && (Array.isArray(v) ? v.length > 0 : true)).length} filter(s) active
                   </div>
                 )}
-              </div>
+                </div>
+              )}
 
-              {/* Swipe Cards - Positioned Higher */}
-              <div className="swipe-container" style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '400px',
-                height: '600px'
-              }}>
-                <div className="card-stack" style={{
-                  position: 'relative',
-                  width: '100%',
-                  height: '100%'
+              {/* Group Full Message or Swipe Cards */}
+              {isUserGroupFull() ? (
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: '400px',
+                  textAlign: 'center'
                 }}>
-                  {potentialMatches.length > 0 ? (
+                  <div style={{
+                    padding: '60px 40px',
+                    backgroundColor: 'white',
+                    borderRadius: '16px',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+                    border: '1px solid rgba(0, 0, 0, 0.08)'
+                  }}>
+                    <div style={{ fontSize: '48px', marginBottom: '20px' }}>🚫</div>
+                    <h2 style={{ 
+                      color: '#333', 
+                      marginBottom: '15px', 
+                      fontSize: '24px',
+                      fontWeight: '600'
+                    }}>
+                      Group is Full
+                    </h2>
+                    <p style={{ 
+                      color: '#666', 
+                      lineHeight: '1.6',
+                      fontSize: '16px',
+                      marginBottom: '15px'
+                    }}>
+                      Sorry, your group is full. You can no longer add others to the group.
+                    </p>
+                    <div style={{ 
+                      fontSize: '14px', 
+                      color: '#999',
+                      padding: '12px 20px',
+                      backgroundColor: '#f8f9fa',
+                      borderRadius: '8px',
+                      display: 'inline-block'
+                    }}>
+                      Current members: {userGroupData?.memberIds?.length || 0} / {userGroupData?.maxMembers || 0}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="swipe-container" style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: '400px',
+                  height: '600px'
+                }}>
+                  <div className="card-stack" style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '100%'
+                  }}>
+                    {potentialMatches.length > 0 ? (
                     potentialMatches.slice(0, 3).reverse().map((user, reverseIndex) => {
                       const index = 2 - reverseIndex;
                       const actualIndex = potentialMatches.slice(0, 3).indexOf(user);
@@ -946,9 +1475,10 @@ const App: React.FC = () => {
                         </button>
                       )}
                     </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </>
         )}
@@ -960,6 +1490,9 @@ const App: React.FC = () => {
             onCreateGroup={() => {}} // COMMENTED OUT - Group creation now handled via API
             onAcceptMatch={handleAcceptMatch}
             onDeclineMatch={handleDeclineMatch}
+            onRemoveMatch={handleRemoveMatch}
+            isGroupFull={isUserGroupFull()}
+            userGroupData={userGroupData}
             // profileManager={profileManager} // COMMENTED OUT - Using API instead
           />
         )}
@@ -967,6 +1500,7 @@ const App: React.FC = () => {
         {currentView === 'groups' && (
           <GroupManagement
             currentUser={currentUser}
+            onUserStatusChange={refreshUserData}
             key={`groups-${currentUserData?.id}-${Date.now()}`} // Force complete re-render
             // profileManager={profileManager} // COMMENTED OUT - Using API instead
             // matchingSystem={matchingSystem} // COMMENTED OUT - Using API instead
@@ -976,6 +1510,7 @@ const App: React.FC = () => {
         {currentView === 'messages' && (
           <MessagingInterface
             currentUser={currentUser}
+            currentUserData={currentUserData}
             onGroupStatusChange={handleGroupStatusChange}
           />
         )}

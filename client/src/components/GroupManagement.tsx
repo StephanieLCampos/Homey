@@ -12,6 +12,7 @@ import { io, Socket } from 'socket.io-client';
 
 interface GroupManagementProps {
   currentUser: User;
+  onUserStatusChange?: () => void;
 }
 
 interface GroupConversation {
@@ -27,6 +28,7 @@ interface GroupConversation {
   lastMessage: any;
   updatedAt: string;
   isGroup: boolean;
+  maxMembers?: number;
 }
 
 interface Message {
@@ -37,7 +39,7 @@ interface Message {
   createdAt: string;
 }
 
-const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
+const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserStatusChange }) => {
   const [groupConversation, setGroupConversation] = useState<GroupConversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -51,19 +53,32 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
 
   useEffect(() => {
     console.log('GroupManagement useEffect triggered for user:', currentUser.getId());
-    loadGroupConversation();
+    let mounted = true;
     
-    // Try to initialize socket, but don't block if it fails
-    try {
-      initializeSocket();
-    } catch (error) {
-      console.log('Failed to initialize socket, continuing without real-time features');
-    }
+    const initializeComponent = async () => {
+      if (mounted) {
+        await loadGroupConversation();
+        
+        // Try to initialize socket, but don't block if it fails
+        try {
+          if (mounted) {
+            initializeSocket();
+          }
+        } catch (error) {
+          console.log('Failed to initialize socket, continuing without real-time features');
+        }
+      }
+    };
+    
+    initializeComponent();
     
     return () => {
+      mounted = false;
       if (socketRef.current) {
         try {
+          socketRef.current.removeAllListeners();
           socketRef.current.disconnect();
+          socketRef.current = null;
         } catch (error) {
           console.log('Error disconnecting socket:', error);
         }
@@ -72,8 +87,11 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
   }, [currentUser.getId()]); // Depend on user ID to force reload when user changes
 
   const initializeSocket = () => {
+    // Clean up existing socket first
     if (socketRef.current) {
+      socketRef.current.removeAllListeners();
       socketRef.current.disconnect();
+      socketRef.current = null;
     }
 
     try {
@@ -83,85 +101,112 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
         return;
       }
 
-      socketRef.current = io(window.location.origin.replace('3000', '3333'), {
-        auth: {
-          token: token
-        },
-        transports: ['polling', 'websocket'],
-        timeout: 10000,
-        reconnection: true,
-        reconnectionAttempts: 3,
-        reconnectionDelay: 2000
-      });
+      // Add a small delay to prevent race conditions
+      setTimeout(() => {
+        if (!socketRef.current) {  // Double-check socket hasn't been created
+          socketRef.current = io(window.location.origin.replace('3000', '3333'), {
+            auth: {
+              token: token
+            },
+            transports: ['polling', 'websocket'],
+            timeout: 10000,
+            reconnection: true,
+            reconnectionAttempts: 3,
+            reconnectionDelay: 2000,
+            closeOnBeforeunload: false
+          });
 
-      socketRef.current.on('connect', () => {
-        console.log('Group socket connected');
-        socketRef.current?.emit('join', currentUser.getId());
-      });
+          // Add event handlers only after socket is created
+          socketRef.current.on('connect', () => {
+            console.log('Group socket connected');
+            socketRef.current?.emit('join', currentUser.getId());
+          });
 
-      socketRef.current.on('connect_error', (error) => {
-        console.log('Socket connection error:', error.message);
-        if (error.message.includes('Authentication error') || error.message.includes('401')) {
-          console.log('Socket authentication failed, will continue without real-time features');
-          // Don't retry if it's an auth error
-          socketRef.current?.disconnect();
-        }
-        // Don't alert users about socket errors - the app can work without real-time updates
-      });
+              socketRef.current.on('connect_error', (error) => {
+            console.log('Socket connection error:', error.message);
+            if (error.message.includes('Authentication error') || error.message.includes('401')) {
+              console.log('Socket authentication failed, will continue without real-time features');
+              // Don't retry if it's an auth error
+              socketRef.current?.disconnect();
+            }
+            // Don't alert users about socket errors - the app can work without real-time updates
+          });
 
-      socketRef.current.on('disconnect', (reason) => {
-        console.log('Socket disconnected:', reason);
-      });
+          socketRef.current.on('disconnect', (reason) => {
+            console.log('Socket disconnected:', reason);
+          });
 
-      socketRef.current.on('message', (newMessage: Message) => {
-      console.log('New group message received:', newMessage);
-      
-      // Add message if it's for our group and it's not from the current user
-      // (to avoid duplicate messages since we already add our own messages immediately)
-      if (groupConversation && 
-          newMessage.groupId === groupConversation.groupId &&
-          newMessage.senderId._id !== currentUser.getId()) {
-        setMessages(prevMessages => [...prevMessages, newMessage]);
-      }
-    });
+              socketRef.current.on('message', (newMessage: Message) => {
+            console.log('New group message received:', newMessage);
+            
+            // Add message if it's for our group and it's not from the current user
+            // (to avoid duplicate messages since we already add our own messages immediately)
+            // Handle null senderId for system messages or messages from users who left
+            if (groupConversation && 
+                newMessage.groupId === groupConversation.groupId &&
+                (!newMessage.senderId || newMessage.senderId._id !== currentUser.getId())) {
+              setMessages(prevMessages => [...prevMessages, newMessage]);
+            }
+          });
 
-    // Listen for join requests sent to the group and refresh the list when received
-    socketRef.current.on('groupJoinRequest', (data: any) => {
-      try {
-        console.log('Received groupJoinRequest socket event:', data);
+          // Listen for join requests sent to the group and refresh the list when received
+          socketRef.current.on('groupJoinRequest', (data: any) => {
+            try {
+              console.log('Received groupJoinRequest socket event:', data);
 
-        // Normalize incoming groupId to string (handle ObjectId vs string)
-        const incomingGroupId = String(data.groupId?._id || data.groupId);
-  const convGroupId = String((groupConversation && groupConversation.groupId) ? groupConversation.groupId : '');
-        const groupDataId = String(groupData?._id || '');
+              // Normalize incoming groupId to string (handle ObjectId vs string)
+              const incomingGroupId = String(data.groupId?._id || data.groupId);
+              const convGroupId = String((groupConversation && groupConversation.groupId) ? groupConversation.groupId : '');
+              const groupDataId = String(groupData?._id || '');
 
-        // If we're viewing the same group conversation, reload join requests
-        if (groupConversation && incomingGroupId && incomingGroupId === convGroupId) {
-          loadJoinRequests(incomingGroupId);
-        } else if (groupDataId && incomingGroupId === groupDataId) {
-          // If we have groupData loaded (e.g., viewing profile), reload
-          loadJoinRequests(incomingGroupId);
-        } else {
-          // Fall back: if groupConversation or groupData are not set, do nothing
-          console.log('groupJoinRequest not for the active group view; incomingGroupId=', incomingGroupId);
-        }
-      } catch (err) {
-        console.error('Error handling groupJoinRequest socket event', err);
-      }
-    });
+              // If we're viewing the same group conversation, reload join requests
+              if (groupConversation && incomingGroupId && incomingGroupId === convGroupId) {
+                loadJoinRequests(incomingGroupId);
+              } else if (groupDataId && incomingGroupId === groupDataId) {
+                // If we have groupData loaded (e.g., viewing profile), reload
+                loadJoinRequests(incomingGroupId);
+              } else {
+                // Fall back: if groupConversation or groupData are not set, do nothing
+                console.log('groupJoinRequest not for the active group view; incomingGroupId=', incomingGroupId);
+              }
+            } catch (err) {
+              console.error('Error handling groupJoinRequest socket event', err);
+            }
+          });
 
-    socketRef.current.on('memberLeft', (data: any) => {
+          socketRef.current.on('memberLeft', (data: any) => {
       console.log('Member left group:', data);
       alert(`${data.leftUserName} has left the group.`);
       loadGroupConversation(); // Reload to update member list
-    });
+          });
 
-      socketRef.current.on('groupDissolved', (data: any) => {
-        console.log('Group dissolved:', data);
-        alert(data.message);
-        setGroupConversation(null);
-        setMessages([]);
-      });
+          // Listen for join request acceptance (emitted to all group members)
+          socketRef.current.on('joinRequestAccepted', (data: any) => {
+      console.log('Join request accepted:', data);
+      // Reload to update member list and remove accepted request
+      if (groupConversation && data.groupId === groupConversation.groupId) {
+        loadGroupConversation();
+        loadJoinRequests(groupConversation.groupId);
+      }
+          });
+
+          // Listen for join request rejection
+          socketRef.current.on('joinRequestRejected', (data: any) => {
+      console.log('Join request rejected:', data);
+      // Reload join requests to update the UI
+      if (groupConversation && data.groupId === groupConversation.groupId) {
+        loadJoinRequests(groupConversation.groupId);
+      }
+          });
+
+          socketRef.current.on('groupDissolved', (data: any) => {
+            console.log('Group dissolved:', data);
+            alert(data.message);
+            setGroupConversation(null);
+            setMessages([]);
+          });
+        }
+      }, 100);
     } catch (error) {
       console.error('Socket initialization error:', error);
       // Continue without socket - app will work but without real-time updates
@@ -433,6 +478,11 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
         alert(result.message);
         setGroupConversation(null);
         setMessages([]);
+        
+        // Notify parent component that user status changed
+        if (onUserStatusChange) {
+          onUserStatusChange();
+        }
       } else {
         const error = await response.json();
         console.error('Failed to leave group:', error);
@@ -495,18 +545,29 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
           marginBottom: '15px',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          gap: '15px'
         }}>
-          <div>
+          <div style={{
+            flex: '1',
+            minWidth: '0', // Allow text to wrap/truncate
+            overflow: 'hidden'
+          }}>
             <h3 style={{ color: 'white', margin: '0 0 4px 0', fontSize: '18px' }}>
               {groupConversation.groupName}
             </h3>
-            <div style={{ color: '#ddd', fontSize: '12px' }}>
-              Members: {groupConversation.members.map(m => m.name).join(', ')}
+            <div style={{ 
+              color: '#ddd', 
+              fontSize: '12px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}>
+              Members: {groupConversation.members.filter(m => m && m.name).map(m => m.name).join(', ')}
             </div>
               <div style={{ color: '#ddd', fontSize: '12px', marginTop: '4px' }}>
                 { /* Show current/target members: use loaded groupData if available for maxMembers */ }
-                Current: {groupConversation.members.length} / Target: {groupData?.maxMembers ?? '—'}
+                Current: {groupConversation.members.filter(m => m && m.id).length} / Target: {groupConversation.maxMembers ?? 8}
               </div>
           </div>
           <button
@@ -526,7 +587,9 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
               color: 'white',
               padding: '6px 12px',
               cursor: 'pointer',
-              fontSize: '12px'
+              fontSize: '12px',
+              flexShrink: 0,
+              whiteSpace: 'nowrap'
             }}
           >
             Info
@@ -534,10 +597,10 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
         </div>
 
         {/* Pending Join Requests (visible to group members) */}
-        {joinRequests.length > 0 && (
+        {joinRequests.filter(req => req.status === 'pending').length > 0 && (
           <div style={{ margin: '10px 0 18px 0', padding: '12px', background: 'rgba(0,0,0,0.12)', borderRadius: '8px' }}>
             <h4 style={{ margin: '0 0 8px 0', color: '#fff' }}>Pending Join Requests</h4>
-            {joinRequests.map(req => (
+            {joinRequests.filter(req => req.status === 'pending').map(req => (
               <div key={req._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                 <div style={{ color: '#ddd' }}>
                   <strong style={{ color: '#fff' }}>{req.requester?.name || 'User'}</strong>
@@ -561,8 +624,19 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
                           body: JSON.stringify({ action: 'accept' })
                         });
                         if (r.ok) {
+                          // Immediately remove the request from the UI
+                          setJoinRequests(prev => prev.filter(request => request._id !== req._id));
+                          // Then reload to ensure consistency
                           await loadJoinRequests(gid);
                           await loadGroupConversation();
+                          // Alert other group members about the new member
+                          if (socketRef.current) {
+                            socketRef.current.emit('notifyGroupMembers', { 
+                              groupId: gid, 
+                              event: 'joinRequestAccepted',
+                              data: { groupId: gid }
+                            });
+                          }
                         } else {
                           console.error('Failed to accept join request', await r.text());
                           alert('Failed to accept request');
@@ -629,49 +703,84 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
               No messages yet. Start chatting with your group!
             </div>
           ) : (
-            messages.map(message => (
-              <div
-                key={message._id}
-                style={{
-                  marginBottom: '10px',
-                  display: 'flex',
-                  justifyContent: message.senderId._id === currentUser.getId() ? 'flex-end' : 'flex-start'
-                }}
-              >
-                <div style={{
-                  maxWidth: '70%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: message.senderId._id === currentUser.getId() ? 'flex-end' : 'flex-start'
-                }}>
-                  {message.senderId._id !== currentUser.getId() && (
-                    <div style={{
-                      fontSize: '10px',
-                      color: '#ddd',
-                      marginBottom: '4px',
-                      paddingLeft: '8px'
-                    }}>
-                      {message.senderId.name}
-                    </div>
-                  )}
+            messages.map(message => {
+              // Handle messages from users who have left the group (senderId might be null)
+              const isCurrentUser = message.senderId && message.senderId._id === currentUser.getId();
+              const isSystemMessage = !message.senderId;
+              const senderName = message.senderId?.name || 'Former Member';
+              
+              // Render system messages as centered notifications
+              if (isSystemMessage) {
+                return (
                   <div
+                    key={message._id}
                     style={{
-                      padding: '8px 12px',
-                      borderRadius: '12px',
-                      background: message.senderId._id === currentUser.getId() 
-                        ? '#007bff' 
-                        : '#6c757d',
-                      color: 'white'
+                      marginBottom: '10px',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      width: '100%'
                     }}
                   >
-                    <p style={{ margin: '0 0 4px 0' }}>{message.content}</p>
-                    <span style={{ fontSize: '10px', opacity: 0.7 }}>
-                      {formatTime(message.createdAt)}
-                    </span>
+                    <div style={{
+                      backgroundColor: 'rgba(108, 117, 125, 0.2)',
+                      color: '#6c757d',
+                      fontSize: '12px',
+                      padding: '6px 12px',
+                      borderRadius: '20px',
+                      textAlign: 'center',
+                      fontStyle: 'italic',
+                      border: '1px solid rgba(108, 117, 125, 0.3)',
+                      maxWidth: '80%'
+                    }}>
+                      {message.content}
+                    </div>
+                  </div>
+                );
+              }
+              
+              // Render regular user messages
+              return (
+                <div
+                  key={message._id}
+                  style={{
+                    marginBottom: '10px',
+                    display: 'flex',
+                    justifyContent: isCurrentUser ? 'flex-end' : 'flex-start'
+                  }}
+                >
+                  <div style={{
+                    maxWidth: '70%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: isCurrentUser ? 'flex-end' : 'flex-start'
+                  }}>
+                    {!isCurrentUser && (
+                      <div style={{
+                        fontSize: '10px',
+                        color: '#ddd',
+                        marginBottom: '4px',
+                        paddingLeft: '8px'
+                      }}>
+                        {senderName}
+                      </div>
+                    )}
+                    <div
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '12px',
+                        background: isCurrentUser ? '#007bff' : '#6c757d',
+                        color: 'white'
+                      }}
+                    >
+                      <p style={{ margin: '0 0 4px 0' }}>{message.content}</p>
+                      <span style={{ fontSize: '10px', opacity: 0.7 }}>
+                        {formatTime(message.createdAt)}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 
@@ -754,54 +863,176 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser }) => {
               </button>
             </div>
             
-            {/* Group Name */}
+            {/* Group Name & Description */}
             <div style={{ textAlign: 'center', marginBottom: '25px' }}>
-              <h3 style={{ margin: '0 0 8px 0', color: '#2d3436' }}>{groupConversation.groupName}</h3>
-              <p style={{ color: '#636e72', margin: '0', fontSize: '14px' }}>
+              <h3 style={{ margin: '0 0 8px 0', color: '#2d3436' }}>{groupData?.name || groupConversation.groupName}</h3>
+              {groupData?.description && (
+                <p style={{ color: '#636e72', margin: '0 0 8px 0', fontSize: '14px', fontStyle: 'italic' }}>
+                  "{groupData.description}"
+                </p>
+              )}
+              <p style={{ color: '#636e72', margin: '0', fontSize: '12px' }}>
                 Created: {new Date(groupConversation.updatedAt).toLocaleDateString()}
               </p>
             </div>
 
             {/* Members */}
             <div style={{ marginBottom: '25px' }}>
-              <h4 style={{ color: '#2d3436', marginBottom: '15px' }}>Members ({groupConversation.members.length})</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {groupConversation.members.map(member => (
-                  <div key={member.id} style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '12px',
-                    padding: '8px',
-                    background: '#f8f9fa',
-                    borderRadius: '8px'
-                  }}>
-                    <img
-                      src={member.photo || '/default_user.png'}
-                      alt={member.name}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%',
-                        objectFit: 'cover'
-                      }}
-                    />
-                    <div>
-                      <div style={{ fontWeight: '600', color: '#2d3436' }}>{member.name}</div>
-                      <div style={{ fontSize: '12px', color: '#636e72' }}>{member.email}</div>
+              <h4 style={{ color: '#2d3436', marginBottom: '15px' }}>
+                Members ({groupData?.memberIds?.filter((m: any) => m && m._id).length || groupConversation.members.filter(m => m && m.id).length}/{groupData?.maxMembers || groupConversation.maxMembers || 8})
+              </h4>
+              
+              {/* Use detailed member data from groupData if available, otherwise fallback to basic groupConversation data */}
+              {groupData && groupData.memberIds && groupData.memberIds.length > 0 ? (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  {groupData.memberIds.filter((member: any) => member && member._id).map((member: any, index: number) => {
+                    // Calculate responsive sizing based on group size (matching group invitation layout)
+                    const validMembers = groupData.memberIds.filter((m: any) => m && m._id);
+                    const memberCount = validMembers.length;
+                    let imageSize, fontSize, padding, maxWidth;
+                    
+                    if (memberCount <= 2) {
+                      imageSize = '50px'; fontSize = '12px'; padding = '8px'; maxWidth = '200px';
+                    } else if (memberCount <= 4) {
+                      imageSize = '40px'; fontSize = '11px'; padding = '6px'; maxWidth = '150px';
+                    } else if (memberCount <= 6) {
+                      imageSize = '32px'; fontSize = '10px'; padding = '5px'; maxWidth = '130px';
+                    } else if (memberCount <= 8) {
+                      imageSize = '28px'; fontSize = '9px'; padding = '4px'; maxWidth = '110px';
+                    } else {
+                      imageSize = '24px'; fontSize = '8px'; padding = '3px'; maxWidth = '100px';
+                    }
+                    
+                    return (
+                      <div 
+                        key={member._id || index}
+                        style={{ 
+                          background: member._id === currentUser.getId() ? 'rgba(0, 184, 148, 0.1)' : 'rgba(108, 92, 231, 0.1)',
+                          padding: padding, 
+                          borderRadius: '12px',
+                          border: member._id === currentUser.getId() ? '1px solid rgba(0, 184, 148, 0.3)' : '1px solid rgba(108, 92, 231, 0.2)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          maxWidth: maxWidth,
+                          position: 'relative'
+                        }}
+                      >
+                        {/* User image */}
+                        <img
+                          src={member.photos?.[0] || '/default_user.png'}
+                          alt={member.name || 'User'}
+                          style={{
+                            width: imageSize,
+                            height: imageSize,
+                            borderRadius: '50%',
+                            objectFit: 'cover',
+                            flexShrink: 0
+                          }}
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/default_user.png';
+                          }}
+                        />
+                        {/* User details */}
+                        <div style={{ 
+                          display: 'flex', 
+                          flexDirection: 'column',
+                          minWidth: 0, // Allows text to shrink
+                          flex: 1
+                        }}>
+                          <span style={{
+                            fontWeight: '600',
+                            fontSize: fontSize,
+                            color: '#2d3436',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {member.name}
+                          </span>
+                          <span style={{
+                            fontSize: `${parseInt(fontSize) - 1}px`,
+                            color: '#636e72',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {member.age && member.gender ? `${member.age}, ${member.gender}` : (member.age || member.gender || '')}
+                          </span>
+                          {member.preferences?.location?.city && (
+                            <span style={{
+                              fontSize: `${parseInt(fontSize) - 1}px`,
+                              color: '#636e72',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}>
+                              {member.preferences.location.city}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {/* "You" indicator */}
+                        {member._id === currentUser.getId() && (
+                          <span style={{ 
+                            position: 'absolute',
+                            top: '-5px',
+                            right: '-5px',
+                            fontSize: '10px',
+                            color: '#00b894',
+                            fontWeight: '600',
+                            background: 'white',
+                            padding: '2px 6px',
+                            borderRadius: '10px',
+                            border: '1px solid #00b894'
+                          }}>
+                            You
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                // Fallback to basic member display if groupData is not loaded
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {groupConversation.members.filter(member => member && member.id).map(member => (
+                    <div key={member.id} style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '12px',
+                      padding: '8px',
+                      background: '#f8f9fa',
+                      borderRadius: '8px'
+                    }}>
+                      <img
+                        src={member.photo || '/default_user.png'}
+                        alt={member.name}
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          objectFit: 'cover'
+                        }}
+                      />
+                      <div>
+                        <div style={{ fontWeight: '600', color: '#2d3436' }}>{member.name}</div>
+                        <div style={{ fontSize: '12px', color: '#636e72' }}>{member.email}</div>
+                      </div>
+                      {member.id === currentUser.getId() && (
+                        <span style={{ 
+                          marginLeft: 'auto',
+                          fontSize: '12px',
+                          color: '#00b894',
+                          fontWeight: '600'
+                        }}>
+                          You
+                        </span>
+                      )}
                     </div>
-                    {member.id === currentUser.getId() && (
-                      <span style={{ 
-                        marginLeft: 'auto',
-                        fontSize: '12px',
-                        color: '#00b894',
-                        fontWeight: '600'
-                      }}>
-                        You
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}

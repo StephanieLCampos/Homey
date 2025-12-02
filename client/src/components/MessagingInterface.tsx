@@ -12,6 +12,7 @@ import { io, Socket } from 'socket.io-client';
 
 interface MessagingInterfaceProps {
   currentUser: User;
+  currentUserData?: any;
   onGroupStatusChange?: () => void;
 }
 
@@ -52,9 +53,10 @@ interface Message {
   receiverId?: string;
   content: string;
   createdAt: string;
+  messageType?: string;
 }
 
-const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, onGroupStatusChange }) => {
+const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, currentUserData, onGroupStatusChange }) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
@@ -75,7 +77,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, on
         socketRef.current.disconnect();
       }
     };
-  }, [currentUser]);
+  }, [currentUser, currentUserData?.status]); // Re-run when user status changes
 
   const initializeSocket = () => {
     if (socketRef.current) {
@@ -495,6 +497,50 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, on
   }
 
   if (conversations.length === 0) {
+    const isInGroup = currentUserData && currentUserData.status === 'in_group';
+    
+    if (isInGroup) {
+      // Show group restriction message in styled white box
+      return (
+        <div style={{ 
+          padding: '20px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '60vh'
+        }}>
+          <div style={{
+            textAlign: 'center',
+            padding: '60px 40px',
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+            border: '1px solid rgba(0, 0, 0, 0.08)',
+            color: '#333',
+            maxWidth: '500px'
+          }}>
+            <div style={{ fontSize: '48px', marginBottom: '20px' }}>💬</div>
+            <h3 style={{ 
+              color: '#333', 
+              marginBottom: '20px', 
+              fontSize: '24px',
+              fontWeight: '600'
+            }}>
+              Group Messaging Only
+            </h3>
+            <p style={{ 
+              color: '#666', 
+              lineHeight: '1.6',
+              fontSize: '16px',
+              marginBottom: '0'
+            }}>
+              You are in a group, messaging others outside of the group is restricted. Leave the group if you would like to explore other roommate options with your individual profile.
+            </p>
+          </div>
+        </div>
+      );
+    }
+    
     return (
       <div className="empty-state">
         <h2>No Conversations</h2>
@@ -590,33 +636,63 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, on
                     No messages yet. Start the conversation!
                   </div>
                 ) : (
-                  messages.map(message => (
-                    <div
-                      key={message._id}
-                      style={{
-                        marginBottom: '10px',
-                        display: 'flex',
-                        justifyContent: message.senderId._id === currentUser.getId() ? 'flex-end' : 'flex-start'
-                      }}
-                    >
+                  messages.map(message => {
+                    // Handle system messages differently
+                    if (message.messageType === 'system') {
+                      return (
+                        <div
+                          key={message._id}
+                          style={{
+                            marginBottom: '10px',
+                            display: 'flex',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <div
+                            style={{
+                              padding: '6px 12px',
+                              borderRadius: '16px',
+                              background: 'rgba(149, 165, 166, 0.3)',
+                              color: '#bdc3c7',
+                              fontSize: '12px',
+                              fontStyle: 'italic'
+                            }}
+                          >
+                            <p style={{ margin: '0' }}>{message.content}</p>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // Handle regular messages
+                    return (
                       <div
+                        key={message._id}
                         style={{
-                          maxWidth: '70%',
-                          padding: '8px 12px',
-                          borderRadius: '12px',
-                          background: message.senderId._id === currentUser.getId() 
-                            ? '#6c5ce7' 
-                            : 'rgba(255, 255, 255, 0.2)',
-                          color: 'white'
+                          marginBottom: '10px',
+                          display: 'flex',
+                          justifyContent: message.senderId?._id === currentUser.getId() ? 'flex-end' : 'flex-start'
                         }}
                       >
-                        <p style={{ margin: '0 0 4px 0' }}>{message.content}</p>
-                        <span style={{ fontSize: '10px', opacity: 0.7 }}>
-                          {formatTime(message.createdAt)}
-                        </span>
+                        <div
+                          style={{
+                            maxWidth: '70%',
+                            padding: '8px 12px',
+                            borderRadius: '12px',
+                            background: message.senderId?._id === currentUser.getId() 
+                              ? '#6c5ce7' 
+                              : 'rgba(255, 255, 255, 0.2)',
+                            color: 'white'
+                          }}
+                        >
+                          <p style={{ margin: '0 0 4px 0' }}>{message.content}</p>
+                          <span style={{ fontSize: '10px', opacity: 0.7 }}>
+                            {formatTime(message.createdAt)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
 

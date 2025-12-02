@@ -547,6 +547,109 @@ NODE_ENV=production
 PORT=3333
 ```
 
+## Maintenance Commands
+
+### Reset All Users (Clear All Data)
+If you need to reset all users to a fresh state (useful for testing or demos):
+
+```bash
+# From the root directory
+node reset_all_users.js
+
+# OR from the server directory
+cd server
+node ../reset_all_users.js
+```
+
+This command will:
+- Delete all matches between users
+- Delete all groups
+- Delete all messages
+- Delete all swipe actions
+- Delete all group join requests
+- Reset all users to 'individual' status with active profiles
+
+**⚠️ WARNING**: This is a destructive operation that cannot be undone!
+
+### Verify Database Reset
+To verify all data has been cleared:
+
+```bash
+# From the root directory
+node verify_reset.js
+```
+
+### Debug User Status
+To check a specific user's status and data:
+
+```bash
+# From the root directory
+node debug_user_status.js user@email.com
+
+# OR from the server directory
+cd server
+node ../debug_user_status.js user@email.com
+```
+
+This will show:
+- User's current status (individual/in_group)
+- Profile status (active/paused)
+- Group membership
+- Active matches
+
+### Fix User Status
+If a user's status is inconsistent (e.g., marked as in_group but not in any groups):
+
+```bash
+# From the root directory
+node fix_user_status.js user@email.com
+
+# OR from the server directory
+cd server
+node ../fix_user_status.js user@email.com
+```
+
+This will:
+- Check if the user is actually in any active groups
+- Fix status inconsistencies
+- Update related matches to the correct state
+
+### Clean Up Orphaned Data
+To remove all data that references deleted users (matches, messages, swipes, etc.):
+
+```bash
+# From the root directory
+node cleanup_orphaned_accounts.js
+```
+
+This will:
+- Find and delete matches referencing deleted users
+- Remove orphaned swipe actions and messages
+- Clean up empty groups and join requests
+- Allow deleted email addresses to be used for new registrations
+
+**Use this after resetting users to ensure no old data references remain.**
+
+### Remove Old User Accounts
+To prevent login attempts with accounts that no longer exist in the database:
+
+```bash
+# From the root directory
+node remove_old_accounts.js
+
+# OR from the server directory
+cd server
+node ../remove_old_accounts.js
+```
+
+This command will:
+- Find and delete specified old user accounts by email
+- Remove all related data (matches, messages, swipes, groups, join requests)
+- Allow those email addresses to be used for new registrations
+- Prevent authentication with stale JWT tokens
+
+**Note**: The authentication system automatically prevents login with deleted accounts by validating user existence on each API request. If users try to log in with cached tokens for deleted accounts, they will be automatically logged out and redirected to the login page.
+
 ## Contributing
 
 1. Fork the repository

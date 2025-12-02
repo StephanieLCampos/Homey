@@ -123,11 +123,10 @@ router.post('/login', authLimiter, [
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Auto-reactivate deactivated accounts when user logs back in
-    if (user.profileStatus === 'deactivated') {
+    // Auto-reactivate paused accounts when user logs back in
+    if (user.profileStatus === 'paused') {
       user.profileStatus = 'active';
       user.isActive = true; // Keep for backward compatibility
-      user.deactivatedAt = null;
     }
 
     user.lastLogin = new Date();
@@ -245,24 +244,6 @@ router.post('/change-password', authMiddleware, [
   }
 });
 
-router.post('/deactivate', authMiddleware, async (req, res) => {
-  try {
-    await User.findByIdAndUpdate(req.userId, { 
-      profileStatus: 'deactivated',
-      isActive: false, // Keep for backward compatibility
-      deactivatedAt: new Date()
-    });
-
-    res.json({
-      success: true,
-      message: 'Account deactivated successfully'
-    });
-
-  } catch (error) {
-    console.error('Deactivate account error:', error);
-    res.status(500).json({ error: 'Server error during account deactivation' });
-  }
-});
 
 // Update profile status (pause/activate profile)
 router.post('/profile-status', authMiddleware, async (req, res) => {

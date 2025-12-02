@@ -5,7 +5,7 @@
  * Supports both individual user messaging and group conversations.
  * Provides foundation for real-time chat features and conversation history loading.
  */
-// NEED TO IMPLEMENT/UPDATE: adding read receipts? or edit messages
+
 
 //Document: Message
 //Fields: 
@@ -28,7 +28,9 @@ const messageSchema = new mongoose.Schema({
   senderId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: function() {
+      return this.messageType !== 'system';
+    }
   },
   receiverId: {
     type: mongoose.Schema.Types.ObjectId,

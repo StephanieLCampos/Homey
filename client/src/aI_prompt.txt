@@ -1,0 +1,99 @@
+
+
+I need you to implement group functionality with the following requirements:
+
+## Current App Structure:
+- Users swipe left/right on potential roommate profiles
+- Users can "like" profiles and if both users like each other, they automatically match or will match if one user accepts the match request of the other
+- Matched users can message each other
+- Users have individual profiles with their preferences, bio, budget, location, etc.
+
+## Feature to Implement: Group Formation & Profile Management
+
+When two matched users decide to form a group (become roommates searching together), implement the following:
+
+### 1. Pause Individual Profiles
+- When a group is created from two matched users, both individual profiles should be "paused"
+- Paused profiles should NOT appear in the swipe feed for other users
+- `status` field for user profiles is updated to "in_group" 
+- 'profileStatus' is updated to 'paused'
+- Create a mechanism to toggle this status when joining/leaving a group
+
+### 2. Create Group Profile
+- Generate a new group profile that combines/represents both members
+- Group profile should appear in the swipe feed instead of individual profiles
+- Group profile field "target_status" will be automatically set to "not_full"
+- Group profile should display:
+  - Both members' names, age, bios
+  - Combined preferences/requirements
+  - Indication that this is a group looking for additional roommate(s)
+- Store group data with references to member user IDs
+
+### 3. Delete Previous Individual Likes/Matches
+- When a user joins a group:
+    - all their pending outgoing likes(match reqeusts) (that haven't been matched yet) should be deleted
+    - all their prior matches should be deleted as if they had never matched before so they can potentially rematch again if so
+- Other users should no longer be able to accept these deleted match requests
+- Remove these likes and matches in the database
+- Handle the UI to not show deleted likes to recipients
+- When a user leaves a group: 
+    - all group data is updated to the user not being in the group
+    - their individual profile is restored:
+        - `status` field for user profiles is updated to "individual" 
+        - 'profileStatus' is updated to 'active'
+    - The previous matches or profiles the user has sent outgoing likes to prior to joining the group should be included in the stack of potential roommate profiles
+
+
+### 4. Group Liking System
+- Each member of a group should be able to send likes FROM the group profile (not their individual profile)
+- When a group member likes another user:
+  - The like should be recorded as coming from the group, not the individual
+  - The recipient should see the GROUP profile in their Matches section as a pending match, not the individual who sent the like
+  - Any group member can send likes on behalf of the group
+  
+### 5. Group reached max number of users 
+- make a new field for the Group model called "group_status" 
+- if a group reached their target limit of users in the group(full):
+    - the "target_status" is updated to "full"
+    - the "group_status" will automatically be set to "paused" and means:
+        - the group profile will no longer be showing up as a potential match for users to swipe on 
+        - all their pending outgoing likes(match reqeusts) (that haven't been matched yet) should be deleted    
+        - all their prior matches should be deleted as if they had never matched before so they can potentially rematch again if so
+        - Other users should no longer be able to accept these deleted match requests
+        - Remove these likes and matches in the database
+        - Handle the UI to not show deleted likes to recipients
+    - users in that group can no longer send out likes to others or accept matches, they will be prompted with error messages:
+        - if user in group tries to send a like: a small popup window will show up saying "Sorry, your group is full. You cannot send anymore likes !"
+        - if user in group tries to accept a match request: a small popup window will show up saying "Sorry, your group is full. You cannot accepted any more requests !"
+
+
+
+### 6. User Liking Group System
+- If a user sends a like to a group profile:
+    - all users in that group should be able to see it and/or accept it from the 'Matches' tab
+    - if a user in the group accepts the match request, it dissapears as a request for all other users and user is automatically added into the group
+
+### 7. Joining a Group via Match
+- When a user accepts a like from a group:
+  - That user joins the existing group
+  - Their individual profile becomes "paused"
+  - Their pending outgoing likes be deleted
+  - They can now send likes from the group profile
+  - The group profile updates to show all members
+
+## Technical Requirements:
+- Maintain data integrity (handle edge cases)
+- Update all relevant database schemas
+- Implement necessary API endpoints
+- Update frontend components to handle group state
+- Ensure real-time updates where applicable (if using websockets)
+
+## Please:
+1. First, explore my codebase to understand the current structure
+2. Identify the relevant files that need modification
+3. Propose a plan before implementing
+4. Implement the changes incrementally
+5. Add appropriate error handling
+6. Update any existing tests or add new ones if testing exists
+
+Start by exploring the codebase and then share your implementation plan.

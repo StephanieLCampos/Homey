@@ -85,9 +85,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: function(v) {
-        return /^https?:\/\/.+/.test(v) || /^\/[^\/].+/.test(v);
+        return /^https?:\/\/.+/.test(v) || /^\/[^\/].+/.test(v) || /^data:image\/.+/.test(v);
       },
-      message: 'Photo must be a valid URL or relative path'
+      message: 'Photo must be a valid URL, relative path, or base64 data URL'
     }
   }],
   isActive: {

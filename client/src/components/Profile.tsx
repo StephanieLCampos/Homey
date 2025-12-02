@@ -35,22 +35,37 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
     try {
       // Convert file to base64 for demo purposes
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const imageDataUrl = e.target?.result as string;
         // Update user photos with new image
         const updatedPhotos = [imageDataUrl, ...currentUser.getPhotos().slice(1)];
-        const updatedUser = new User(
-          currentUser.getId(),
-          currentUser.getEmail(),
-          currentUser.getName(),
-          currentUser.getAge(),
-          currentUser.getGender() as 'male' | 'female' | 'non-binary' | 'other',
-          currentUser.getBio(),
-          updatedPhotos,
-          currentUser.getPreferences()
-        );
-        onProfileUpdate(updatedUser);
-        setIsUploading(false);
+        
+        try {
+          // Save to database
+          const updateData = {
+            photos: updatedPhotos
+          };
+          const updatedUserData = await authService.updateProfile(updateData);
+          
+          // Create updated user object with server response
+          const updatedUser = new User(
+            updatedUserData.id,
+            updatedUserData.email,
+            updatedUserData.name,
+            updatedUserData.age,
+            updatedUserData.gender as 'male' | 'female' | 'non-binary' | 'other',
+            updatedUserData.bio,
+            updatedUserData.photos,
+            updatedUserData.preferences
+          );
+          
+          onProfileUpdate(updatedUser);
+          setIsUploading(false);
+        } catch (error) {
+          console.error('Error saving image to database:', error);
+          alert('Failed to save profile picture. Please try again.');
+          setIsUploading(false);
+        }
       };
       reader.readAsDataURL(file);
     } catch (error) {
@@ -61,20 +76,35 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
 
   const handleSaveChanges = async () => {
     try {
+      // Prepare update data for the backend
+      const updateData = {
+        name: editData.name,
+        age: editData.age,
+        bio: editData.bio,
+        photos: currentUser.getPhotos(),
+        preferences: editData.preferences
+      };
+
+      // Save to database
+      const updatedUserData = await authService.updateProfile(updateData);
+
+      // Create updated User instance with the response from server
       const updatedUser = new User(
-        currentUser.getId(),
-        currentUser.getEmail(),
-        editData.name,
-        editData.age,
-        currentUser.getGender() as 'male' | 'female' | 'non-binary' | 'other',
-        editData.bio,
-        currentUser.getPhotos(),
-        editData.preferences
+        updatedUserData.id,
+        updatedUserData.email,
+        updatedUserData.name,
+        updatedUserData.age,
+        updatedUserData.gender as 'male' | 'female' | 'non-binary' | 'other',
+        updatedUserData.bio,
+        updatedUserData.photos,
+        updatedUserData.preferences
       );
+      
       onProfileUpdate(updatedUser);
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
+      alert('Failed to update profile. Please try again.');
     }
   };
 
@@ -103,10 +133,11 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
 
     setIsDeactivating(true);
     try {
-      const response = await fetch('/api/auth/deactivate', {
+      const response = await fetch(`/api/user/${currentUser.getId()}/deactivate`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${authService.getToken()}`
+          'Authorization': `Bearer ${authService.getToken()}`,
+          'Content-Type': 'application/json'
         }
       });
 

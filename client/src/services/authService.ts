@@ -93,8 +93,10 @@ class AuthService {
     const data = await response.json();
 
     if (!response.ok) {
+      // Clear token for any auth failure (invalid token, user not found, etc.)
       if (response.status === 401) {
         this.logout();
+        throw new Error('Authentication failed. Please log in again.');
       }
       throw new Error(data.error || 'Failed to get user data');
     }
@@ -185,6 +187,12 @@ class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+  }
+
+  // Force complete logout - clears all storage
+  forceLogout(): void {
+    localStorage.clear();
+    sessionStorage.clear();
   }
 
   getAuthHeaders(): Record<string, string> {
