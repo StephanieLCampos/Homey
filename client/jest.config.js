@@ -1,9 +1,24 @@
 /**
- * JEST TEST CONFIGURATION - Testing setup for the Homey client application
- * Configures Jest testing framework with TypeScript support and node environment.
- * Sets up test file discovery, coverage reporting, and module path resolution.
- * Enables unit testing for classes, components, and utility functions.
- * Provides foundation for test-driven development and code quality assurance.
+ * JEST CONFIGURATION
+ *
+ * Test setup for the client. The ts-jest preset compiles TypeScript on the fly,
+ * and the environment is deliberately 'node' rather than 'jsdom': the suite
+ * covers the framework-independent domain classes, not React components, so no
+ * DOM is required.
+ *
+ * `testMatch` restricts discovery to `src/__tests__/**\/*.test.ts`, and coverage
+ * is collected from `src/classes` alone - the classes are the tested surface,
+ * and including untested component files would make the figure meaningless.
+ *
+ * Usage: `npm test`, `npm run test:watch`, `npm run test:coverage` from client/.
+ *
+ * Connections:
+ *   - client/src/__tests__/    - the suites this discovers.
+ *   - client/src/classes/      - the code under test and the coverage scope.
+ *   - client/package.json      - the npm scripts that invoke Jest.
+ *
+ * Note: coverage output is written to client/coverage/, which is committed to
+ * the repository; it is generated and is listed in the dead-file audit.
  */
 module.exports = {
   preset: 'ts-jest',

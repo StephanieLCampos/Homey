@@ -41,7 +41,7 @@ Filter query: {
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -111,7 +111,7 @@ Loading group matches...
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -181,7 +181,7 @@ Found 0 groups with pending join requests from user 691e3478fa0ca2ee636b1cbd
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -241,7 +241,7 @@ Pending matches: 0
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -315,7 +315,7 @@ Added 1 group(s) to matches for user 691e3478fa0ca2ee636b1cbd
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -359,7 +359,7 @@ User not in group, returning empty array
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -445,7 +445,7 @@ Loading group matches...
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -510,7 +510,7 @@ Pending matches: 0
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -570,7 +570,7 @@ Pending matches: 0
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -651,7 +651,7 @@ Filter query: {
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -667,7 +667,7 @@ Added 1 group(s) into potential matches for user 691e3478fa0ca2ee636b1cbd
 Found potential matches: 5
 User names: [
   'Mike Chen',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -718,7 +718,7 @@ Filter query: {
 Found potential matches: 5
 User names: [
   'Sam Rodriguez',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -804,7 +804,7 @@ Loading group matches...
 Found potential matches: 5
 User names: [
   'Sam Rodriguez',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -864,7 +864,7 @@ Swiped user IDs: []
 Found potential matches: 5
 User names: [
   'Sam Rodriguez',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -907,7 +907,7 @@ Loading group matches...
 Found potential matches: 5
 User names: [
   'Sam Rodriguez',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -1024,7 +1024,7 @@ Returning matches for user: 691e3479fa0ca2ee636b1cc3
 Real matches: 1
 Pending matches: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc3
 Potential-matches: found candidateGroups count= 1
@@ -1127,7 +1127,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -1194,7 +1194,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3478fa0ca2ee636b1cbd
@@ -1278,7 +1278,7 @@ Created 0 pending matches
 🔍 DEBUG: Final pending matches:
 Loading group matches...
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 group matches
 Processing group matches...
@@ -1334,7 +1334,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Current user: Sam Rodriguez sam@email.com
 Potential-matches: found candidateGroups count= 1
@@ -1382,7 +1382,7 @@ Created 0 pending matches
 🔍 DEBUG: Final pending matches:
 Loading group matches...
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 group matches
 Processing group matches...
@@ -1435,7 +1435,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 actual matches
 Finding incoming likes...
@@ -1509,7 +1509,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Loading group conversations for user: 691e3478fa0ca2ee636b1cbd
 Potential-matches: found candidateGroups count= 1
@@ -1599,7 +1599,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3478fa0ca2ee636b1cbd
@@ -1669,7 +1669,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -1823,7 +1823,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3478fa0ca2ee636b1cbd
@@ -1895,7 +1895,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 actual matches
 Finding incoming likes...
@@ -1968,7 +1968,7 @@ Finding incoming likes...
 User connected: L5fkbUXz6rNk3FJpAAAb User ID: 691e3478fa0ca2ee636b1cbd
 User 691e3478fa0ca2ee636b1cbd joined room
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3478fa0ca2ee636b1cbd
@@ -2092,7 +2092,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3478fa0ca2ee636b1cbd
@@ -2524,7 +2524,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 actual matches
 Finding incoming likes...
@@ -2587,7 +2587,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 2
 Added 2 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
@@ -2671,7 +2671,7 @@ Filter query: {
 }
 User 691e3479fa0ca2ee636b1cc0 confirmed in room
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 2
 Added 2 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
@@ -2708,7 +2708,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Loading group conversations for user: 691e3479fa0ca2ee636b1cc0
 Potential-matches: found candidateGroups count= 2
@@ -2793,7 +2793,7 @@ Returning matches for user: 691e3479fa0ca2ee636b1cc0
 Real matches: 0
 Pending matches: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc0
 Potential-matches: found candidateGroups count= 2
@@ -2847,7 +2847,7 @@ Returning matches for user: 691e3479fa0ca2ee636b1cc0
 Real matches: 0
 Pending matches: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc0
 Potential-matches: found candidateGroups count= 2
@@ -2899,7 +2899,7 @@ Created 0 pending matches
 🔍 DEBUG: Final pending matches:
 Loading group matches...
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 User 691e3479fa0ca2ee636b1cc0 confirmed in room
 Found 0 group matches
@@ -2960,7 +2960,7 @@ Returning matches for user: 691e3479fa0ca2ee636b1cc0
 Real matches: 0
 Pending matches: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc0
 Potential-matches: found candidateGroups count= 2
@@ -3014,7 +3014,7 @@ Returning matches for user: 691e3479fa0ca2ee636b1cc0
 Real matches: 0
 Pending matches: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc0
 Potential-matches: found candidateGroups count= 2
@@ -3075,7 +3075,7 @@ Filter query: {
 Swiped user IDs: []
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Matched user IDs: []
 All excluded user IDs: []
@@ -3105,7 +3105,7 @@ Added 2 group(s) to matches for user 691e3479fa0ca2ee636b1cc0
   - Available groups: 2
   - Total matches returned: 2
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 2
 Added 2 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
@@ -3227,7 +3227,7 @@ Filter query: {
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -3322,7 +3322,7 @@ Pending matches: 0
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -3395,7 +3395,7 @@ User 691e3479fa0ca2ee636b1cc3 confirmed in room
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -3546,7 +3546,7 @@ Current user: Mike Chen groupId: {
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -3964,7 +3964,7 @@ Loading group matches...
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -4061,7 +4061,7 @@ Current user: Mike Chen groupId: {
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -4193,7 +4193,7 @@ Current user: Mike Chen groupId: {
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -4601,7 +4601,7 @@ Filter query: {
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -4641,7 +4641,7 @@ Filter query: {
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -4750,7 +4750,7 @@ Found group: Mike Chen & Sam Rodriguez with members: [ 'Mike Chen', 'Sam Rodrigu
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -4884,7 +4884,7 @@ Found group: Mike Chen & Sam Rodriguez with members: [ 'Mike Chen', 'Sam Rodrigu
 Found potential matches: 5
 User names: [
   'Jordan Lee',
-  'Steph C',
+  'Taylor Reed',
   'Alex Johnson',
   'Sam Chen',
   'Mike Rodriguez'
@@ -5418,7 +5418,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -5487,7 +5487,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -5669,7 +5669,7 @@ Current user: Mike Chen groupId: {
   __v: 1
 } status: in_group
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found group: Mike Chen & Sam Rodriguez with members: [ 'Mike Chen', 'Sam Rodriguez', 'Jordan Lee' ]
 Potential-matches: found candidateGroups count= 1
@@ -6187,7 +6187,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -6254,7 +6254,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3478fa0ca2ee636b1cbd
@@ -6404,7 +6404,7 @@ Returning group conversation: {
   maxMembers: 8
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 actual matches
 Finding incoming likes...
@@ -6552,7 +6552,7 @@ Returning group conversation: {
   maxMembers: 8
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3478fa0ca2ee636b1cbd
@@ -7041,7 +7041,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
@@ -7140,7 +7140,7 @@ User connected: Vg65TchSbbF8xfiuAABD User ID: 691e3479fa0ca2ee636b1cc0
 User 691e3479fa0ca2ee636b1cc0 joined room
 Found group: Mike Chen & Sam Rodriguez with members: [ 'Mike Chen', 'Sam Rodriguez', 'Jordan Lee' ]
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -7270,7 +7270,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
@@ -7795,7 +7795,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -7855,7 +7855,7 @@ Created 0 pending matches
 🔍 DEBUG: Final pending matches:
 Loading group matches...
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 group matches
 Processing group matches...
@@ -7909,7 +7909,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc3
@@ -7980,7 +7980,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -8055,7 +8055,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
@@ -8192,7 +8192,7 @@ Returning group conversation: {
   maxMembers: 8
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 group matches
 Processing group matches...
@@ -8311,7 +8311,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Loading group conversations for user: 691e3479fa0ca2ee636b1cc0
 Potential-matches: found candidateGroups count= 1
@@ -8739,7 +8739,7 @@ Created 0 pending matches
 🔍 DEBUG: Final pending matches:
 Loading group matches...
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 group matches
 Processing group matches...
@@ -8790,7 +8790,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -8864,7 +8864,7 @@ Added 0 group(s) to matches for user 691e3479fa0ca2ee636b1cc0
   - Available groups: 0
   - Total matches returned: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
@@ -8908,7 +8908,7 @@ Created 0 pending matches
 🔍 DEBUG: Final pending matches:
 Loading group matches...
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 group matches
 Processing group matches...
@@ -8968,7 +8968,7 @@ Returning matches for user: 691e3479fa0ca2ee636b1cc0
 Real matches: 0
 Pending matches: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 groups with pending join requests from user 691e3479fa0ca2ee636b1cc0
 Potential-matches: found candidateGroups count= 1
@@ -9029,7 +9029,7 @@ Filter query: {
 }
 Found 1 groups with pending join requests from user 691e3479fa0ca2ee636b1cc0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Matched user IDs: []
 All excluded user IDs: []
@@ -9061,7 +9061,7 @@ Added 0 group(s) to matches for user 691e3479fa0ca2ee636b1cc0
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
@@ -9144,7 +9144,7 @@ Returning matches for user: 691e3479fa0ca2ee636b1cc0
 Real matches: 0
 Pending matches: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 1 groups with pending join requests from user 691e3479fa0ca2ee636b1cc0
 Found group: Mike Chen & Sam Rodriguez with members: [ 'Sam Rodriguez', 'Jordan Lee' ]
@@ -9294,7 +9294,7 @@ Returning group conversation: {
   maxMembers: 8
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
@@ -9724,7 +9724,7 @@ Filter query: {
 }
 Found 1 groups with pending join requests from user 691e3479fa0ca2ee636b1cc0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Added 0 group(s) to matches for user 691e3479fa0ca2ee636b1cc0
 🔍 DEBUG: Final response breakdown:
@@ -9777,7 +9777,7 @@ Created 0 pending matches
 🔍 DEBUG: Final pending matches:
 Loading group matches...
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 1
 Added 1 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc0
@@ -9827,7 +9827,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Potential-matches: found candidateGroups count= 2
 Added 2 group(s) into potential matches for user 691e3479fa0ca2ee636b1cc3
@@ -9897,7 +9897,7 @@ Filter query: {
 }
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc3
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Added 2 group(s) to matches for user 691e3479fa0ca2ee636b1cc3
 🔍 DEBUG: Final response breakdown:
@@ -9950,7 +9950,7 @@ Returning matches for user: 691e3479fa0ca2ee636b1cc3
 Real matches: 0
 Pending matches: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc3
 Potential-matches: found candidateGroups count= 2
@@ -9997,7 +9997,7 @@ Filter query: {
 Found 0 actual matches
 Finding incoming likes...
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -10056,7 +10056,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Loading group conversations for user: 691e3479fa0ca2ee636b1cc3
 Potential-matches: found candidateGroups count= 2
@@ -10140,7 +10140,7 @@ Created 0 pending matches
 🔍 DEBUG: Final pending matches:
 Loading group matches...
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 group matches
 Processing group matches...
@@ -10201,7 +10201,7 @@ Filter query: {
 }
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc3
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Added 2 group(s) to matches for user 691e3479fa0ca2ee636b1cc3
 🔍 DEBUG: Final response breakdown:
@@ -10263,7 +10263,7 @@ Filter query: {
 Loading group conversations for user: 691e3479fa0ca2ee636b1cc3
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc3
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Current user: Mike Chen groupId: null status: individual
 User not in group, returning empty array
@@ -10306,7 +10306,7 @@ Filter query: {
   ]
 }
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Loading group conversations for user: 691e3479fa0ca2ee636b1cc3
 Current user: Mike Chen groupId: null status: individual
@@ -10397,7 +10397,7 @@ Returning matches for user: 691e3479fa0ca2ee636b1cc3
 Real matches: 0
 Pending matches: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc3
 Potential-matches: found candidateGroups count= 2
@@ -10451,7 +10451,7 @@ Returning matches for user: 691e3479fa0ca2ee636b1cc3
 Real matches: 0
 Pending matches: 0
 Found potential matches: 4
-User names: [ 'Steph C', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
+User names: [ 'Taylor Reed', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
 Found 0 groups with pending join requests from user 691e3479fa0ca2ee636b1cc3
 Potential-matches: found candidateGroups count= 2
@@ -10463,8 +10463,8 @@ Added 2 group(s) to matches for user 691e3479fa0ca2ee636b1cc3
   - Group matches: 0
   - Available groups: 2
   - Total matches returned: 2
-Search for email "Stephaniec.1646@gmail.com" returned 0 results
-Search for email "Stephaniec1646@gmail.com" returned 1 results
+Search for email "taylor.reed@example.com" returned 0 results
+Search for email "taylor.reed@example.com" returned 1 results
 🔍 Processing swipe action: 691e3479fa0ca2ee636b1cc3 -> 691e3bcac5eb1a469363d74b (like)
 ✅ Created new swipe action
 User disconnected: o9YURMnLntIX6o71AABj User ID: 691e3479fa0ca2ee636b1cc3
@@ -10472,7 +10472,7 @@ Auth check: {
   reqUserId: '691e3bcac5eb1a469363d74b',
   paramsId: '691e3bcac5eb1a469363d74b'
 }
-Current user: Steph C stephaniec1646@gmail.com
+Current user: Taylor Reed taylor.reed@example.com
 User connected: Ynt9IjGLfQ6UEcHSAABt User ID: 691e3bcac5eb1a469363d74b
 User 691e3bcac5eb1a469363d74b joined room
 Swiped user IDs: []
@@ -10541,7 +10541,7 @@ Auth check: {
 }
 Found 0 actual matches
 Finding incoming likes...
-Current user: Steph C stephaniec1646@gmail.com
+Current user: Taylor Reed taylor.reed@example.com
 Found 1 incoming likes
 🔍 DEBUG: Raw incoming likes:
   1. SwipeAction 692e7db398891f81f75234a8:
@@ -10603,9 +10603,9 @@ Auth check: {
 }
 Loading matches for user: 691e3bcac5eb1a469363d74b requested by: 691e3bcac5eb1a469363d74b
 Finding matches in database...
-Current user: Steph C groupId: null status: individual
+Current user: Taylor Reed groupId: null status: individual
 User not in group, returning empty array
-Current user: Steph C stephaniec1646@gmail.com
+Current user: Taylor Reed taylor.reed@example.com
 User connected: 1HzLyK0qk5qBYp66AABv User ID: 691e3bcac5eb1a469363d74b
 User 691e3bcac5eb1a469363d74b joined room
 Found 0 actual matches
@@ -10665,15 +10665,15 @@ Added 2 group(s) to matches for user 691e3bcac5eb1a469363d74b
   - Total matches returned: 3
 Potential-matches: found candidateGroups count= 2
 Added 2 group(s) into potential matches for user 691e3bcac5eb1a469363d74b
-Current user: Steph C groupId: null status: individual
+Current user: Taylor Reed groupId: null status: individual
 User not in group, returning empty array
 Auth check: {
   reqUserId: '691e3bcac5eb1a469363d74b',
   paramsId: '691e3bcac5eb1a469363d74b'
 }
 Loading group conversations for user: 691e3bcac5eb1a469363d74b
-Current user: Steph C stephaniec1646@gmail.com
-Current user: Steph C groupId: null status: individual
+Current user: Taylor Reed taylor.reed@example.com
+Current user: Taylor Reed groupId: null status: individual
 User not in group, returning empty array
 Swiped user IDs: []
 Matched user IDs: []
@@ -10700,7 +10700,7 @@ Loading group conversations for user: 691e3bcac5eb1a469363d74b
 Found potential matches: 4
 User names: [ 'Mike Chen', 'Alex Johnson', 'Sam Chen', 'Mike Rodriguez' ]
 Returning: 4 matches
-Current user: Steph C groupId: null status: individual
+Current user: Taylor Reed groupId: null status: individual
 User not in group, returning empty array
 Potential-matches: found candidateGroups count= 2
 Added 2 group(s) into potential matches for user 691e3bcac5eb1a469363d74b
@@ -10709,7 +10709,7 @@ Finding matches in database...
 Loading group conversations for user: 691e3bcac5eb1a469363d74b
 Found 0 actual matches
 Finding incoming likes...
-Current user: Steph C groupId: null status: individual
+Current user: Taylor Reed groupId: null status: individual
 User not in group, returning empty array
 Found 1 incoming likes
 🔍 DEBUG: Raw incoming likes:
@@ -10739,7 +10739,7 @@ Added 2 group(s) to matches for user 691e3bcac5eb1a469363d74b
   - Available groups: 2
   - Total matches returned: 3
 Loading group conversations for user: 691e3bcac5eb1a469363d74b
-Current user: Steph C groupId: null status: individual
+Current user: Taylor Reed groupId: null status: individual
 User not in group, returning empty array
 User connected: FjpSvZun0krPqImxAABx User ID: 691e3bcac5eb1a469363d74b
 User 691e3bcac5eb1a469363d74b joined room
@@ -10757,7 +10757,7 @@ Auth check: {
 }
 Loading matches for user: 691e3bcac5eb1a469363d74b requested by: 691e3bcac5eb1a469363d74b
 Finding matches in database...
-Current user: Steph C stephaniec1646@gmail.com
+Current user: Taylor Reed taylor.reed@example.com
 Found 0 actual matches
 Finding incoming likes...
 Swiped user IDs: []
@@ -10857,7 +10857,7 @@ Auth check: {
   paramsId: '691e3bcac5eb1a469363d74b'
 }
 User 691e3bcac5eb1a469363d74b confirmed in room
-Current user: Steph C stephaniec1646@gmail.com
+Current user: Taylor Reed taylor.reed@example.com
 Swiped user IDs: [ new ObjectId('691e3479fa0ca2ee636b1cc3') ]
 Found 1 actual matches
 Finding incoming likes...
@@ -11033,7 +11033,7 @@ Auth check: {
   reqUserId: '691e3bcac5eb1a469363d74b',
   paramsId: '691e3bcac5eb1a469363d74b'
 }
-Current user: Steph C stephaniec1646@gmail.com
+Current user: Taylor Reed taylor.reed@example.com
 Loading matches for user: 691e3bcac5eb1a469363d74b requested by: 691e3bcac5eb1a469363d74b
 Finding matches in database...
 Swiped user IDs: [ new ObjectId('691e3479fa0ca2ee636b1cc3') ]

@@ -1,25 +1,31 @@
 /**
- * MATCH MODEL - MongoDB schema for tracking user relationships and match status
- * Manages match creation when users mutually like each other through swipe actions.
- * Handles match acceptance, rejection, and status updates for pending matches.
- * Stores match timestamps, user references, and enables conversation list population.
- * Provides relationship tracking foundation for messaging and group formation features.
- */ 
-// delete: unmatching users or expired matches after 7 days occurs
-
-// NEED TO FIX: ensure that if a user swipe right on another user, that had alrieady swiped right on them, 
-//it automatically creates a match and the move to the messages tab
-
-//document: Model
-// fields:
-// userId1
-// userId2
-// status: pending, accepted, rejected or expired
-// compatibilityScore -> N/A
-// expiresAt
-// CreatedAt (auto-added by Mongoose timestamps)
-// updatedAt (auto-added by Mongoose timestamps)
-
+ * MATCH MODEL
+ *
+ * Mongoose schema for a user-to-user match. A match document is created by the
+ * swipe endpoint the moment two users have both liked each other, and it is the
+ * record that unlocks a direct conversation between them.
+ *
+ * Status lifecycle:
+ *   pending  -> created on a mutual like, awaiting explicit acceptance
+ *   accepted -> both parties confirmed; messaging is enabled
+ *   rejected -> declined or unmatched by either party
+ *   expired  -> `expiresAt` has passed (7 days from creation)
+ *
+ * Connections:
+ *   - server/models/SwipeAction.js - the mutual likes that trigger a match.
+ *   - server/models/Message.js     - conversations are keyed off an accepted match.
+ *   - server/models/GroupMatch.js  - the equivalent record for group-to-user matches.
+ *   - server/index.js              - /api/swipe, /api/users/:id/matches, accept,
+ *                                    decline and unmatch endpoints.
+ *   - client/src/components/MatchesList.tsx - renders these records.
+ *
+ * Notes:
+ *   - The unique compound index on (userId1, userId2) is order-sensitive, so the
+ *     endpoints that create matches normalise the pair before querying.
+ *   - `compatibilityScore` is reserved for a future weighted-scoring model; the
+ *     current matching flow uses the hard filter in `User.isCompatibleWith` and
+ *     leaves this field at its default of 0.
+ */
 
 
 const mongoose = require('mongoose');
@@ -60,6 +66,7 @@ matchSchema.index({ userId1: 1, userId2: 1 }, { unique: true });
 matchSchema.index({ status: 1 });
 matchSchema.index({ expiresAt: 1 });
 
+/** @returns {boolean} true once the match has passed its 7-day expiry window. */
 matchSchema.methods.isExpired = function() {
   return this.expiresAt < new Date();
 };

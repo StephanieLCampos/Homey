@@ -1,30 +1,46 @@
 /**
- * USER MODEL - MongoDB schema and database operations for user profiles
- * Defines user document structure with personal info, preferences, photos, and status tracking.
- * Handles user registration, authentication, profile updates, and roommate preference management.
- * Includes password hashing with bcrypt, photo URL storage, and user activation/deactivation.
- * Supports age, gender, cleanliness, noise tolerance, pet/smoking preferences for matching.
+ * USER MODEL
+ *
+ * Mongoose schema for an individual member of the platform. A user document
+ * carries three distinct groups of data:
+ *   1. Identity and credentials  - email, bcrypt-hashed password, last login.
+ *   2. Public profile            - name, age, gender, bio, photo URLs.
+ *   3. Roommate preferences      - the embedded `preferencesSchema` used by the
+ *                                  compatibility filter in the matching flow.
+ *
+ * The schema also owns two pieces of lifecycle state that the rest of the
+ * application keys off:
+ *   - `status`        : 'individual' | 'in_group' | 'seeking_group'
+ *   - `profileStatus` : 'active' | 'paused' | 'deactivated'
+ * A user who joins a group is moved to 'in_group' / 'paused' so that they stop
+ * surfacing in other users' swipe decks while the group represents them.
+ *
+ * Connections:
+ *   - server/routes/auth.js        - registration, login, profile updates.
+ *   - server/middleware/auth.js    - loads the user for every authenticated request.
+ *   - server/index.js              - matching, swiping, group and messaging endpoints.
+ *   - server/models/Group.js       - `groupId` references the user's current group.
+ *   - client/src/types/index.ts    - `UserData` mirrors the shape returned by
+ *                                    `toSafeObject()`.
+ *
+ * Notes:
+ *   - `isActive` is retained purely for backward compatibility with earlier
+ *     revisions; `profileStatus` is the authoritative flag and the two are kept
+ *     in sync by the callers that mutate them.
+ *   - Passwords are hashed by a pre-save hook, so plaintext must never be
+ *     written via `findByIdAndUpdate` (that path bypasses the hook).
  */
-// deletes user accounts
-// Handles password hashing and verification and authetication
-// removes password before sending user data to frontend
-
-//Model: User
-//document fields:
-// email
-// password (hashed)
-// name
-// age
-// gender
-// bio
-// photos
-// preferences (minAge, maxAge, maxRent, etc.)
-// groupId (if they’re in a group)
-// isActive, status
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+/**
+ * Embedded sub-document describing the kind of roommate and living situation a
+ * user is looking for. Stored inline on the user rather than in its own
+ * collection because preferences are never queried independently of their owner.
+ * `Group.preferences` deliberately mirrors these fields so that a group can be
+ * matched with the same comparison logic as an individual.
+ */
 const preferencesSchema = new mongoose.Schema({
   minAge: { type: Number, required: true, min: 18, max: 100 },
   maxAge: { type: Number, required: true, min: 18, max: 100 },
@@ -131,6 +147,11 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
+/**
+ * Pre-save hook: hash the password whenever it is set or changed.
+ * Guarded by `isModified` so that unrelated profile updates do not re-hash an
+ * already-hashed value.
+ */
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   
@@ -143,6 +164,11 @@ userSchema.pre('save', async function(next) {
   }
 });
 
+/**
+ * Pre-save hook: derive a 0-100 "profile completeness" score from which fields
+ * the user has filled in. The weights are fixed and sum to 100; the score is
+ * surfaced in the UI to nudge users toward finishing their profile.
+ */
 userSchema.pre('save', function(next) {
   let completeness = 0;
   
@@ -158,10 +184,27 @@ userSchema.pre('save', function(next) {
   next();
 });
 
+/**
+ * Verify a plaintext password against the stored bcrypt hash.
+ * @param {string} candidatePassword - password supplied at login.
+ * @returns {Promise<boolean>} true when the password matches.
+ */
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+/**
+ * Hard compatibility filter used to build a user's swipe deck.
+ *
+ * This is a symmetric, all-or-nothing check rather than a score: both users
+ * must fall inside each other's age range and preferred-gender list, their
+ * cleanliness and noise ratings must be within two points of one another, and
+ * their pet and smoking preferences must agree exactly. Any single failure
+ * removes the candidate from consideration.
+ *
+ * @param {Object} otherUser - the candidate user document being evaluated.
+ * @returns {boolean} true when the two users are mutually compatible.
+ */
 userSchema.methods.isCompatibleWith = function(otherUser) {
   const otherPrefs = otherUser.preferences;
   const myPrefs = this.preferences;
@@ -181,6 +224,12 @@ userSchema.methods.isCompatibleWith = function(otherUser) {
   return true;
 };
 
+/**
+ * Serialise the document for transport to the client: strips the password hash
+ * and the Mongoose version key, and renames `_id` to `id` so the payload
+ * matches the `UserData` interface the front end expects.
+ * @returns {Object} client-safe plain object.
+ */
 userSchema.methods.toSafeObject = function() {
   const userObject = this.toObject();
   delete userObject.password;

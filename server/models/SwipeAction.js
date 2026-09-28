@@ -1,23 +1,30 @@
 /**
- * SWIPE ACTION MODEL - MongoDB schema for recording user swipe decisions (like/dislike)
- * Tracks all swipe actions with user references, target users, and action types.
- * Enables match detection logic by checking mutual likes between users.
- * Stores swipe timestamps for analytics and prevents duplicate swipes on same users.
- * Foundation for the matching algorithm and user preference tracking system.
+ * SWIPE ACTION MODEL
+ *
+ * Mongoose schema recording a single swipe decision. Every like or pass in the
+ * application is persisted here, and mutual likes are what the swipe endpoint
+ * reads back to decide whether a `Match` or `GroupMatch` should be created.
+ *
+ * The schema covers three directions of swipe, tagged by `swipeType`:
+ *   - 'user_to_user'  : userId  -> targetUserId
+ *   - 'user_to_group' : userId  -> targetGroupId
+ *   - 'group_to_user' : groupId -> targetUserId
+ * Because only one actor field and one target field apply to any given swipe,
+ * the four id fields are conditionally required against each other rather than
+ * unconditionally required.
+ *
+ * Connections:
+ *   - server/models/User.js, Group.js       - actors and targets.
+ *   - server/models/Match.js, GroupMatch.js - created when a like is reciprocated.
+ *   - server/index.js                       - /api/swipe and /api/group/:groupId/swipe.
+ *   - client/src/components/SwipeCard.tsx   - the UI that emits these actions.
+ *
+ * Notes:
+ *   - Sparse unique indexes prevent a duplicate swipe on the same target while
+ *     still allowing the unused id combinations to be absent.
+ *   - `isUndo` and the 'superlike' action are carried over from an earlier
+ *     revision and are not currently exercised by any endpoint.
  */
-
-//NOTE remove dislike and isUndo, undo last swipe
-
-
-//Document: Swipe Action
-//Fields:
-// userId: ObjectId (User)
-// targetUserId: ObjectId (User)
-// action: 'like' or 'dislike'
-// isUndo: Boolean, undo the last swipe
-// createdAt: Date
-// updatedAt: Date
-
 
 const mongoose = require('mongoose');
 
@@ -71,8 +78,15 @@ const swipeActionSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes for different swipe combinations
-// Pre-save hook to ensure undefined fields don't become null
+/**
+ * Pre-save hook: strip the group fields from a plain user-to-user swipe.
+ *
+ * Mongoose would otherwise persist them as explicit nulls, and a null value
+ * participates in the sparse unique indexes above - meaning a user's second
+ * user-to-user swipe would collide with their first on the (userId,
+ * targetGroupId) index. Deleting the keys keeps those documents out of the
+ * group indexes entirely.
+ */
 swipeActionSchema.pre('save', function(next) {
   // If this is a user_to_user swipe, ensure group fields are not set
   if (this.swipeType === 'user_to_user') {

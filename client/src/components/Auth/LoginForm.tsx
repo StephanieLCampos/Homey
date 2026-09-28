@@ -1,9 +1,27 @@
 /**
- * LOGIN FORM COMPONENT - User login interface with email/password authentication
- * Provides secure login form with input validation and error handling.
- * Handles form submission, loading states, and success/failure feedback.
- * Coordinates with authService for JWT token-based authentication.
- * Displays appropriate error messages for invalid credentials or network issues.
+ * LOGIN FORM COMPONENT
+ *
+ * Email and password sign-in. Holds three pieces of local state - the field
+ * values, a loading flag and an error string - and delegates the actual
+ * authentication to `authService.login`, which stores the returned token before
+ * this component's `onSuccess` fires.
+ *
+ * Every control is disabled while the request is in flight, which is what
+ * prevents a double submission; `finally` clears the flag so the form is usable
+ * again after a failure.
+ *
+ * Errors are shown verbatim from the service. For bad credentials the server
+ * returns a single generic message that does not distinguish an unknown email
+ * from a wrong password, so the form cannot leak which addresses are registered.
+ *
+ * Props:
+ *   onSuccess          - called once the token is stored.
+ *   onSwitchToRegister - switches the parent to the registration form.
+ *
+ * Connections:
+ *   - client/src/services/authService.ts - performs the login.
+ *   - client/src/components/Auth/AuthPage.tsx - the parent.
+ *   - server/routes/auth.js - POST /api/auth/login.
  */
 import React, { useState } from 'react';
 import { authService, LoginCredentials } from '../../services/authService';
@@ -21,6 +39,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegis
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
 
+  /**
+   * Generic controlled-input handler: writes the changed field into form state
+   * by its `name` attribute, so both inputs share one handler.
+   */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -29,6 +51,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegis
     }));
   };
 
+  /**
+   * Submit the credentials. Clears any previous error, locks the form for the
+   * duration of the request, and either notifies the parent on success or
+   * surfaces the service's error message.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');

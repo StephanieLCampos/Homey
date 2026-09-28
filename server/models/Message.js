@@ -1,26 +1,29 @@
 /**
- * MESSAGE MODEL - MongoDB schema for storing chat messages between matched users
- * Handles message creation, storage, and retrieval for conversation threads.
- * Manages message metadata including sender, receiver, timestamps, and read status.
- * Supports both individual user messaging and group conversations.
- * Provides foundation for real-time chat features and conversation history loading.
+ * MESSAGE MODEL
+ *
+ * Mongoose schema for a single chat message. One schema serves both
+ * conversation types, distinguished by which recipient field is populated:
+ *   - direct message : `receiverId` set, `groupId` absent.
+ *   - group message  : `groupId` set, `receiverId` absent.
+ *
+ * `messageType` additionally allows 'system' messages - automated notices such
+ * as "X joined the group" - which have no human sender, which is why
+ * `senderId` is only conditionally required.
+ *
+ * Read tracking is deliberately two-tiered: `isRead` is a simple boolean for the
+ * direct-message case, while `readBy` accumulates per-user receipts so a group
+ * message can record that each member has seen it independently.
+ *
+ * Connections:
+ *   - server/models/User.js, Group.js - sender, receiver and group references.
+ *   - server/index.js                 - POST /api/messages and the conversation
+ *                                       retrieval endpoints, plus Socket.io relay.
+ *   - client/src/components/MessagingInterface.tsx - renders conversations.
+ *
+ * Notes:
+ *   - `isDeleted` implements soft deletion; queries that surface messages to
+ *     users are expected to filter on it rather than removing documents.
  */
-
-
-//Document: Message
-//Fields: 
-// senderId
-// receiverId
-// groupId
-// content -> every object is a singular message
-// messageType
-// isRead -> isRead.user1 or isRead.user2
-// readBy
-// editedAt
-// isDeleted: 
-// createdAt (auto from timestamps: true)
-// updatedAt (auto from timestamps: true)
-
 
 const mongoose = require('mongoose');
 
@@ -72,6 +75,15 @@ messageSchema.index({ receiverId: 1, createdAt: -1 });
 messageSchema.index({ groupId: 1, createdAt: -1 });
 messageSchema.index({ isRead: 1 });
 
+/**
+ * Record that a user has read this message.
+ *
+ * Appends a receipt to `readBy` (de-duplicated, so re-reading is idempotent),
+ * and additionally sets the boolean `isRead` when the reader is the direct
+ * recipient - that flag drives unread badges for one-to-one conversations.
+ *
+ * @param {ObjectId} userId - the user who read the message.
+ */
 messageSchema.methods.markAsRead = function(userId) {
   if (!this.readBy.some(reader => reader.userId.equals(userId))) {
     this.readBy.push({ userId, readAt: new Date() });

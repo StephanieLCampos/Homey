@@ -1,3 +1,25 @@
+/**
+ * USER STATUS INSPECTOR (diagnostic utility)
+ *
+ * Read-only. Given an email address, prints one user's identity and lifecycle
+ * fields (`status`, `profileStatus`, `isActive`, `groupId`), then every match
+ * they are part of and every group whose member list contains them.
+ *
+ * Its purpose is to expose a specific inconsistency: a user marked 'in_group'
+ * while appearing in no group's member list, which leaves them unable to swipe
+ * or to be matched. fix_user_status.js repairs exactly that state.
+ *
+ * Usage: run from the repository root
+ *        `node debug_user_status.js <user-email>`
+ *
+ * Connections:
+ *   - server/models/User.js, Match.js, Group.js
+ *   - fix_user_status.js - the repair for what this diagnoses.
+ *   - server/debug_current_user.js - an earlier version with a hard-coded email.
+ *
+ * Note: hard-codes the database `roommate-finder` rather than the
+ * `homey_roommate_app` the server uses - see the audit note on database naming.
+ */
 // Debug script to check user status after leaving group
 // Run this in the server directory: node ../debug_user_status.js
 

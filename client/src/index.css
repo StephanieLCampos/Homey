@@ -1,3 +1,29 @@
+/**
+ * GLOBAL STYLESHEET
+ *
+ * The application's only stylesheet, imported once by client/src/index.tsx and
+ * inlined into the bundle by webpack's style-loader. There is no CSS-module or
+ * styled-component layer, so every class named here is global.
+ *
+ * The sheet covers the shared shell and the reusable primitives - the reset, the
+ * sage-green page background, the header and navigation, buttons, forms, cards,
+ * the swipe deck and its animations, the auth pages, the profile layout and the
+ * messaging panes.
+ *
+ * Note that the components apply their styling in two ways: structural and
+ * repeated elements use the classes defined here, while one-off modals and
+ * layout details are written as inline `style` objects in the TSX. Anything
+ * defined below is therefore the shared half; a rule that seems to be missing is
+ * likely inline in the component that needs it.
+ *
+ * Connections:
+ *   - client/src/index.tsx      - imports this file.
+ *   - client/webpack.config.js  - style-loader and css-loader inline it.
+ *   - client/public/index.html  - carries its own minimal reset for the shell,
+ *                                 painted before this sheet loads.
+ *   - client/src/components/*   - consumers of the class names below.
+ */
+
 * {
   margin: 0;
   padding: 0;

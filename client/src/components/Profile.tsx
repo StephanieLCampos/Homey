@@ -1,9 +1,38 @@
 /**
- * PROFILE COMPONENT - User profile management and editing interface
- * Allows users to view and edit their personal information, photos, and roommate preferences.
- * Handles photo uploads, bio editing, and preference updates for age, cleanliness, etc.
- * Provides form validation and coordinates with authService for profile updates.
- * Displays current profile data and enables real-time preview of profile changes.
+ * PROFILE COMPONENT
+ *
+ * The signed-in user's own profile: a single view that toggles between read-only
+ * display and an inline editor via the `isEditing` flag, so the same field
+ * layout serves both modes.
+ *
+ * Edits are staged in `editData`, initialised from the current user and
+ * discarded on cancel, so nothing is written until Save. On save the component
+ * does not trust its own staged values: it sends them to the API and rebuilds a
+ * `User` from the server's response before calling `onProfileUpdate`. The server
+ * is therefore the source of truth for what the profile now contains.
+ *
+ * Photo changes are applied immediately rather than staged, since a picture
+ * cannot be usefully previewed as pending. The file is read into a base64 data
+ * URL and saved on its own - the same inline-image approach used at registration.
+ *
+ * The account-deactivation section at the foot calls the server directly rather
+ * than going through authService, because the implemented route is
+ * /api/user/:id/deactivate. It confirms first, then logs out and reloads, since
+ * every piece of loaded state belongs to an account that no longer participates.
+ *
+ * Props:
+ *   currentUser     - the profile to display and edit.
+ *   onProfileUpdate - called with a rebuilt User after a successful save.
+ *
+ * Connections:
+ *   - client/src/services/authService.ts - PUT /api/auth/me and the token.
+ *   - client/src/classes/User.ts - the type constructed from API responses.
+ *   - client/src/App.tsx - owns the user and handles onProfileUpdate.
+ *   - server/routes/auth.js, server/index.js - the endpoints called.
+ *
+ * Note: email, gender and location are shown but not editable here; changing
+ * them is not offered anywhere in the UI, though the API would accept gender and
+ * location changes.
  */
 import React, { useState, useRef } from 'react';
 import { User } from '../classes/User';
@@ -27,6 +56,16 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
 
+  /**
+   * Replace the profile picture.
+   *
+   * The chosen file is read into a base64 data URL, put at the head of the photo
+   * array (preserving any others), and saved immediately rather than waiting for
+   * the Save button - a photo has no meaningful pending state.
+   *
+   * The User rebuilt from the response is what propagates to the parent, so the
+   * displayed picture is the one the server actually stored.
+   */
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -74,6 +113,15 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
     }
   };
 
+  /**
+   * Commit the staged edits.
+   *
+   * Sends name, age, bio, the existing photos and the edited preferences, then
+   * constructs a fresh `User` from the server's response and hands it to the
+   * parent - so any server-side normalisation is reflected in the UI rather than
+   * the local guess. Leaves edit mode only on success; a failure keeps the
+   * staged values so the user can retry without retyping.
+   */
   const handleSaveChanges = async () => {
     try {
       // Prepare update data for the backend
@@ -108,6 +156,10 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
     }
   };
 
+  /**
+   * Write one staged field. A key prefixed 'preferences.' is routed into the
+   * nested preferences object; anything else is a top-level field.
+   */
   const handleInputChange = (field: string, value: any) => {
     if (field.includes('preferences.')) {
       const prefKey = field.split('preferences.')[1];
@@ -126,6 +178,18 @@ export const Profile: React.FC<ProfileProps> = ({ currentUser, onProfileUpdate }
     }
   };
 
+  /**
+   * Deactivate the account after an explicit confirmation.
+   *
+   * Calls the server directly rather than through authService, because the
+   * implemented route is /api/user/:id/deactivate (authService's own
+   * `deactivateAccount` points at a path the server does not define).
+   *
+   * On success the token is cleared and the page reloaded rather than the view
+   * simply changing: every piece of loaded state - matches, conversations, group
+   * membership - belongs to an account that has just been removed from all of
+   * them, so a full reset is the honest response.
+   */
   const handleDeactivateAccount = async () => {
     if (!confirm('Are you sure you want to deactivate your account? This will remove you from any group and delete all your matches/messages. You can reactivate it anytime by logging back in.')) {
       return;

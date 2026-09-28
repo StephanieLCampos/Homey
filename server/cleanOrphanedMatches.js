@@ -1,3 +1,29 @@
+/**
+ * ORPHANED MATCH CLEANUP (destructive maintenance utility)
+ *
+ * Removes matches whose participants no longer exist. Such records are produced
+ * when a user document is deleted directly rather than through the deactivation
+ * endpoint, and they surface in the UI as "phantom" conversations with a blank
+ * counterpart.
+ *
+ * Detection relies on Mongoose populating a dangling reference as null: any
+ * match with a null side is orphaned. Those matches and the messages involving
+ * the missing users are then deleted.
+ *
+ * Usage: run from the server/ directory - `node cleanOrphanedMatches.js`
+ *
+ * Connections:
+ *   - server/models/Match.js, Message.js, User.js
+ *   - server/cleanPhantomConversations.js - broader equivalent that also cleans
+ *     swipe actions and uses an explicit id set rather than populate.
+ *   - cleanup_orphaned_accounts.js (repository root) - the most complete version.
+ *
+ * Notes:
+ *   - Destructive and unprompted.
+ *   - The trailing section is a leftover diagnostic that replays the
+ *     /api/conversations logic for one hard-coded user id; it reads only.
+ *   - Reads MONGO_URI, defaulting to the 'homey' database.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Match = require('./models/Match');
@@ -11,7 +37,8 @@ async function cleanOrphanedMatches() {
     
     console.log('\n🔍 Looking for orphaned matches (matches with deleted users)...');
     
-    // Get all matches and populate user data (this will show null for deleted users)
+    // Populate both sides: Mongoose resolves a reference to a deleted document as
+    // null, so a null side is exactly the signal that a match is orphaned.
     const allMatches = await Match.find({}).populate('userId1 userId2', 'name email');
     
     console.log(`Found ${allMatches.length} total matches`);
@@ -81,7 +108,8 @@ async function cleanOrphanedMatches() {
       console.log('\n✅ No orphaned matches found!');
     }
     
-    // Test the conversations endpoint logic
+    // Read-only verification: replay the /api/conversations shaping logic for one
+    // user and report how many conversations would still be dropped as invalid.
     console.log('\n🧪 Testing conversations endpoint logic...');
     
     // Get your user ID (from the error log)

@@ -1,9 +1,39 @@
 /**
- * GROUP CLASS - Business logic for group objects and voting system on client side
- * Manages group formation, member voting, and preference compatibility checking.
- * Implements democratic voting system for adding new members to existing groups.
- * Handles group profile management, photo collections, and member status tracking.
- * Provides methods for vote counting, member acceptance, and group data conversion.
+ * GROUP CLASS
+ *
+ * Client-side domain model for a roommate group: its shared profile, its member
+ * list, and the voting state used to admit new members.
+ *
+ * `pendingVotes` maps a proposed user's id to the ballots cast on them, which
+ * mirrors the `pendingVotes` Map on the server's Group schema. The rule
+ * implemented here is a simple majority of current members
+ * (`ceil(memberCount / 2)`), with `getVotingStatus` exposing the running tally
+ * for display.
+ *
+ * Connections:
+ *   - client/src/types/index.ts   - `GroupData`, `Preferences`, `GroupVote`.
+ *   - client/src/classes/User.ts  - members, and the subject of compatibility checks.
+ *   - client/src/classes/User.ts - members, and the subject of compatibility checks.
+ *   - client/src/__tests__/Group.test.ts - its 55-test suite, the only consumer.
+ *   - server/models/Group.js - the authoritative server-side equivalent.
+ *   - client/src/__tests__/Group.test.ts   - unit tests.
+ *   - server/models/Group.js      - the authoritative server-side equivalent.
+ *
+ * STATUS: not wired into the running application. The UI receives group data from
+ * the API as plain JSON and stores it untyped, and the group rules are enforced
+ * server-side by server/models/Group.js and the /propose and /vote endpoints in
+ * server/index.js. An unused import of this class in App.tsx was removed.
+ *
+ * It is retained deliberately, as the clearest executable statement of the
+ * voting rules - the server implements the same majority threshold across a
+ * schema, a Map field and two endpoints, whereas the version here can be read in
+ * one sitting and is covered by 55 unit tests.
+ *
+ * Notes:
+ *   - This class holds no capacity limit; `maxMembers` and the full/paused
+ *     status flags live only on the server model.
+ *   - Votes are keyed by an id derived from `Date.now()` and the voter, which is
+ *     adequate here but is not collision-proof.
  */
 import { GroupData, Preferences, GroupVote } from '../types';
 import { User } from './User';
@@ -104,7 +134,18 @@ export class Group {
     this.updatedAt = new Date();
   }
 
-  // Check if user is compatible with group preferences
+  /**
+   * Test a candidate against the group's merged preferences.
+   *
+   * Mirrors `User.isCompatibleWith`, with one asymmetry: the candidate's budget
+   * ceiling must be at least the group's, since a member who cannot cover the
+   * group's target rent is not a viable addition. The remaining criteria - age,
+   * gender, cleanliness and noise within two points, exact agreement on pets and
+   * smoking - are the same.
+   *
+   * @param user - the candidate being evaluated.
+   * @returns true when the candidate fits the group profile.
+   */
   isCompatibleWithUser(user: User): boolean {
     const userPrefs = user.getPreferences();
     const groupPrefs = this.preferences;
@@ -147,7 +188,17 @@ export class Group {
     return true;
   }
 
-  //Propose a new member for group voting
+  /**
+   * Open a vote on admitting a new member.
+   *
+   * The proposer's own 'yes' is recorded as the first ballot, so proposing
+   * counts as voting in favour. Re-proposing the same candidate is a no-op
+   * rather than a duplicate ballot.
+   *
+   * @param proposedUserId - the candidate.
+   * @param proposerId     - the member opening the vote.
+   * @throws if the proposer is not a member, or the candidate already is one.
+   */
   proposeMember(proposedUserId: string, proposerId: string): void {
     if (!this.memberIds.includes(proposerId)) {
       throw new Error('Only group members can propose new members');
@@ -178,7 +229,15 @@ export class Group {
     }
   }
 
-  //Vote on a proposed member
+  /**
+   * Cast or change a ballot on an open proposal. A member who has already voted
+   * has their previous ballot replaced rather than duplicated.
+   *
+   * @param proposedUserId - the candidate being voted on.
+   * @param voterId        - the member voting.
+   * @param vote           - 'yes' or 'no'.
+   * @throws if the voter is not a member, or no proposal is open.
+   */
   voteOnMember(proposedUserId: string, voterId: string, vote: 'yes' | 'no'): void {
     if (!this.memberIds.includes(voterId)) {
       throw new Error('Only group members can vote');
@@ -207,7 +266,30 @@ export class Group {
     this.updatedAt = new Date();
   }
 
-  //Check if a proposed member has been accepted (majority vote)
+  /**
+   * Whether a proposal has carried.
+   *
+   * The threshold is `ceil(memberCount / 2)` 'yes' ballots, matching the /vote
+   * endpoint in server/index.js.
+   *
+   * KNOWN ISSUES, shared with the server implementation:
+   *   - The `totalVotes >= requiredVotes` clause below is mathematically
+   *     redundant. Since `totalVotes = yesVotes + noVotes >= yesVotes`, it is
+   *     implied by the first clause and can never change the outcome. It appears
+   *     to have been intended as a quorum check, but does not act as one.
+   *   - In a two-member group the threshold is 1, which the proposer's own
+   *     automatic 'yes' already satisfies. The remaining member voting 'no'
+   *     therefore still admits the candidate - a rejection is counted as an
+   *     approval.
+   *   - For even member counts the threshold is exactly half, not a majority:
+   *     2 of 4, 3 of 6, and 4 of 8 all pass.
+   *
+   * Left unchanged because this pass is documentation-only; see the README's
+   * Known Limitations.
+   *
+   * @param proposedUserId - the candidate.
+   * @returns true when the candidate has been admitted by vote.
+   */
   isMemberAccepted(proposedUserId: string): boolean {
     if (!this.pendingVotes.has(proposedUserId)) {
       return false;
@@ -224,7 +306,11 @@ export class Group {
     return yesVotes >= requiredVotes && totalVotes >= requiredVotes;
   }
 
-  //Get voting status for a proposed member
+  /**
+   * Running tally for a proposal, for display in the group UI. Returns a
+   * zeroed-out result (with the threshold still populated) when no proposal is
+   * open for the given candidate, so callers need not special-case that.
+   */
   getVotingStatus(proposedUserId: string): {
     yesVotes: number;
     noVotes: number;
@@ -264,7 +350,11 @@ export class Group {
     this.updatedAt = new Date();
   }
 
-  //Convert to plain object for API calls
+  /**
+   * Flatten to the plain `GroupData` shape used for API payloads.
+   * Note that `pendingVotes` is deliberately omitted - voting state is
+   * transient and is owned by the server.
+   */
   toJSON(): GroupData {
     return {
       id: this.id,

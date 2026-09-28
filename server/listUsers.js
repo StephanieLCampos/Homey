@@ -1,3 +1,18 @@
+/**
+ * USER LISTING SCRIPT (diagnostic utility)
+ *
+ * Prints the name, email and ObjectId of every user in the database. Its main
+ * practical use is obtaining the ids that the other diagnostic scripts in this
+ * directory expect to be pasted into them.
+ *
+ * Usage: run from the server/ directory - `node listUsers.js`
+ *
+ * Connections:
+ *   - server/models/User.js
+ *
+ * Note: reads MONGO_URI and defaults to the 'homey' database - see the note in
+ * createUsers.js about the inconsistent variable naming across these scripts.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 require('dotenv').config();

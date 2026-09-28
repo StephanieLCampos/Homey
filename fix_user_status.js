@@ -1,3 +1,29 @@
+/**
+ * USER STATUS REPAIR (maintenance utility)
+ *
+ * Reconciles one user's lifecycle fields against actual group membership, which
+ * can fall out of step when a join or leave fails part-way through.
+ *
+ * Two directions are handled:
+ *   - Marked 'in_group' but in no active group: reset to an active individual
+ *     with no groupId, and promote their 'group'-status matches back to
+ *     'accepted' so those conversations reappear in the individual matches list.
+ *   - Genuinely in a group but not marked as such: set 'in_group' / 'paused' and
+ *     point groupId at the first group found.
+ *
+ * Usage: run from the repository root
+ *        `node fix_user_status.js <user-email>`
+ *
+ * Connections:
+ *   - server/models/User.js, Group.js, Match.js
+ *   - debug_user_status.js  - the read-only diagnosis for this repair.
+ *   - server/fix_group_sync.js - the database-wide equivalent.
+ *
+ * Notes:
+ *   - Writes to the user and to matches; make sure the diagnosis is right first.
+ *   - Hard-codes the `roommate-finder` database rather than the server's
+ *     `homey_roommate_app` - see the audit note on database naming.
+ */
 // Fix script to ensure user status is consistent after leaving group
 // Run this in the server directory: node ../fix_user_status.js <user-email>
 
@@ -36,6 +62,10 @@ async function fixUserStatus(userEmail) {
 
     console.log('\nActive groups containing user:', activeGroups.length);
 
+    // Case 1: the user believes they are in a group, but no active group lists
+    // them. Release them back to an individual and promote the matches that were
+    // re-pointed at the group back to 'accepted', so those conversations
+    // reappear in their individual matches list.
     if (activeGroups.length === 0 && (user.status === 'in_group' || user.groupId)) {
       console.log('\nFIXING: User marked as in group but no active groups found');
       
@@ -68,6 +98,8 @@ async function fixUserStatus(userEmail) {
         await match.save();
         console.log('Fixed match:', match._id);
       }
+    // Case 2: the user is genuinely a member of a group but is not marked as
+    // one. Bring their status fields into line with the membership.
     } else if (activeGroups.length > 0) {
       console.log('\nUser is correctly in', activeGroups.length, 'active group(s)');
       

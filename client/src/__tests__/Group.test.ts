@@ -1,3 +1,25 @@
+/**
+ * GROUP CLASS UNIT TESTS
+ *
+ * Covers client/src/classes/Group.ts: construction, setters, member and photo
+ * management, compatibility against a candidate user, and the voting system.
+ *
+ * The voting tests are the substantive part of the suite. They assert the rule
+ * the group model actually implements - a proposal carries on a majority of
+ * current members, with the proposer's automatic 'yes' counted, and a member's
+ * re-vote replacing their previous ballot rather than adding to it.
+ *
+ * Fixtures are rebuilt in `beforeEach`, and group sizes from one member to large
+ * lists are exercised, because the majority threshold behaves differently at the
+ * extremes.
+ *
+ * Connections:
+ *   - client/src/classes/Group.ts - the code under test.
+ *   - client/src/classes/User.ts  - candidates in the compatibility tests.
+ *   - client/src/types/index.ts   - `Preferences`, `GroupVote`.
+ *
+ * Run with `npm test` from client/.
+ */
 import { Group } from '../classes/Group';
 import { User } from '../classes/User';
 import { Preferences } from '../types';

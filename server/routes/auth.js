@@ -1,9 +1,29 @@
 /**
- * AUTHENTICATION ROUTES - Express.js routes for user registration and login
- * Provides secure user registration with email validation and password hashing.
- * Handles user login with JWT token generation and rate limiting for security.
- * Includes input validation, duplicate email prevention, and error handling.
- * Implements password strength requirements and secure token-based authentication flow.
+ * AUTHENTICATION ROUTES
+ *
+ * Express router mounted at /api/auth by server/index.js. It owns the whole
+ * account lifecycle that sits outside the matching domain:
+ *   POST /register        - create an account, returns a JWT.
+ *   POST /login           - verify credentials, returns a JWT.
+ *   GET  /me              - read the authenticated user's profile.
+ *   PUT  /me              - update name, bio, photos, age, preferences.
+ *   POST /change-password - rotate the password after re-verifying the old one.
+ *   POST /profile-status  - pause or reactivate the profile.
+ *
+ * Every mutating field is validated with express-validator before it reaches
+ * the model, and the two unauthenticated routes sit behind a shared rate
+ * limiter to blunt credential-stuffing attempts.
+ *
+ * Connections:
+ *   - server/models/User.js     - persistence, password hashing, `toSafeObject`.
+ *   - server/middleware/auth.js - protects the authenticated routes below.
+ *   - server/index.js           - mounts this router.
+ *   - client/src/services/authService.ts - the sole client-side caller.
+ *
+ * Notes:
+ *   - `authLimiter` is currently set to a development-friendly 100 attempts per
+ *     15 minutes; it should be tightened before a production deployment.
+ *   - Tokens are signed with HS256 and expire after 7 days.
  */
 const express = require('express');
 const jwt = require('jsonwebtoken');
@@ -14,6 +34,10 @@ const { authMiddleware } = require('../middleware/auth');
 
 const router = express.Router();
 
+/**
+ * Rate limiter applied to the unauthenticated /register and /login routes.
+ * Deliberately loose for local development - see the note in the file header.
+ */
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Increased limit for development - change back to 5 for production
@@ -22,6 +46,14 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+/**
+ * Mint a signed JWT for a user.
+ * The payload carries only the user id; the middleware re-reads the account from
+ * the database on each request, so no profile data is embedded in the token.
+ *
+ * @param {ObjectId|string} userId - subject of the token.
+ * @returns {string} signed HS256 token valid for 7 days.
+ */
 const generateToken = (userId) => {
   return jwt.sign(
     { userId },
@@ -33,6 +65,17 @@ const generateToken = (userId) => {
   );
 };
 
+/**
+ * POST /api/auth/register
+ *
+ * Create a new account. Validates the payload, rejects a duplicate email and an
+ * inverted age range, then persists the user - the model's pre-save hook hashes
+ * the password. New users with no uploaded photo are given the bundled default
+ * avatar so that their card renders correctly in the swipe deck.
+ *
+ * @returns 201 with { token, user } on success; 400 on validation or duplicate
+ *          email; 500 on an unexpected failure.
+ */
 router.post('/register', authLimiter, [
   body('email').isEmail().normalizeEmail().withMessage('Please provide a valid email'),
   body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
@@ -98,6 +141,18 @@ router.post('/register', authLimiter, [
   }
 });
 
+/**
+ * POST /api/auth/login
+ *
+ * Verify credentials and issue a token. Failures for an unknown email and for a
+ * wrong password return the same generic message so the endpoint does not
+ * disclose which addresses are registered.
+ *
+ * Logging in also reactivates a paused or deactivated profile, on the
+ * assumption that returning to the app signals intent to be visible again.
+ *
+ * @returns 200 with { token, user }; 401 on bad credentials.
+ */
 router.post('/login', authLimiter, [
   body('email').isEmail().normalizeEmail().withMessage('Please provide a valid email'),
   body('password').notEmpty().withMessage('Password is required')
@@ -147,6 +202,11 @@ router.post('/login', authLimiter, [
   }
 });
 
+/**
+ * GET /api/auth/me
+ * Return the authenticated user's own profile. The middleware has already
+ * loaded and validated the account, so this simply serialises it.
+ */
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     res.json({
@@ -159,6 +219,15 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * PUT /api/auth/me
+ *
+ * Update the authenticated user's profile. Only the fields in `allowedUpdates`
+ * are copied out of the request body - an explicit allow-list, so that a caller
+ * cannot smuggle in privileged fields such as `status`, `groupId` or `password`.
+ *
+ * @returns 200 with the updated user; 400 on validation failure.
+ */
 router.put('/me', authMiddleware, [
   body('name').optional().trim().isLength({ min: 2, max: 100 }).withMessage('Name must be between 2 and 100 characters'),
   body('bio').optional().isLength({ max: 1000 }).withMessage('Bio must not exceed 1000 characters'),
@@ -208,6 +277,15 @@ router.put('/me', authMiddleware, [
   }
 });
 
+/**
+ * POST /api/auth/change-password
+ *
+ * Rotate the password after re-verifying the current one. The new value is
+ * assigned to the document and saved (rather than written with an update query)
+ * so that the model's pre-save hashing hook runs.
+ *
+ * @returns 200 on success; 400 when the current password is incorrect.
+ */
 router.post('/change-password', authMiddleware, [
   body('currentPassword').notEmpty().withMessage('Current password is required'),
   body('newPassword').isLength({ min: 8 }).withMessage('New password must be at least 8 characters long')
@@ -245,7 +323,18 @@ router.post('/change-password', authMiddleware, [
 });
 
 
-// Update profile status (pause/activate profile)
+/**
+ * POST /api/auth/profile-status
+ *
+ * Pause or reactivate the profile, controlling whether the user appears in
+ * other people's swipe decks.
+ *
+ * A user who belongs to a group may not reactivate manually: while in a group
+ * the group represents them in matching, so their individual profile is
+ * intentionally held paused until they leave.
+ *
+ * @returns 200 on success; 400 for an invalid status or while in a group.
+ */
 router.post('/profile-status', authMiddleware, async (req, res) => {
   try {
     const { status } = req.body;

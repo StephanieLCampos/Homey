@@ -1,9 +1,37 @@
 /**
- * FILTER PANEL COMPONENT - Filter controls for discovering potential matches
- * Provides filtering options based on user preferences like age, rent, cleanliness, etc.
- * Shows as a modal popup with various filter options that users can select.
- * Integrates with the discovery system to filter potential matches based on criteria.
- * Includes reset functionality and clear visual indicators for active filters.
+ * FILTER PANEL COMPONENT
+ *
+ * Modal filter controls for the discovery deck: age range, budget, cleanliness,
+ * noise, pets, smoking, gender, city and state, plus a profile-type switch that
+ * limits the deck to individuals or to groups.
+ *
+ * The panel keeps its own working copy of the filters and only reports them
+ * upward when Apply is pressed, so adjusting controls does not reload the deck
+ * on every keystroke. A `useEffect` re-syncs that copy whenever the parent's
+ * filters change, which keeps the panel correct if the filters are reset from
+ * outside while it is closed.
+ *
+ * Three-state booleans are the notable subtlety: `petFriendly` and
+ * `smokingAllowed` distinguish `null` ("no preference", the default) from
+ * `true`/`false`. A plain boolean could not express "don't care", and would
+ * silently exclude half the candidates.
+ *
+ * `FilterOptions` is exported from this file and is the shape the parent passes
+ * to the API as query parameters.
+ *
+ * Props:
+ *   isOpen         - whether the modal is shown; false renders nothing.
+ *   onClose        - dismiss without applying.
+ *   onApplyFilters - called with the working filters on Apply.
+ *   currentFilters - the parent's active filters, mirrored into local state.
+ *
+ * Connections:
+ *   - client/src/App.tsx - owns the filters and passes them to the API.
+ *   - server/index.js    - GET /api/users/:id/potential-matches consumes these
+ *                          as query parameters.
+ *
+ * Note: `profileType` is applied on the client, by filtering the assembled deck;
+ * every other filter is applied by the server.
  */
 import React, { useState, useEffect } from 'react';
 
@@ -36,7 +64,9 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
 }) => {
   const [filters, setFilters] = useState<FilterOptions>({ ...currentFilters, profileType: currentFilters.profileType || 'all' });
 
-  // Update local state when currentFilters prop changes
+  // Re-sync the working copy whenever the parent's filters change - for example
+  // after an external reset - so a reopened panel reflects what is actually
+  // being applied.
   useEffect(() => {
     setFilters({ ...currentFilters, profileType: currentFilters.profileType || 'all' });
   }, [currentFilters]);
@@ -48,6 +78,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     }));
   };
 
+  /**
+   * Add or remove one gender from the multi-select list. Handled separately from
+   * the generic setter, which cannot express membership toggling.
+   */
   const handleGenderChange = (gender: string, checked: boolean) => {
     const currentGenders = filters.preferredGender || [];
     let newGenders;
@@ -64,11 +98,20 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     }));
   };
 
+  /** Publish the working filters to the parent and dismiss the panel. */
   const handleApply = () => {
     onApplyFilters(filters);
     onClose();
   };
 
+  /**
+   * Clear every filter back to its neutral value. Note that the two tri-state
+   * booleans reset to `null` ("no preference") rather than `false`, which would
+   * be an active filter.
+   *
+   * Only the working copy is reset; the parent still sees the old filters until
+   * Apply is pressed.
+   */
   const handleReset = () => {
     const resetFilters: FilterOptions = {
       minAge: undefined,
@@ -86,6 +129,11 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     setFilters(resetFilters);
   };
 
+  /**
+   * Whether any filter is currently set, used to badge the filter control.
+   * A value counts as active when it is neither undefined nor null, and - for
+   * the gender list - not empty.
+   */
   const hasActiveFilters = () => {
     return Object.values(filters).some(value => 
       value !== undefined && 
@@ -94,6 +142,9 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     );
   };
 
+  // Render nothing when closed. Returning null after the hooks above keeps the
+  // hook order stable across renders, which is why the early return is placed
+  // here rather than at the top of the component.
   if (!isOpen) return null;
 
   return (

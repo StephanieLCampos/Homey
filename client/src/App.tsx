@@ -1,20 +1,64 @@
 /**
- * MAIN APP COMPONENT - Root React component for Homey roommate finder client
- * Manages application state, authentication flow, and view navigation between swipe/matches/groups/messages.
- * Handles user initialization from API data, potential match loading, and swipe actions.
- * Coordinates with authService for JWT authentication and provides unified interface for all app features.
- * Converts API user data to User class instances and manages real-time match updates.
+ * MAIN APP COMPONENT
+ *
+ * The root of the client and the owner of essentially all application state. It
+ * decides whether to show the authentication page or the app, holds the signed-in
+ * user, the swipe deck, the matches list and the active filters, and routes
+ * between the six views. The child components below are largely presentational;
+ * they raise intent through callbacks and this component performs the API calls.
+ *
+ * Responsibilities, in order through the file:
+ *   1. State and group capacity helpers.
+ *   2. Effects - session restore on load, group data on status change, data
+ *      refresh on view change, and the Socket.io connection.
+ *   3. Authentication - `checkAuthStatus`, `handleAuthSuccess`,
+ *      `initializeAuthenticatedApp`, which converts the API user into a `User`.
+ *   4. Data loading - `loadPotentialMatches`, `loadMatches`.
+ *   5. Actions - swipe, accept, decline, remove, profile update, logout, filters.
+ *   6. Render - the header, the active view, and the filter panel.
+ *
+ * Two ideas run through the whole file and explain most of its shape:
+ *
+ *   - Heterogeneous ids. The matches endpoint returns four kinds of record
+ *     distinguished by an id prefix - `pending_` (a one-way like), `group_match_`
+ *     (a group invitation), `group_` (a joinable group) and a bare ObjectId (a
+ *     real match). Every action handler dispatches on that prefix to choose the
+ *     right endpoint, because each kind is accepted or declined differently.
+ *
+ *   - Individual versus group identity. Whether the user is in a group changes
+ *     which swipe endpoint applies, whether the deck loads at all, and which
+ *     views are meaningful. `currentUserData.status` is consulted throughout, and
+ *     any action that might change it ends by refreshing the user.
+ *
+ * The socket here is a third instance alongside those in MessagingInterface and
+ * GroupManagement; this one listens for the events that invalidate *this*
+ * component's state - `matchInvalidated`, `groupUpdated`, `memberLeft`.
+ *
+ * Connections:
+ *   - client/src/services/authService.ts - session and token handling.
+ *   - client/src/classes/User.ts - wraps API user records as `User` instances.
+ *   - client/src/components/* - every view rendered below.
+ *   - server/index.js - the entire API surface consumed here.
+ *
+ * Notes:
+ *   - Some commented-out blocks below are the original in-memory implementation
+ *     that predated the backend. The classes they referenced (ProfileManager,
+ *     MatchingSystem) have since been removed from the repository.
+ *   - Several flows respond to a state change by reloading the page rather than
+ *     reconciling state. That is blunt but deliberate: joining or leaving a group
+ *     invalidates nearly everything at once.
+ *   - Known limitation: `unreadCount` is hard-coded to 0 in the header, so the
+ *     unread badge never appears.
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { authService } from './services/authService';
 import { AuthPage } from './components/Auth/AuthPage';
-// COMMENTED OUT - Using MongoDB/API instead of local memory storage
-// import { ProfileManager } from './classes/ProfileManager';
-// import { MatchingSystem } from './classes/MatchingSystem';
+// Note: earlier revisions imported ProfileManager and MatchingSystem here to run
+// matching in browser memory. Both were superseded by the server API and have
+// since been removed from the repository.
 import { UserData, GroupData, Preferences } from './types';
 import { User } from './classes/User';
-import { Group } from './classes/Group';
 import SwipeCard from './components/SwipeCard';
 import Header from './components/Header';
 import MatchesList from './components/MatchesList';
@@ -42,7 +86,10 @@ const App: React.FC = () => {
   const [userGroupData, setUserGroupData] = useState<any>(null);
   const socketRef = useRef<Socket | null>(null);
 
-  // Function to check if user's group is full
+  /**
+   * Whether the user belongs to a group that has reached capacity. A full group
+   * suppresses the swipe deck and match actions, since neither can lead anywhere.
+   */
   const isUserGroupFull = (): boolean => {
     if (!currentUserData || currentUserData.status !== 'in_group' || !userGroupData) {
       return false;
@@ -50,7 +97,10 @@ const App: React.FC = () => {
     return userGroupData.memberIds?.length >= userGroupData.maxMembers;
   };
 
-  // Function to load user's group data
+  /**
+   * Load the user's group, or clear it if they are not in one. The result backs
+   * the capacity checks and the member counts shown in the group-full notices.
+   */
   const loadUserGroupData = async () => {
     if (!currentUser || !currentUserData || currentUserData.status !== 'in_group' || !currentUserData.groupId) {
       setUserGroupData(null);
@@ -77,7 +127,7 @@ const App: React.FC = () => {
     }
   };
 
-  // Check authentication status on app load
+  // Restore a session from the stored token, once on mount.
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -91,7 +141,10 @@ const App: React.FC = () => {
     }
   }, [currentUserData?.status, currentUserData?.groupId]);
 
-  // Force refresh all data when switching views
+  // Reload the deck and matches on every view change. Deliberately eager: group
+  // membership, matches and swipes can all be changed by another user between
+  // views, and re-fetching is cheaper than reasoning about which view invalidates
+  // what.
   useEffect(() => {
     if (currentUser && isAuthenticated) {
       // Reload data when view changes
@@ -118,6 +171,18 @@ const App: React.FC = () => {
     };
   }, [currentUser, isAuthenticated]);
 
+  /**
+   * Open the app-level socket.
+   *
+   * This connection exists for events that invalidate state held *here*, as
+   * distinct from the sockets in MessagingInterface and GroupManagement:
+   *   - `matchInvalidated` - a pending match is no longer valid, typically
+   *     because the other user joined a group. The card is removed silently
+   *     rather than with an alert; the user took no action and needs no warning.
+   *   - `groupUpdated` / `memberLeft` - the user's group changed size, which
+   *     alters both its capacity state and who should appear in the deck, so both
+   *     are reloaded in sequence.
+   */
   const initializeSocket = () => {
     // Clean up existing socket
     if (socketRef.current) {
@@ -200,6 +265,13 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * Restore a session on start-up.
+   *
+   * A stored token is validated by fetching the user; any failure - expired
+   * token, deleted account - clears the token and every piece of derived state,
+   * so the app falls back cleanly to the signed-out view rather than half-loaded.
+   */
   const checkAuthStatus = async () => {
     try {
       if (authService.isAuthenticated()) {
@@ -233,6 +305,19 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * Build the authenticated application state from an API user record.
+   *
+   * Converts the plain record into a `User` instance and loads the deck and the
+   * matches. The default preferences below only apply to a record that predates
+   * the preferences field; a normally-registered user always supplies their own.
+   *
+   * Note the commented-out block: an earlier version skipped loading individual
+   * data for users in groups. It was changed deliberately - group members still
+   * need to see the deck, because they swipe on behalf of the group.
+   *
+   * @param userData - the record returned by /api/auth/me.
+   */
   const initializeAuthenticatedApp = async (userData: UserData) => {
     // Convert API user data to User class instance
     const defaultPreferences = {
@@ -279,7 +364,19 @@ const App: React.FC = () => {
      await loadMatches(user).catch(err => console.error('loadMatches error', err));
   };
 
-  // Helper to normalize various ID shapes returned from server (string, ObjectId, { $oid }, etc.)
+  /**
+   * Coerce any of the id shapes the API produces into a plain string.
+   *
+   * Ids reach the client variously as a string, a populated document with `_id`,
+   * a serialised ObjectId, or the extended-JSON form `{ $oid }`, depending on
+   * which endpoint composed the response and whether `lean()` was used. Every
+   * id comparison in this file goes through here, so those differences cannot
+   * cause a false mismatch. The guard against '[object Object]' catches a
+   * `toString` that has not been overridden.
+   *
+   * @param val - an identifier in any of the above shapes.
+   * @returns the id as a string, or undefined if it cannot be derived.
+   */
   const normalizeId = (val: any): string | undefined => {
     if (!val && val !== 0) return undefined;
     if (typeof val === 'string') return val;
@@ -301,6 +398,27 @@ const App: React.FC = () => {
     try { return String(val); } catch (e) { return undefined; }
   };
 
+  /**
+   * Load and normalise the swipe deck.
+   *
+   * Skipped entirely when the user's group is full - such a group cannot take
+   * new members, so there is nothing to swipe on.
+   *
+   * Active filters become query parameters (arrays joined with commas), and the
+   * response is mapped into `User` instances. Group entries need special
+   * handling: they are not people, so a `User` is constructed as a carrier and
+   * the group-specific fields (`isGroup`, `groupId`, `memberCount`,
+   * `maxMembers`) are attached to it. SwipeCard reads those fields back to render
+   * a group card. This keeps the deck a single typed array at the cost of the
+   * casts below.
+   *
+   * `profileType` is the one filter applied here rather than by the server,
+   * because only the client can tell a group entry from an individual one after
+   * this normalisation.
+   *
+   * @param user    - whose deck to load.
+   * @param filters - optional discovery filters.
+   */
   const loadPotentialMatches = async (user: User, filters?: FilterOptions) => {
     try {
       console.log('Loading potential matches for user:', user.getId(), 'with filters:', filters);
@@ -418,6 +536,14 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * Load the matches list - real matches, pending likes, group invitations and
+   * joinable groups, combined by the server into one array.
+   *
+   * Each entry is given a stable `id`, falling back from `id` to `_id` and
+   * finally to a generated value, because React keys and every action handler
+   * key off that field.
+   */
   const loadMatches = async (user: User) => {
     try {
       console.log('Loading matches for user:', user.getId());
@@ -593,6 +719,31 @@ const App: React.FC = () => {
   };
   */
 
+  /**
+   * Handle a swipe decision, routing it to whichever endpoint the target and the
+   * current user's own state call for. Three cases:
+   *
+   *   1. Target is a group (`group_` prefix) - a like becomes a request to join
+   *      that group; a pass simply drops the card.
+   *   2. Current user is in a group - the swipe is cast on the group's behalf via
+   *      /api/group/:groupId/swipe, creating a pending group match rather than a
+   *      mutual match.
+   *   3. Otherwise - an ordinary individual swipe via /api/swipe, which becomes a
+   *      match immediately if the target had already liked back.
+   *
+   * The component's 'pass' is translated to the server's 'dislike' here; the two
+   * vocabularies were never unified.
+   *
+   * The swiped card is removed from the deck on success, and also on the "already
+   * swiped" and "no longer available" errors - in both cases the card is stale,
+   * and leaving it would trap the user on it.
+   *
+   * @param userId              - target user or `group_<id>` card.
+   * @param action              - 'like' or 'pass'.
+   * @param showCongratulations - suppressed when the swipe is a side effect of
+   *                              accepting a pending match, where the caller
+   *                              reports the outcome itself.
+   */
   const handleSwipe = async (userId: string, action: 'like' | 'pass', showCongratulations: boolean = true) => {
     if (!currentUser) return;
 
@@ -602,7 +753,11 @@ const App: React.FC = () => {
       console.log('handleSwipe: normalized target id:', normalizedTarget, 'original:', userId);
       const targetToUse: any = normalizedTarget || userId;
 
-      // First check if current user is allowed to swipe
+      // A pre-flight check that the user is still active and not in a group,
+      // currently bypassed. It was disabled while debugging a stale-state problem
+      // and left off because it costs an extra request per swipe and the server
+      // enforces the same rules regardless. The error paths below handle the
+      // rejections it would have anticipated.
       // TEMPORARY: Add bypass flag for testing
       const BYPASS_USER_CHECK = true; // Set to false to enable user checks
       
@@ -649,7 +804,9 @@ const App: React.FC = () => {
         console.log('User check bypassed for testing - proceeding with swipe');
       }
       
-      // If this is a group card (group_ prefix), send a group join request instead of a swipe
+      // A group card is not a swipe target: liking it asks to join the group,
+      // which the members then accept or reject. Either way the card leaves the
+      // deck, since the decision has been made.
       if (String(targetToUse).startsWith('group_')) {
         if (action === 'like') {
           const groupId = String(userId).replace('group_', '');
@@ -828,6 +985,23 @@ const App: React.FC = () => {
   };
   */
 
+  /**
+   * Accept a match, dispatching on the id prefix - the three kinds are accepted
+   * in genuinely different ways:
+   *
+   *   - `pending_<id>`      - a one-way like. There is no match record yet, so
+   *                           accepting means swiping right on the liker; the
+   *                           server then creates the match from the now-mutual
+   *                           likes. Congratulations are suppressed on that inner
+   *                           swipe so the user sees one message, not two.
+   *   - `group_match_<id>`  - a group invitation. Accepting joins the group, so
+   *                           the user record is refreshed and the view moves to
+   *                           Groups.
+   *   - a bare ObjectId     - a real match; accepted directly, and the view moves
+   *                           to Messages where the conversation now lives.
+   *
+   * @param matchId - the prefixed identifier from the matches list.
+   */
   const handleAcceptMatch = async (matchId: string | undefined) => {
     if (!currentUser) return;
     
@@ -974,6 +1148,14 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * Decline a match, dispatching on the same three id forms:
+   *   - `group_match_<id>` - decline the group invitation.
+   *   - `pending_<id>`     - pass on the liker, which records the negative swipe
+   *                          and stops them reappearing in the deck.
+   *   - a bare ObjectId    - mark the match rejected.
+   * The matches list is reloaded afterwards so the declined entry disappears.
+   */
   const handleDeclineMatch = async (matchId: string | undefined) => {
     if (!currentUser) return;
     
@@ -1046,6 +1228,11 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * Drop a match from the local list without calling the server - used to
+   * dismiss a card the user does not want to see, leaving the underlying record
+   * intact. It will reappear on the next load.
+   */
   const handleRemoveMatch = (matchId: string) => {
     console.log('Removing match from state:', matchId);
     setMatches(prevMatches => prevMatches.filter(match => match.id !== matchId));
@@ -1057,6 +1244,10 @@ const App: React.FC = () => {
     // await authService.updateProfile(updatedUser.toJSON());
   };
 
+  /**
+   * Sign out: clear the token and every piece of user-derived state, and return
+   * to the default view so a subsequent sign-in starts clean.
+   */
   const handleLogout = () => {
     authService.logout();
     setIsAuthenticated(false);
@@ -1067,6 +1258,7 @@ const App: React.FC = () => {
     setCurrentView('swipe');
   };
 
+  /** Store new discovery filters and rebuild the deck under them. */
   const handleApplyFilters = async (filters: FilterOptions) => {
     setActiveFilters(filters);
     if (currentUser) {
@@ -1090,6 +1282,11 @@ const App: React.FC = () => {
     );
   };
 
+  /**
+   * Re-read the user from the server and rebuild the application state around
+   * them. Called after anything that may have changed group membership, since
+   * that status determines which endpoints apply and which views are meaningful.
+   */
   const refreshUserData = async () => {
     try {
       console.log('Refreshing user data...');
@@ -1103,6 +1300,11 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * Switch views, refreshing what the destination depends on: the Groups view
+   * needs current membership, and the swipe deck needs to reflect anyone who has
+   * since joined a group or been swiped on elsewhere.
+   */
   const handleViewChange = async (view: 'swipe' | 'matches' | 'groups' | 'messages' | 'profile' | 'search') => {
     setCurrentView(view);
     
@@ -1117,6 +1319,11 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * Callback for children that change group membership (MessagingInterface,
+   * GroupManagement). Refreshing the user is enough - the effects above rebuild
+   * everything that depends on their status.
+   */
   const handleGroupStatusChange = async () => {
     await refreshUserData();
   };
@@ -1153,6 +1360,12 @@ const App: React.FC = () => {
         onLogout={handleLogout}
       />
       
+      {/*
+        Development aid: clears React state, browser storage and the Cache API,
+        then hard-reloads. It exists because several stale-state bugs during
+        development could only be cleared by hand. It should be removed before
+        this is presented as a finished product.
+      */}
       {/* Debug/Refresh Button */}
       <button
         onClick={async () => {

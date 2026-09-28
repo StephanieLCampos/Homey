@@ -1,14 +1,59 @@
 /**
- * MATCHES LIST COMPONENT - Displays and manages user matches and group creation
- * Shows pending matches from users who liked you with accept/decline options.
- * Provides modal for viewing detailed match profiles with photos and preferences.
- * Handles match acceptance/rejection and coordinates with API for match updates.
- * Previously included group creation functionality (now handled via API endpoints).
+ * MATCHES LIST COMPONENT
+ *
+ * The Matches view. Its job is to take the deliberately heterogeneous array
+ * returned by GET /api/users/:id/matches and sort it into the sections a user
+ * can act on:
+ *
+ *   - Pending matches  - someone liked you and is waiting on a response. These
+ *                        are synthesised server-side from swipe records and carry
+ *                        an id of the form `pending_<swipeId>`, plus the liker's
+ *                        profile on a `likedBy` field.
+ *   - Group matches    - a group has invited you. Id `group_match_<id>`, with the
+ *                        group and its populated members attached, so the card can
+ *                        show who you would be living with before you decide.
+ *   - Group-created    - matches that have already become a group.
+ *
+ * Accepted individual matches are deliberately absent: once a match is accepted
+ * it is a conversation, and it belongs in Messages rather than here.
+ *
+ * The section split is driven by the `type` field and the id prefixes, which are
+ * the contract this component shares with the server - see the endpoint's own
+ * documentation in server/index.js.
+ *
+ * Because the array is heterogeneous, most access is through `as any` casts and
+ * defensive lookups; `validMatches` filters out entries whose counterpart cannot
+ * be resolved at all, which happens when a referenced account has been deleted.
+ *
+ * A user whose group is full sees an explanatory panel instead of the list: a
+ * full group can neither accept new members nor be joined, so every action would
+ * be unavailable.
+ *
+ * Props:
+ *   matches        - the combined array from the matches endpoint.
+ *   currentUser    - used to work out which side of a match is "the other one".
+ *   onCreateGroup  - form a group from an accepted match.
+ *   onAcceptMatch  - accept a pending individual match or a group invitation.
+ *   onDeclineMatch - optional; decline either kind.
+ *   onRemoveMatch  - optional; unmatch entirely.
+ *   isGroupFull    - replaces the list with the capacity notice when true.
+ *   userGroupData  - member counts shown in that notice.
+ *
+ * Connections:
+ *   - client/src/App.tsx - supplies the matches and implements every callback.
+ *   - client/src/classes/User.ts - the `currentUser` type.
+ *   - server/index.js - GET /api/users/:id/matches and the accept, decline and
+ *                       unmatch endpoints the callbacks reach.
+ *
+ * Note: this component performs no requests of its own - every action is raised
+ * to App.tsx, which owns the API calls and the resulting state.
  */
 import React, { useState } from 'react';
 import { User } from '../classes/User';
 import { authService } from '../services/authService';
-// import { ProfileManager } from '../classes/ProfileManager'; // COMMENTED OUT - Using API instead
+// Note: an earlier revision resolved match participants through ProfileManager,
+// an in-browser store. That class was superseded by the server API and has since
+// been removed; participant data now arrives populated on the match records.
 
 interface Match {
   id: string;
@@ -37,6 +82,20 @@ const MatchesList: React.FC<MatchesListProps> = ({ matches, currentUser, onCreat
   const [groupDescription, setGroupDescription] = useState('');
   const [showProfile, setShowProfile] = useState<any | null>(null);
 
+  /**
+   * Resolve the counterpart of a match, whichever shape it arrived in.
+   *
+   * Three cases are tried in order, because the endpoint composes its response
+   * from three different sources:
+   *   1. A synthesised pending match carries the liker on `likedBy`.
+   *   2. A real match has both participants populated on userId1/userId2; the
+   *      one that is not the current user is the counterpart.
+   *   3. Anything else predates population and cannot be resolved - the caller
+   *      filters these out rather than rendering a nameless card.
+   *
+   * @param match - a match of any of the shapes above.
+   * @returns the counterpart's display name and profile, or a null profile.
+   */
   const getOtherUserInfo = (match: any): { name: string; user: any } => {
     // For pending matches, use the likedBy field
     if (match.likedBy && match.likedBy.name) {
@@ -65,6 +124,10 @@ const MatchesList: React.FC<MatchesListProps> = ({ matches, currentUser, onCreat
     };
   };
 
+  /**
+   * Submit the create-group form for a match, requiring both a name and a
+   * description, then close the form and clear its fields.
+   */
   const handleCreateGroup = (matchId: string) => {
     if (groupName.trim() && groupDescription.trim()) {
       onCreateGroup(matchId, groupName.trim(), groupDescription.trim());
@@ -74,7 +137,10 @@ const MatchesList: React.FC<MatchesListProps> = ({ matches, currentUser, onCreat
     }
   };
 
-  // Filter out any matches with invalid user data
+  // Drop entries whose counterpart cannot be identified - typically a match
+  // referencing an account that has since been deleted, which Mongoose populates
+  // as null. Group entries are exempt because they have no counterpart user at
+  // all; their shape is validated where they are rendered.
   const validMatches = matches.filter(match => {
     try {
       // Group matches have different structure, don't filter them out
@@ -96,6 +162,10 @@ const MatchesList: React.FC<MatchesListProps> = ({ matches, currentUser, onCreat
     }
   });
 
+  // Split the combined array into the sections rendered below. The `type` field
+  // is what distinguishes a group entry from an individual one, so the pending
+  // filter must exclude anything carrying a type - otherwise group invitations
+  // would appear twice.
   const pendingMatches = validMatches.filter(match => match.status === 'pending' && !(match as any).type);
   // Group matches (groups that liked the user)
   const groupMatches = validMatches.filter((m: any) => m.type === 'group_match' && m.status === 'pending');
@@ -103,7 +173,9 @@ const MatchesList: React.FC<MatchesListProps> = ({ matches, currentUser, onCreat
   const groupCreatedMatches = validMatches.filter(match => match.status === 'group_created');
   // Note: Removed serverGroupMatches - we only want actual group invitations, not available groups
 
-  // Show full group message if group is full
+  // A full group replaces the list entirely: its members cannot accept further
+  // matches and the group cannot take new members, so showing actionable cards
+  // would be misleading.
   if (isGroupFull) {
     return (
       <div style={{ color: 'white', padding: '20px' }}>
@@ -205,6 +277,13 @@ const MatchesList: React.FC<MatchesListProps> = ({ matches, currentUser, onCreat
                   Liked you on {new Date(match.createdAt).toLocaleDateString()}
                 </p>
                 <div style={{ display: 'flex', gap: '10px' }}>
+                  {/*
+                    The identifier arrives as `id` on synthesised pending matches
+                    and as `_id` on real ones - sometimes as an ObjectId rather
+                    than a string. It is normalised here, and the button is
+                    disabled outright when no id can be derived, so the accept
+                    call is never made against an undefined id.
+                  */}
                   {(() => {
                     const computedId = match.id || ((match as any)._id ? (typeof (match as any)._id === 'object' ? String((match as any)._id) : (match as any)._id) : undefined);
                     const disabled = !computedId;
@@ -452,6 +531,9 @@ const MatchesList: React.FC<MatchesListProps> = ({ matches, currentUser, onCreat
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button
                     className="btn btn-success"
+                    // The id retains its `group_match_` prefix, which is how
+                    // App.tsx knows to call the group-match accept endpoint
+                    // rather than the individual one.
                     onClick={() => {
                       console.log('Accepting group match:', groupMatch.id);
                       onAcceptMatch(groupMatch.id);

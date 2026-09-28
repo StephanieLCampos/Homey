@@ -1,3 +1,24 @@
+/**
+ * USER CLASS UNIT TESTS
+ *
+ * Covers client/src/classes/User.ts: construction, the accessor and mutator
+ * pairs, photo management, activation and group status, the compatibility rule,
+ * and `toJSON` serialisation.
+ *
+ * A fresh user and a known-good preference set are rebuilt in `beforeEach`, so
+ * no test can be affected by state another test left behind.
+ *
+ * The suite deliberately leans on boundary cases - the minimum and maximum ages,
+ * empty and very large photo arrays, removing a photo that is not present - since
+ * these are the inputs where the accessors are most likely to be wrong.
+ *
+ * Connections:
+ *   - client/src/classes/User.ts  - the code under test.
+ *   - client/src/types/index.ts   - `Preferences`.
+ *   - client/jest.config.js       - discovery and coverage configuration.
+ *
+ * Run with `npm test` from client/.
+ */
 import { User } from '../classes/User';
 import { Preferences } from '../types';
 

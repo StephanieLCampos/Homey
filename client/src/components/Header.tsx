@@ -1,9 +1,25 @@
 /**
- * HEADER COMPONENT - Navigation bar for the Homey app with tab switching
- * Provides navigation between main app views: swipe, matches, groups, messages, and profile.
- * Displays unread message count badges and highlights currently active tab.
- * Includes logout functionality and responsive design for mobile and desktop.
- * Manages view state changes and coordinates with parent App component for navigation.
+ * HEADER COMPONENT
+ *
+ * The application's persistent top bar and primary navigation: the Homey
+ * wordmark, a logout control, and the six view tabs (Discover, Matches, Groups,
+ * Search, Messages, Profile).
+ *
+ * Deliberately stateless - it renders whichever tab `currentView` names as
+ * active and reports every click back through `onViewChange`. All navigation
+ * state lives in App.tsx, so the header cannot disagree with what is on screen.
+ *
+ * The unread badge on Messages is suppressed at zero rather than rendered empty.
+ *
+ * Props:
+ *   currentView  - the active view; drives which tab is highlighted.
+ *   onViewChange - called with the requested view on a tab click.
+ *   unreadCount  - unread messages; the badge is hidden when zero.
+ *   onLogout     - optional; the logout button is omitted when not supplied.
+ *
+ * Connections:
+ *   - client/src/App.tsx - the sole consumer, which owns the view state.
+ *   - client/src/index.css - the .header, .btn and .logout-btn styles.
  */
 import React from 'react';
 

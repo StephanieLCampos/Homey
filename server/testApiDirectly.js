@@ -1,3 +1,23 @@
+/**
+ * SWIPE DECK QUERY TEST (diagnostic utility)
+ *
+ * Reproduces the candidate query from GET /api/users/:id/potential-matches
+ * against the database and prints the result, including the `toSafeObject`
+ * serialisation the endpoint returns. Used to establish whether an unexpected
+ * deck came from the query or from the layers above it.
+ *
+ * Despite the name this is not an automated test - there are no assertions, and
+ * it exercises the database directly rather than the HTTP API.
+ *
+ * Usage: run from the server/ directory - `node testApiDirectly.js`
+ *
+ * Connections:
+ *   - server/models/User.js, SwipeAction.js, Match.js
+ *   - server/debugPotentialMatches.js - a near-duplicate of this script.
+ *
+ * Note: the user id is hard-coded and no longer resolves, and the query
+ * reproduced is an older revision of the endpoint. Listed in the dead-file audit.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const SwipeAction = require('./models/SwipeAction');

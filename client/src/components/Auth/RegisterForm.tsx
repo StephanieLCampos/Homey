@@ -1,9 +1,39 @@
 /**
- * REGISTER FORM COMPONENT - User registration with profile setup and preferences
- * Comprehensive registration form including personal info, photos, and roommate preferences.
- * Handles multi-step form validation, photo uploads, and preference configuration.
- * Provides detailed roommate preference inputs (age, cleanliness, noise, pets, smoking).
- * Coordinates with authService for account creation and automatic login after registration.
+ * REGISTER FORM COMPONENT
+ *
+ * Three-step account creation, split so that a new user is not confronted with
+ * one very long form:
+ *   1. Credentials - name, email, password and confirmation.
+ *   2. Profile     - photo, age, gender, bio.
+ *   3. Preferences - location, age range, gender preferences, budget,
+ *                    cleanliness, noise, pets and smoking.
+ *
+ * Validation is per step rather than deferred to submission: `handleNextStep`
+ * refuses to advance until the current step is valid, so an error is reported
+ * next to the fields that caused it. The final step's checks run in
+ * `handleSubmit`, and only then is the account created - a single request
+ * carrying the whole profile, after which `authService` stores the token and the
+ * user is signed straight in.
+ *
+ * The photo is read client-side into a base64 data URL and sent inline with the
+ * registration payload; there is no separate upload endpoint. The User schema's
+ * photo validator accepts data URLs for exactly this reason. Users who skip the
+ * step keep the bundled default avatar so their swipe card still renders.
+ *
+ * Props:
+ *   onSuccess       - called after the account is created and the token stored.
+ *   onSwitchToLogin - returns to the login form (offered on step 1 only).
+ *
+ * Connections:
+ *   - client/src/services/authService.ts - performs the registration.
+ *   - client/src/types/index.ts          - the `Preferences` shape being built.
+ *   - client/src/components/Auth/AuthPage.tsx - the parent.
+ *   - server/routes/auth.js - POST /api/auth/register, which re-validates
+ *                             everything checked here.
+ *
+ * Note: base64 photos are stored directly in the user document. That is
+ * workable at demonstration scale but would not survive real usage; object
+ * storage with a URL reference is the natural next step.
  */
 import React, { useState, useRef } from 'react';
 import { authService, RegisterData } from '../../services/authService';
@@ -46,6 +76,17 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  /**
+   * One controlled-input handler for every field across all three steps.
+   *
+   * Nesting is expressed through the input's `name`: a name prefixed
+   * 'preferences.' writes into the preferences object, 'location.' writes into
+   * the nested location object, and anything else is a top-level field. This
+   * keeps the markup declarative at the cost of the dispatch below.
+   *
+   * Checkbox inputs contribute their `checked` value, and number and range
+   * inputs are coerced with `Number` so the state never holds numeric strings.
+   */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const isCheckbox = type === 'checkbox';
@@ -82,6 +123,18 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
     }
   };
 
+  /**
+   * Read the chosen file into a base64 data URL and store it as the user's only
+   * photo, replacing the default.
+   *
+   * There is no upload request: the encoded image travels inside the
+   * registration payload, which is why the server's photo validator accepts
+   * data URLs alongside http URLs and relative paths.
+   *
+   * Note that FileReader is asynchronous via its `onload` callback, so the
+   * surrounding try/catch only covers the synchronous set-up - a read error
+   * would leave `isUploading` true.
+   */
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -104,6 +157,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
     }
   };
 
+  /**
+   * Toggle one gender in or out of the multi-select preference list, since the
+   * generic input handler cannot express add-or-remove semantics.
+   */
   const handleGenderPreferenceChange = (gender: string) => {
     const typedGender = gender as 'male' | 'female' | 'non-binary' | 'other';
     setFormData(prev => {
@@ -122,6 +179,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
     });
   };
 
+  /**
+   * Validate the current step and advance.
+   *
+   * Step 1 requires the mandatory fields, matching passwords and a password of
+   * at least eight characters - the same minimum the server enforces. Step 2
+   * enforces the 18+ age floor. Failing either keeps the user on the step with
+   * an explanatory message rather than surfacing the problem at submission.
+   */
   const handleNextStep = () => {
     setError('');
     
@@ -155,6 +220,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
     setError('');
   };
 
+  /**
+   * Validate the preferences step and create the account.
+   *
+   * Checks location is complete, at least one gender preference is selected, and
+   * the age range is not inverted, then submits the whole profile in one
+   * request. On success the token is already stored by the service, so
+   * `onSuccess` signs the user straight in.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -490,6 +563,11 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
         </div>
       )}
 
+      {/*
+        Submission is bound only on the final step. On steps 1 and 2 the default
+        is suppressed, so pressing Enter in a field cannot create the account
+        before the preferences have been filled in.
+      */}
       <form onSubmit={step === 3 ? handleSubmit : (e) => e.preventDefault()}>
         {step === 1 && renderStep1()}
         {step === 2 && renderStep2()}

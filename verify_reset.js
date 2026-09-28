@@ -1,3 +1,24 @@
+/**
+ * RESET VERIFICATION (diagnostic utility)
+ *
+ * Read-only. Counts the documents in every interaction collection - groups,
+ * matches, messages, swipe actions, join requests - and lists each user's
+ * lifecycle fields, so that a reset can be confirmed to have taken effect.
+ * A clean reset shows zero across the board with every user 'individual' and
+ * 'active'.
+ *
+ * Usage: run from the repository root - `node verify_reset.js`
+ *
+ * Connections:
+ *   - server/models/User.js, Group.js, Match.js, Message.js, SwipeAction.js,
+ *     GroupJoinRequest.js
+ *   - reset_all_users.js - the operation this verifies.
+ *
+ * Note: this script reads the `roommate-finder` database while
+ * reset_all_users.js writes to `homey_roommate_app`, so as written the pair do
+ * not actually inspect the same data. Flagged rather than corrected, as this
+ * pass is documentation-only.
+ */
 // Verify that the reset actually worked
 const path = require('path');
 const mongoose = require(path.join(__dirname, 'server', 'node_modules', 'mongoose'));

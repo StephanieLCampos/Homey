@@ -1,3 +1,27 @@
+/**
+ * UNMATCH BEHAVIOUR TEST (diagnostic utility, writes to the database)
+ *
+ * An end-to-end check of the rule that unmatching must make two users eligible
+ * to match again. It takes the first two users in the database, has them like
+ * each other, creates the match, confirms each is excluded from the other's
+ * swipe deck, then performs the unmatch deletions and confirms the exclusion is
+ * gone.
+ *
+ * This is a manual script rather than an automated test: it asserts nothing,
+ * reports pass or fail by printing, and is not run by any test runner.
+ *
+ * Usage: run from the server/ directory - `node testUnmatchFunctionality.js`
+ *
+ * Connections:
+ *   - server/models/User.js, Match.js, SwipeAction.js
+ *   - server/index.js - the unmatch endpoint whose behaviour it mirrors.
+ *
+ * Notes:
+ *   - Writes to whatever database it is pointed at, using two real user accounts
+ *     chosen arbitrarily. Do not run against data that matters.
+ *   - It reproduces the endpoint's deletions rather than calling it, so it
+ *     verifies the intended behaviour rather than the shipped implementation.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Match = require('./models/Match');

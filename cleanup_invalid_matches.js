@@ -1,3 +1,30 @@
+/**
+ * INVALID MATCH CLEANUP (destructive maintenance utility)
+ *
+ * Finds matches referencing user ids that no longer exist, lists them with the
+ * reason each is invalid, and - after an explicit yes/no confirmation - deletes
+ * them along with every swipe action whose participants are likewise missing.
+ *
+ * Validity is decided against an in-memory set of all current user ids rather
+ * than by populating each reference, so it also catches ids that were never
+ * valid rather than only ones since deleted.
+ *
+ * Usage: run from the repository root - `node cleanup_invalid_matches.js`
+ *
+ * Connections:
+ *   - server/models/User.js, Match.js, SwipeAction.js
+ *   - cleanup_orphaned_accounts.js - the broader cleanup, which also covers
+ *     messages, join requests and empty groups.
+ *   - server/cleanPhantomConversations.js - the server-directory equivalent.
+ *
+ * Notes:
+ *   - Prompts before deleting, unlike the scripts under server/.
+ *   - The follow-up swipe cleanup is broader than the matches it accompanies: it
+ *     deletes every swipe with a missing participant, not only those tied to the
+ *     matches just removed.
+ *   - Hard-codes the `roommate-finder` database - see the audit note on
+ *     database naming.
+ */
 // Script to find and remove matches that reference non-existent users
 const path = require('path');
 const mongoose = require(path.join(__dirname, 'server', 'node_modules', 'mongoose'));

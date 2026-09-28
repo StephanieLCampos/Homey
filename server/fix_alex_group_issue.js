@@ -1,3 +1,19 @@
+/**
+ * SINGLE GROUP-MATCH REPAIR (maintenance utility, superseded)
+ *
+ * Resets one hard-coded GroupMatch from 'accepted' back to 'pending' when its
+ * user was never actually added to the group - the same corruption pattern
+ * described in detect_and_fix_orphaned_group_matches.js, fixed for one record.
+ *
+ * Usage: run from the server/ directory - `node fix_alex_group_issue.js`
+ *
+ * Connections:
+ *   - server/models/GroupMatch.js, Group.js, User.js
+ *   - server/detect_and_fix_orphaned_group_matches.js - the general replacement.
+ *
+ * Note: the ids are from one historic debugging session and no longer resolve.
+ * Listed in the dead-file audit.
+ */
 const mongoose = require('mongoose');
 const GroupMatch = require('./models/GroupMatch');
 const Group = require('./models/Group');

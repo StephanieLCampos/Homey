@@ -1,3 +1,37 @@
+/**
+ * ORPHANED DATA CLEANUP (destructive maintenance utility)
+ *
+ * The most complete of the orphan-cleanup scripts, and the one documented in the
+ * README. It reports, then - after a yes/no confirmation - deletes five classes
+ * of record left behind when a user account is removed directly rather than
+ * through the deactivation endpoint:
+ *   1. Matches naming a missing user (or with a null second participant).
+ *   2. Swipe actions with a missing swiper or target.
+ *   3. Messages from a missing sender.
+ *   4. Group join requests from a missing requester.
+ *   5. Empty groups.
+ *
+ * The practical consequence of leaving these in place is "phantom" matches and
+ * conversations in the UI whose counterpart renders blank.
+ *
+ * Usage: run from the repository root - `node cleanup_orphaned_accounts.js`
+ *
+ * Connections:
+ *   - server/models/User.js, Match.js, Message.js, SwipeAction.js,
+ *     GroupJoinRequest.js, Group.js
+ *   - remove_old_accounts.js - deletes accounts, creating exactly this debris.
+ *   - cleanup_invalid_matches.js, server/cleanPhantomConversations.js - narrower
+ *     variants of the same idea.
+ *
+ * Notes:
+ *   - Prompts before deleting, and reports counts first.
+ *   - The "empty/orphaned groups" query previously passed `$nin: [validUserIds]`
+ *     - the id array nested one level too deep - which matched effectively every
+ *     group, so confirming the prompt deleted all of them. It now uses
+ *     `$elemMatch`; see the comment at that query.
+ *   - Hard-codes the `roommate-finder` database - see the audit note on
+ *     database naming.
+ */
 // Script to remove all orphaned user accounts and related data
 const path = require('path');
 const mongoose = require(path.join(__dirname, 'server', 'node_modules', 'mongoose'));
@@ -46,11 +80,18 @@ async function cleanupOrphanedAccounts() {
       console.log(`  - Match ${match._id}: userId1=${match.userId1}, userId2=${match.userId2}`);
     });
 
-    // 2. Orphaned swipe actions
+    // 2. Orphaned swipe actions.
+    //
+    // The `$ne: null` guards are required. `userId` and `targetUserId` are only
+    // conditionally required on the schema: a 'group_to_user' swipe has no
+    // `userId` (it has `groupId`), and a 'user_to_group' swipe has no
+    // `targetUserId` (it has `targetGroupId`). In MongoDB a bare `$nin` also
+    // matches documents where the field is absent, so without these guards every
+    // group swipe would be reported as an orphan and deleted.
     const orphanedSwipes = await SwipeAction.find({
       $or: [
-        { userId: { $nin: validUserIds } },
-        { targetUserId: { $nin: validUserIds } }
+        { userId: { $ne: null, $nin: validUserIds } },
+        { targetUserId: { $ne: null, $nin: validUserIds } }
       ]
     });
     
@@ -62,9 +103,14 @@ async function cleanupOrphanedAccounts() {
       console.log(`  ... and ${orphanedSwipes.length - 5} more`);
     }
 
-    // 3. Orphaned messages
+    // 3. Orphaned messages.
+    //
+    // `$ne: null` is required for the same reason as above. System messages -
+    // the "X has joined/left the group chat" notices written by server/index.js -
+    // are saved with `senderId: null`, which a bare `$nin` matches. Without this
+    // guard every system message in every group would be deleted.
     const orphanedMessages = await Message.find({
-      senderId: { $nin: validUserIds }
+      senderId: { $ne: null, $nin: validUserIds }
     });
     
     console.log(`❌ Orphaned messages: ${orphanedMessages.length}`);
@@ -76,11 +122,22 @@ async function cleanupOrphanedAccounts() {
     
     console.log(`❌ Orphaned join requests: ${orphanedJoinRequests.length}`);
 
-    // 5. Empty groups
+    // 5. Empty groups, and groups holding at least one deleted member.
+    //
+    // `$elemMatch` is required here rather than a bare `$nin`. The field is an
+    // array, so `{ memberIds: { $nin: validUserIds } }` would ask "is the whole
+    // array absent from this list of ids", which is not the question; and
+    // `{ $nin: [validUserIds] }` - the array nested one level too deep - asks
+    // whether memberIds is exactly equal to the full user list, which is false
+    // for virtually every group and therefore matched all of them.
+    //
+    // `$elemMatch: { $nin: validUserIds }` correctly means "at least one element
+    // of memberIds is not a valid user id". The `$size: 0` clause covers the
+    // genuinely empty case, which `$elemMatch` cannot match.
     const emptyGroups = await Group.find({
       $or: [
         { memberIds: { $size: 0 } },
-        { memberIds: { $nin: [validUserIds] } }
+        { memberIds: { $elemMatch: { $nin: validUserIds } } }
       ]
     });
     
@@ -142,7 +199,7 @@ async function cleanupOrphanedAccounts() {
 
       console.log('\n✅ Database cleanup complete!');
       console.log('All orphaned references to deleted accounts have been removed.');
-      console.log('\nOld account emails like stephaniec1646@gmail.com can now be used for new registrations.');
+      console.log('\nEmail addresses belonging to deleted accounts can now be reused for new registrations.');
     } else {
       console.log('Cleanup cancelled');
     }

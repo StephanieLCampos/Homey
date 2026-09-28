@@ -1,17 +1,53 @@
+/**
+ * LEGACY ACCOUNT REMOVAL (destructive maintenance utility)
+ *
+ * Deletes a fixed list of accounts by email address together with everything
+ * that references them - matches, swipe actions, messages, join requests and any
+ * group they belonged to - freeing those addresses for re-registration.
+ *
+ * Dependent records are removed before the users themselves, so an interrupted
+ * run cannot leave references pointing at accounts that are already gone. The
+ * script reports what it will delete and requires a yes/no confirmation.
+ *
+ * Deleting the account is also what invalidates any outstanding JWT for it: the
+ * auth middleware re-reads the user on every request, so a cached token for a
+ * removed account is rejected on its next use.
+ *
+ * Usage: populate OLD_ACCOUNTS (it ships empty), then from the repository root
+ *        `node remove_old_accounts.js`
+ *
+ * Connections:
+ *   - server/models/User.js, Match.js, Message.js, SwipeAction.js,
+ *     GroupJoinRequest.js, Group.js
+ *   - check_correct_db.js - shares the address list and verifies the removal.
+ *   - cleanup_orphaned_accounts.js - clears any debris this misses.
+ *   - server/middleware/auth.js - why deleted accounts cannot keep using tokens.
+ *
+ * Notes:
+ *   - Destructive; deletes whole groups a listed user belonged to, including
+ *     their other members' membership.
+ *   - OLD_ACCOUNTS ships empty by design, so a fresh clone cannot delete anything
+ *     by accident. Fill it in locally and do not commit real addresses.
+ *   - Targets the `homey_roommate_app` database, matching server/.env.
+ */
 // Script to remove specific old user accounts
 const path = require('path');
 const mongoose = require(path.join(__dirname, 'server', 'node_modules', 'mongoose'));
 
-// List of old account emails to delete
-const OLD_ACCOUNTS = [
-  'stephaniec1646@gmail.com',
-  'stephaniec.1646@gmail.com', 
-  'ashikab@gmail.com',
-  'seanlai@gmail.com',
-  'mrseanlai@gmail.com',
-  'mia.l.cater04@gmail.com'
-  // Add any other old emails you want to remove
-];
+// Accounts to delete, by email address.
+//
+// Intentionally empty. Populate it with the addresses you want removed before
+// running the script; with an empty list it reports "No old accounts found to
+// remove" and exits without touching anything, which is the safe default.
+//
+// Format:
+//   const OLD_ACCOUNTS = [
+//     'someone@example.com',
+//     'someone-else@example.com'
+//   ];
+//
+// Do not commit real personal email addresses here - this file is published.
+const OLD_ACCOUNTS = [];
 
 async function removeOldAccounts() {
   try {
@@ -94,7 +130,8 @@ async function removeOldAccounts() {
     if (answer.toLowerCase() === 'yes') {
       console.log('\n🗑️  Deleting old accounts and related data...\n');
 
-      // Delete related data first
+      // Delete dependent records before the accounts themselves, so an
+      // interrupted run cannot leave references pointing at users that are gone.
       if (relatedMatches.length > 0) {
         await Match.deleteMany({ _id: { $in: relatedMatches.map(m => m._id) } });
         console.log(`✓ Deleted ${relatedMatches.length} related matches`);

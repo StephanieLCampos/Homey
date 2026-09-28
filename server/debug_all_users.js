@@ -1,3 +1,25 @@
+/**
+ * GROUP MEMBERSHIP AUDIT SCRIPT (diagnostic utility)
+ *
+ * Read-only. Lists every user whose status is 'in_group' with their groupId,
+ * then dumps a specific group's capacity flags and resolves each of its member
+ * ids, printing 'USER NOT FOUND' for members whose accounts have been deleted.
+ * Written to investigate groups that had become unable to send likes because
+ * deleted accounts were still inflating the member count.
+ *
+ * Usage: run from the server/ directory - `node debug_all_users.js`
+ *        Requires MongoDB to be running; see the README for how to start it.
+ *
+ * Connections:
+ *   - server/models/User.js, Group.js
+ *   - server/cleanup_orphaned_members.js - the fix for what this detects.
+ *
+ * Note: hard-codes a group named 'BING' from a historic local database, so the
+ * second half produces no output elsewhere - `findOne` returns null and the
+ * `if (bingGroup)` block is skipped without error. The first half (users in
+ * groups) is generic and works against any database. Listed in the dead-file
+ * audit.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Group = require('./models/Group');

@@ -1,9 +1,26 @@
 /**
- * GROUP REQUEST MODEL - MongoDB schema for tracking group formation requests
- * Manages requests between users to form groups, including status tracking and timestamps.
- * Handles the workflow of group creation from initial request to acceptance/rejection.
- * Supports pending, accepted, rejected, and expired request states.
- * Links to User documents for requester and recipient with proper validation.
+ * GROUP REQUEST MODEL
+ *
+ * Mongoose schema for one user inviting another matched user to form a group
+ * together. This is the step that precedes a group existing at all: two matched
+ * individuals must agree before a `Group` document is created.
+ *
+ * Lifecycle: a requester sends a request to a recipient (optionally with a short
+ * message); on acceptance the responding endpoint creates the group, records its
+ * id in `groupId`, stamps `respondedAt`, and moves both users to 'in_group'.
+ *
+ * Connections:
+ *   - server/models/User.js  - requester and recipient.
+ *   - server/models/Group.js - populated on `groupId` once the request succeeds.
+ *   - server/index.js        - /api/group-requests and the respond endpoint.
+ *   - client/src/components/MessagingInterface.tsx - surfaces requests in-thread.
+ *
+ * Notes:
+ *   - The unique (requester, recipient, status) index blocks a second request in
+ *     the same state between the same pair, while still permitting a fresh
+ *     request after an earlier one was rejected.
+ *   - The 'expired' status is defined for parity with the match models but is
+ *     not currently applied by a background job.
  */
 const mongoose = require('mongoose');
 

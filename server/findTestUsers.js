@@ -1,3 +1,22 @@
+/**
+ * TEST-USER SEARCH SCRIPT (diagnostic utility)
+ *
+ * Read-only. Locates leftover test accounts three ways: names containing
+ * 'test', names ending in a digit, and an explicit list of names that were
+ * appearing in the server logs at the time this was written. Written as the
+ * investigation step that preceded removeTestUsers.js.
+ *
+ * Usage: run from the server/ directory - `node findTestUsers.js`
+ *
+ * Connections:
+ *   - server/models/User.js
+ *   - server/removeTestUsers.js - deletes what this script finds.
+ *
+ * Notes:
+ *   - The hard-coded name list is specific to one historic debugging session
+ *     and has no ongoing meaning.
+ *   - Reads MONGO_URI, defaulting to the 'homey' database.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 require('dotenv').config();

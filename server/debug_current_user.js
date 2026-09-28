@@ -1,3 +1,20 @@
+/**
+ * SINGLE-USER GROUP STATE DUMP (diagnostic utility)
+ *
+ * Read-only. Prints one user's status fields and, if they belong to a group,
+ * that group's capacity flags plus a per-member existence check.
+ *
+ * Usage: run from the server/ directory - `node debug_current_user.js`
+ *
+ * Connections:
+ *   - server/models/User.js, Group.js
+ *   - debug_user_status.js (repository root) - the general-purpose equivalent,
+ *     which takes the email as a command-line argument.
+ *
+ * Note: the target email is hard-coded to a fixture account from a historic
+ * local database, so the script prints nothing elsewhere. Superseded by
+ * debug_user_status.js; listed in the dead-file audit.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Group = require('./models/Group');

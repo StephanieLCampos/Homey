@@ -1,9 +1,20 @@
 /**
- * REACT ENTRY POINT - Application bootstrap and DOM mounting for Homey client
- * Initializes React application and mounts the main App component to DOM.
- * Sets up React 18 createRoot for concurrent features and proper rendering.
- * Imports global CSS styles and establishes the foundation for the entire client app.
- * This is the starting point that launches the Homey roommate finder interface.
+ * REACT ENTRY POINT
+ *
+ * The client's bootstrap. Webpack is configured to treat this file as the bundle
+ * entry; it locates the #root element in the HTML template, creates a React 18
+ * root against it and renders <App />. The global stylesheet is imported here so
+ * that webpack pulls it into the bundle.
+ *
+ * The missing-container check throws rather than failing silently: if #root is
+ * absent the template and the entry point have diverged, and an explicit error
+ * is more useful than a blank page.
+ *
+ * Connections:
+ *   - client/src/App.tsx        - the root component and all application state.
+ *   - client/src/index.css      - global styles.
+ *   - client/public/index.html  - supplies the #root container.
+ *   - client/webpack.config.js  - names this file as the entry point.
  */
 import React from 'react';
 import { createRoot } from 'react-dom/client';

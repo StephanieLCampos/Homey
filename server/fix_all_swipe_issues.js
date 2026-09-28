@@ -1,3 +1,28 @@
+/**
+ * SWIPE COLLECTION REPAIR (destructive maintenance utility)
+ *
+ * The most substantial of the swipe repair scripts. It addresses the root cause
+ * of a class of "duplicate key" failures on swiping, in four steps:
+ *   1. Delete every swipe action holding a null groupId or targetGroupId.
+ *   2. Backfill `swipeType: 'user_to_user'` on documents predating that field.
+ *   3. Drop the two unique indexes that included those nullable fields.
+ *   4. Recreate them as partial indexes restricted to documents where both keys
+ *      actually exist and are non-null.
+ *
+ * Step 4 is the durable fix: a plain unique index treats every null as the same
+ * value, so a user's second swipe collided with their first. A partial index
+ * excludes those documents from the constraint entirely.
+ *
+ * Usage: run from the server/ directory - `node fix_all_swipe_issues.js`
+ *
+ * Connections:
+ *   - server/models/SwipeAction.js - declares sparse (not partial) indexes, so
+ *     Mongoose may recreate the original form on next start; the model's
+ *     pre-save hook is what prevents new null fields being written.
+ *   - server/cleanup_null_swipes.js - the data-only subset of this repair.
+ *
+ * Note: destructive and unprompted; it also alters collection indexes.
+ */
 const mongoose = require('mongoose');
 const SwipeAction = require('./models/SwipeAction');
 require('dotenv').config();
@@ -37,7 +62,9 @@ async function fixAllSwipeIssues() {
       console.log(`Updated ${updateResult.modifiedCount} swipes without swipeType`);
     }
 
-    // 4. Remove the problematic index completely
+    // Drop the two unique indexes that span the nullable group fields. A plain
+    // unique index treats every null as one value, so a user's second swipe
+    // collided with their first on the (userId, targetGroupId) key.
     try {
       await SwipeAction.collection.dropIndex('groupId_1_targetUserId_1');
       console.log('\nDropped groupId_1_targetUserId_1 index');
@@ -52,7 +79,9 @@ async function fixAllSwipeIssues() {
       console.log('Index userId_1_targetGroupId_1 not found or already dropped');
     }
 
-    // 5. Recreate indexes with partialFilterExpression
+    // Recreate them as partial indexes: the constraint now applies only to
+    // documents where both keys are present and non-null, so user-to-user swipes
+    // are excluded from the group indexes entirely.
     try {
       await SwipeAction.collection.createIndex(
         { groupId: 1, targetUserId: 1 },

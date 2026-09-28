@@ -1,9 +1,51 @@
 /**
- * MESSAGING INTERFACE COMPONENT - Real-time chat system for matched users
- * Displays conversation list with match partners and provides message history.
- * Handles real-time message sending/receiving via API endpoints and potential Socket.io.
- * Shows conversation threads, message timestamps, and user info for each match.
- * Manages message state, conversation selection, and user profile popups for matches.
+ * MESSAGING INTERFACE COMPONENT
+ *
+ * The Messages view: a conversation list beside the selected thread, backed by
+ * both the REST API (history and sending) and a Socket.io connection (live
+ * delivery and notifications).
+ *
+ * It is more than a chat window, because a conversation is where the group
+ * relationship is negotiated. Opening a participant's profile from a thread also
+ * offers, according to the two users' states: sending a group request, responding
+ * to one already received, leaving a group, or unmatching. Those actions are
+ * here rather than in the Groups view because the decision is made in the
+ * context of the conversation that led to it.
+ *
+ * The socket carries far more than messages. It also delivers the events that
+ * change what this view should be showing at all - `groupFormed`, `leftGroup`,
+ * `groupDissolved`, `memberLeft`, `groupRequestReceived`,
+ * `groupRequestRejected` - because forming or leaving a group rewrites which
+ * conversations exist. Most handlers therefore reload the conversation list
+ * rather than patching state in place.
+ *
+ * A user in a group with no conversations sees an explanation rather than an
+ * empty state: group membership deliberately replaces individual messaging, and
+ * the emptiness is the rule working, not a failure.
+ *
+ * Props:
+ *   currentUser         - the signed-in user.
+ *   currentUserData     - raw user record; its `status` distinguishes an empty
+ *                         inbox from the group-messaging restriction.
+ *   onGroupStatusChange - notifies App.tsx when an action here has changed the
+ *                         user's group membership.
+ *
+ * Connections:
+ *   - client/src/services/authService.ts - token for REST calls and the socket
+ *                                          handshake.
+ *   - client/src/App.tsx - the parent, which reloads app-wide state on
+ *                          onGroupStatusChange.
+ *   - server/index.js - /api/conversations, /api/messages,
+ *                       /api/group-requests, /api/groups/:id/leave,
+ *                       /api/matches/:id/unmatch, and the Socket.io server.
+ *
+ * Notes:
+ *   - The socket URL is derived by substituting 3000 for 3333 in the page
+ *     origin, which works for the local development ports but is fragile; a
+ *     configured base URL would be the better arrangement.
+ *   - User feedback is delivered with `alert`, including for events arriving
+ *     over the socket. That is intrusive and would be replaced with in-app
+ *     notifications in a production build.
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { User } from '../classes/User';
@@ -68,6 +110,10 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
   const [requestLoading, setRequestLoading] = useState(false);
   const socketRef = useRef<Socket | null>(null);
 
+  // Load the conversation list and open the socket, tearing the socket down on
+  // unmount. The dependency on `currentUserData?.status` matters: joining or
+  // leaving a group changes which conversations exist, so the effect must re-run
+  // and rebuild both.
   useEffect(() => {
     loadConversations();
     initializeSocket();
@@ -79,6 +125,25 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     };
   }, [currentUser, currentUserData?.status]); // Re-run when user status changes
 
+  /**
+   * Open the authenticated Socket.io connection and register every live handler.
+   *
+   * The token is passed in the handshake, which the server verifies before the
+   * connection is accepted; on connect the client joins its own user room, which
+   * is how the server addresses it.
+   *
+   * Handlers fall into two groups:
+   *   - 'message' appends to the open thread, after checking the message belongs
+   *     to it - the socket delivers everything addressed to this user, not only
+   *     the conversation currently on screen.
+   *   - The group events (`groupRequestReceived`, `groupRequestRejected`,
+   *     `groupFormed`, `leftGroup`, `groupDissolved`, `memberLeft`) change which
+   *     conversations should exist, so they reload the list rather than patching
+   *     it.
+   *
+   * Any previous socket is disconnected first, so a re-run of the effect cannot
+   * leave two connections delivering duplicate messages.
+   */
   const initializeSocket = () => {
     if (socketRef.current) {
       socketRef.current.disconnect();
@@ -148,6 +213,9 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
       alert(`${data.rejectedBy} rejected your group request.`);
     });
 
+    // Group formation changes the user's status, their swipe deck, their matches
+    // and their conversations all at once. Rather than reconciling each, the page
+    // is reloaded after a short delay so every view is rebuilt from the server.
     socketRef.current.on('groupFormed', (data: any) => {
       console.log('Group formed:', data);
       alert(`Group "${data.groupName}" has been created successfully!`);
@@ -182,6 +250,11 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     });
   };
 
+  /**
+   * Load the user's one-to-one conversations. The server returns an empty array
+   * for a user in a group - group membership replaces individual messaging - so
+   * an empty result is a legitimate state rather than an error.
+   */
   const loadConversations = async () => {
     try {
       console.log('Loading conversations...');
@@ -212,6 +285,12 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     await loadMessages(conversationId);
   };
 
+  /**
+   * Load a thread's history. The conversation id encodes the thread type: two
+   * user ids joined by an underscore for a direct thread, or a `group_` prefix
+   * for a group thread. The server returns the 100 most recent messages,
+   * oldest first; there is no pagination, so longer histories are truncated.
+   */
   const loadMessages = async (conversationId: string) => {
     try {
       console.log('Loading messages for conversation:', conversationId);
@@ -235,6 +314,14 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     }
   };
 
+  /**
+   * Send a message in the open conversation.
+   *
+   * The saved message returned by the server is appended locally rather than
+   * waiting for the socket to echo it - the sender's own client is deliberately
+   * excluded from the broadcast, so this is what makes the message appear
+   * immediately. Empty or whitespace-only input is ignored.
+   */
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation) return;
 
@@ -271,6 +358,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     }
   };
 
+  /** Enter sends; Shift+Enter inserts a newline, the usual chat convention. */
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -278,6 +366,11 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     }
   };
 
+  /**
+   * Load the group requests exchanged with one participant, in either direction,
+   * so the profile modal can show a request already sent or offer a response to
+   * one received.
+   */
   const loadGroupRequestsForConversation = async (otherUserId: string) => {
     try {
       const response = await fetch(`/api/group-requests/conversation/${otherUserId}`, {
@@ -299,6 +392,18 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     }
   };
 
+  /**
+   * Accept or reject a group request.
+   *
+   * Accepting is the moment a group comes into existence: the server creates it,
+   * merges both users' preferences and moves them to 'in_group'. The parent is
+   * notified through `onGroupStatusChange` so the rest of the application picks
+   * up the new state, and the conversation list is reloaded because individual
+   * conversations are no longer available to either user.
+   *
+   * @param requestId - the request being answered.
+   * @param action    - 'accept' or 'reject'.
+   */
   const handleRespondToGroupRequest = async (requestId: string, action: 'accept' | 'reject') => {
     try {
       const response = await fetch(`/api/group-requests/${requestId}/respond`, {
@@ -343,6 +448,11 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  /**
+   * Open a participant's profile modal, loading their record and, alongside it,
+   * any group requests between the two users - the modal's available actions
+   * depend on whether a request is already outstanding.
+   */
   const loadUserProfile = async (userId: string) => {
     setProfileLoading(true);
     try {
@@ -367,6 +477,11 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     }
   };
 
+  /**
+   * Invite the person whose profile is open to form a group. The server requires
+   * both parties to be individuals, and refuses a duplicate request while one is
+   * still pending.
+   */
   const handleRequestGroup = async () => {
     if (!showProfile) return;
     
@@ -402,6 +517,14 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     }
   };
 
+  /**
+   * Leave the user's current group, after confirming.
+   *
+   * The group id is re-read from /api/auth/me rather than taken from local
+   * state, so the request always targets the group the server currently believes
+   * the user is in. Leaving may dissolve the group entirely if only one member
+   * would remain; the server's response says which happened.
+   */
   const handleLeaveGroup = async () => {
     if (!showProfile) return;
     
@@ -453,6 +576,13 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     }
   };
 
+  /**
+   * Unmatch the person whose profile is open, after confirming.
+   *
+   * This is irreversible in the sense that the conversation and its history are
+   * deleted - but it also deletes both users' swipe records, so the pair can
+   * encounter each other again in future decks.
+   */
   const handleUnmatch = async () => {
     if (!showProfile) return;
     
@@ -496,6 +626,10 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ currentUser, cu
     );
   }
 
+  // An empty inbox has two quite different meanings, so they are distinguished
+  // here: for a user in a group it is the messaging restriction working as
+  // intended, and is explained; for an individual it simply means no matches
+  // have been accepted yet.
   if (conversations.length === 0) {
     const isInGroup = currentUserData && currentUserData.status === 'in_group';
     

@@ -1,3 +1,21 @@
+/**
+ * GROUP INVITATION LOOKUP (diagnostic utility)
+ *
+ * Read-only. Given a hard-coded user id and GroupMatch id, prints whether that
+ * specific invitation exists, every pending invitation for the user, the user's
+ * own status, and the target group's capacity. A narrower variant of
+ * debug_alex_group.js aimed at one particular missing invitation.
+ *
+ * Usage: run from the server/ directory - `node debug_group_invites.js`
+ *        Requires MongoDB to be running; see the README for how to start it.
+ *
+ * Connections:
+ *   - server/models/GroupMatch.js, Group.js, User.js
+ *
+ * Note: the ids are from one historic debugging session and no longer resolve,
+ * so against a current database every lookup reports NOT FOUND rather than
+ * erroring. Listed in the dead-file audit.
+ */
 const mongoose = require('mongoose');
 const GroupMatch = require('./models/GroupMatch');
 const Group = require('./models/Group');

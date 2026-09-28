@@ -1,3 +1,26 @@
+/**
+ * SAMPLE USER CREATION SCRIPT (maintenance utility)
+ *
+ * Inserts four fixed development accounts, skipping any that already exist, so
+ * it is safe to re-run. Unlike seed.js it does not require an empty database,
+ * which makes it the convenient way to top an existing environment back up.
+ *
+ * Usage: run from the server/ directory - `node createUsers.js`
+ *
+ * Connections:
+ *   - server/models/User.js - the documents written.
+ *
+ * Notes:
+ *   - Reads MONGO_URI (not MONGODB_URI, which is what server/index.js and
+ *     server/.env use) and falls back to a database named 'homey' rather than
+ *     'homey_roommate_app'. Set the variable explicitly, or this script will
+ *     write to a different database than the one the server reads.
+ *   - Like seed.js, it bcrypt-hashes the password before saving, and the model's
+ *     pre-save hook hashes it again - so these accounts cannot be logged into
+ *     with 'password123'.
+ *   - All fixture accounts use @example.com addresses, which RFC 2606 reserves
+ *     for documentation and which can never route to a real mailbox.
+ */
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./models/User');
@@ -10,9 +33,9 @@ async function createSampleData() {
     
     const sampleUsers = [
       {
-        email: 'stephaniec1646@gmail.com',
+        email: 'jordan@example.com',
         password: 'password123',
-        name: 'Stephanie Louise Campos',
+        name: 'Jordan Rivera',
         age: 23,
         gender: 'female',
         bio: 'Student looking for a friendly roommate to share a cozy apartment!',

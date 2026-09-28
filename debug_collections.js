@@ -1,3 +1,22 @@
+/**
+ * COLLECTION DUMP (diagnostic utility)
+ *
+ * Read-only. Enumerates every collection in the database and prints its document
+ * count plus the first five documents in full. Useful as a first look at an
+ * unfamiliar or suspect database, since it goes through the raw driver and so
+ * shows fields that the Mongoose schemas would strip.
+ *
+ * Usage: run from the repository root - `node debug_collections.js`
+ *
+ * Connections:
+ *   - server/node_modules/mongoose - resolved explicitly; see the note below.
+ *
+ * Notes:
+ *   - Hard-codes the database name `roommate-finder`, which is not the database
+ *     the server uses (`homey_roommate_app` per server/.env). Point it at the
+ *     right name, or it will report an empty database.
+ *   - Prints whole documents, including password hashes.
+ */
 // Script to see what data is actually in all collections
 const path = require('path');
 const mongoose = require(path.join(__dirname, 'server', 'node_modules', 'mongoose'));

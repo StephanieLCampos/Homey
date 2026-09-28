@@ -1,9 +1,32 @@
 /**
- * TYPE DEFINITIONS - TypeScript interfaces for Homey app data structures
- * Defines data contracts for User, Group, Match, Message, and Preference objects.
- * Provides type safety for API responses, component props, and state management.
- * Includes user demographics, roommate preferences, match statuses, and messaging types.
- * Supports MongoDB document structure with ObjectId references and timestamps.
+ * SHARED TYPE DEFINITIONS
+ *
+ * The client's data contract with the API. Every interface here mirrors a
+ * Mongoose schema under server/models, with one deliberate difference: the
+ * server's `toSafeObject()` renames `_id` to `id` and strips internal fields, so
+ * these types describe the serialised form the client actually receives rather
+ * than the raw document.
+ *
+ * Contents:
+ *   - `UserData`    - a user profile (mirrors server/models/User.js).
+ *   - `Preferences` - the embedded roommate-preference block, shared by users
+ *                     and groups; the 1-5 scales are typed as literal unions so
+ *                     an out-of-range value is a compile error.
+ *   - `GroupData`   - a group profile (mirrors server/models/Group.js).
+ *   - `Match`, `Message`, `GroupVote`, `SwipeAction` - the interaction records.
+ *
+ * Connections:
+ *   - server/models/* - the schemas these mirror.
+ *   - client/src/classes/*  - the domain classes built on these shapes.
+ *   - client/src/components/*, services/authService.ts - consumers throughout.
+ *
+ * Notes:
+ *   - These are hand-maintained rather than generated, so a schema change on the
+ *     server must be reflected here by hand.
+ *   - `UserStatus` at the foot of the file includes 'suspended', a value used by
+ *     the client-side ProfileManager, whereas `UserData.status` uses the
+ *     server's vocabulary ('individual' | 'in_group' | 'seeking_group'). The two
+ *     were never reconciled.
  */
 export interface UserData {
   id: string;

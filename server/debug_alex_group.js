@@ -1,3 +1,27 @@
+/**
+ * PENDING GROUP INVITATION DUMP (diagnostic utility)
+ *
+ * Read-only. Looks up a user by email and prints their status plus every pending
+ * group invitation addressed to them, with each group's capacity flags. Written
+ * to investigate invitations that were not appearing in the UI.
+ *
+ * Usage: run from the server/ directory - `node debug_alex_group.js`
+ *        Requires MongoDB to be running; see the README for how to start it.
+ *
+ * Connections:
+ *   - server/models/GroupMatch.js, Group.js, User.js
+ *
+ * Notes:
+ *   - The target address, alex@example.com, is recreated by
+ *     initializeSampleData() in server/index.js on every server start, so this
+ *     part of the script works against any database.
+ *   - The `Group` import is load-bearing even though the name is never used
+ *     directly: `.populate('groupId')` resolves GroupMatch's `ref: 'Group'`, and
+ *     Mongoose can only do that if the Group model has been registered by being
+ *     required. Removing it raises MissingSchemaError once a connection is open.
+ *   - Also hard-codes a group named 'BING' from a historic local database; that
+ *     block is skipped without error anywhere else. Listed in the dead-file audit.
+ */
 const mongoose = require('mongoose');
 const GroupMatch = require('./models/GroupMatch');
 const Group = require('./models/Group');

@@ -1,3 +1,21 @@
+/**
+ * ORPHANED GROUP MEMBER CLEANUP (destructive maintenance utility)
+ *
+ * Removes member ids from every group where the referenced user account no
+ * longer exists, then recomputes that group's `target_status` and `group_status`.
+ *
+ * This matters beyond tidiness: a group whose member list is padded with deleted
+ * accounts reads as full, which pauses it and silently stops it from ever
+ * swiping again. The group swipe endpoint now performs the same reconciliation
+ * inline; this script repairs groups that were already affected.
+ *
+ * Usage: run from the server/ directory - `node cleanup_orphaned_members.js`
+ *
+ * Connections:
+ *   - server/models/User.js, Group.js
+ *   - server/index.js - the inline reconciliation in the group swipe endpoint.
+ *   - server/debug_all_users.js - the read-only detector for this condition.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Group = require('./models/Group');

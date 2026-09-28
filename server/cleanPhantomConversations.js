@@ -1,3 +1,27 @@
+/**
+ * PHANTOM DATA CLEANUP (destructive maintenance utility)
+ *
+ * Deletes every match, message and swipe action that references a user id no
+ * longer present in the users collection.
+ *
+ * Loads all valid user ids once and checks each document against that set, which
+ * makes it more thorough than cleanOrphanedMatches.js: it catches swipe actions
+ * as well, and does not depend on populate to reveal a dangling reference.
+ *
+ * Usage: run from the server/ directory - `node cleanPhantomConversations.js`
+ *
+ * Connections:
+ *   - server/models/User.js, Match.js, SwipeAction.js, Message.js
+ *   - server/cleanOrphanedMatches.js - narrower predecessor.
+ *   - cleanup_orphaned_accounts.js (repository root) - also clears groups and
+ *     join requests, and is the version documented in the README.
+ *
+ * Notes:
+ *   - Destructive and unprompted.
+ *   - Loads whole collections into memory; fine at development scale, but it
+ *     would need batching against a large database.
+ *   - Reads MONGO_URI, defaulting to the 'homey' database.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Match = require('./models/Match');
@@ -10,7 +34,9 @@ async function cleanPhantomConversations() {
     await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/homey');
     console.log('Connected to MongoDB');
     
-    // Step 1: Get all valid user IDs
+    // Load every existing user id once. Every subsequent check is membership in
+    // this set, which avoids a per-document lookup and catches dangling
+    // references that `populate` would not reveal on a non-populated field.
     console.log('\n1. Getting all valid users...');
     const validUsers = await User.find({}, '_id');
     const validUserIds = validUsers.map(user => user._id.toString());

@@ -1,12 +1,51 @@
 /**
- * SERVER MAIN ENTRY POINT - Express.js backend for Homey roommate finder app
- * Connects to MongoDB and sets up REST API and Socket.io for real-time features.
- * MongoDB models for User, Group, Match, SwipeAction, and Message are imported.
- * You then use the Model from a schema (fields your document has) to create, read, update, delete documents. ( documents being a object, like a user object)
- * Handles user authentication, matchmaking, group management, and real-time messaging.
- * Provides REST API endpoints for user registration, swipe actions, matches, group voting system,
- * and message handling. Uses MongoDB for data persistence and Socket.io for real-time features.
- * Implements JWT authentication with 7-day token expiry and CORS for client communication.
+ * SERVER MAIN ENTRY POINT
+ *
+ * The Express application for Homey. This single file is the backend: it opens
+ * the MongoDB connection, mounts the authentication router, defines the whole
+ * REST API for matching, groups and messaging, runs the Socket.io server for
+ * real-time notifications, and serves the compiled client bundle.
+ *
+ * Layout of this file, in order:
+ *   1. Bootstrap        - environment, database connection, security middleware,
+ *                         static file serving, development-only helper routes.
+ *   2. Sample data      - `initializeSampleData()` seeds three demo accounts.
+ *   3. User endpoints   - profile retrieval, account deactivation.
+ *   4. Discovery        - potential matches (the swipe deck) and user search.
+ *   5. Swiping          - individual and group swipes; match creation.
+ *   6. Matches          - listing, accepting, declining, unmatching.
+ *   7. Groups           - creation, member proposals and voting, invites, join
+ *                         requests, updates, leaving and dissolution.
+ *   8. Messaging        - sending messages, conversation and thread retrieval.
+ *   9. Socket.io        - authenticated connections and per-user rooms.
+ *  10. Startup          - migrations, admin reset endpoint, listener.
+ *
+ * Core domain rule enforced throughout: a user is represented either as an
+ * individual or by a group, never both. Joining a group pauses the individual
+ * profile, deletes that user's outstanding individual swipes and matches (after
+ * archiving them to `UserGroupHistory`), and redirects their messaging into the
+ * group thread. Leaving reverses the status change but deliberately leaves the
+ * old swipes deleted so the user can be rematched fresh.
+ *
+ * Connections:
+ *   - server/models/*           - all eight Mongoose models used here.
+ *   - server/routes/auth.js     - mounted at /api/auth.
+ *   - server/middleware/auth.js - guards every endpoint below.
+ *   - client/src/App.tsx        - primary consumer; holds the Socket.io client.
+ *   - client/dist               - the built front end, served statically.
+ *
+ * Notes:
+ *   - Socket.io rooms are named by user id, so `io.to(userId).emit(...)`
+ *     addresses one user across all of their open tabs.
+ *   - The verbose console logging throughout was added while debugging the group
+ *     flows and is intentionally left in place; it should be replaced with a
+ *     levelled logger before production use.
+ *   - The `/api/debug/*`, `/api/dev/*` and `/api/admin/reset-all` routes are
+ *     development aids. The dev and admin routes are disabled when NODE_ENV is
+ *     'production'; the debug route is not, and should be removed or guarded.
+ *   - Known limitation: this file has grown well past a comfortable size and
+ *     would benefit from being split into routers per domain, mirroring the
+ *     existing routes/auth.js.
  */
 require('dotenv').config();
 const express = require('express');
@@ -41,7 +80,12 @@ const io = socketIo(server, {
   }
 });
 
-// Connect to MongoDB
+// ---------------------------------------------------------------------------
+// 1. BOOTSTRAP
+// ---------------------------------------------------------------------------
+
+// Connect to MongoDB. A failed connection is fatal: the process exits rather
+// than serving requests that would all fail at the data layer.
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => {
@@ -49,7 +93,9 @@ mongoose.connect(process.env.MONGODB_URI)
     process.exit(1);
   });
 
-// Security middleware
+// Helmet sets standard security headers. The default content-security-policy is
+// relaxed only for images, so that data: URLs (base64 profile photos uploaded at
+// registration) and the Unsplash sample imagery both render.
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -72,13 +118,17 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.static('public'));
 
-// Serve the client build files
+// Serve the compiled React bundle, so a single Express process hosts both the
+// API and the front end. Note the path is relative to the process working
+// directory, which means the server must be started from within server/.
 app.use(express.static('../client/dist'));
 
 // Auth routes
 app.use('/api/auth', authRoutes);
 
-// DEV: impersonation endpoint to mint tokens for testing (only enabled in non-production)
+// Development-only helpers, compiled out of a production deployment by the
+// NODE_ENV guard. `impersonate` mints a token for an arbitrary user so that
+// multi-user flows (matching, group voting) can be exercised from one machine.
 if (process.env.NODE_ENV !== 'production') {
   app.post('/api/dev/impersonate/:userId', async (req, res) => {
     try {
@@ -104,7 +154,13 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-// Debug route to see all users (remove in production)
+/**
+ * GET /api/debug/users
+ * Unauthenticated dump of every user with passwords stripped. Used during
+ * development to inspect database state from the browser.
+ * KNOWN ISSUE: unlike the /api/dev routes above, this is not gated on NODE_ENV
+ * and must be removed or guarded before any production deployment.
+ */
 app.get('/api/debug/users', async (req, res) => {
   try {
     const users = await User.find({});
@@ -119,7 +175,20 @@ app.get('/api/debug/users', async (req, res) => {
   }
 });
 
-// Initialize sample data if database is empty  
+// ---------------------------------------------------------------------------
+// 2. SAMPLE DATA
+// ---------------------------------------------------------------------------
+
+/**
+ * Seed three demonstration accounts (Alex, Sam and Mike) with contrasting
+ * preferences, so a freshly-cloned checkout has something to swipe on.
+ *
+ * The accounts are deleted and recreated on every start rather than only
+ * inserted when missing. That keeps the fixtures in step with the current schema
+ * as fields are added, at the cost of discarding any changes made to those three
+ * accounts between restarts. Users are saved one at a time rather than with
+ * `insertMany` so that the model's password-hashing pre-save hook runs.
+ */
 const initializeSampleData = async () => {
   try {
     // Clear and recreate sample users to ensure they have all required fields
@@ -204,9 +273,19 @@ const initializeSampleData = async () => {
   }
 };
 
-// API Routes
+// ---------------------------------------------------------------------------
+// 3. USER ENDPOINTS
+// ---------------------------------------------------------------------------
 
-// Get current user (protected)
+/**
+ * GET /api/user/:id
+ *
+ * Fetch a user profile. A user may always read their own record; another user's
+ * record is only readable once the two hold an accepted match. This prevents the
+ * endpoint from being used to enumerate profiles outside the swipe flow.
+ *
+ * @returns 200 with the safe user object; 403 when not matched; 404 if unknown.
+ */
 app.get('/api/user/:id', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -236,7 +315,27 @@ app.get('/api/user/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Deactivate user account
+/**
+ * POST /api/user/:id/deactivate
+ *
+ * Deactivate the caller's own account and erase their relational footprint.
+ * Runs as an ordered sequence, each step tolerant of the previous one having
+ * found nothing:
+ *   1. If the user belongs to a group, remove them, post a system message to the
+ *      group thread and notify the remaining members over Socket.io.
+ *   2. Delete every swipe action, individual match and group match that involves
+ *      the user or the group they were representing.
+ *   3. Delete private messages only - group messages are preserved so that the
+ *      remaining members keep a coherent conversation history.
+ *   4. Delete outstanding group requests, join requests and history records.
+ *   5. Flip the user to profileStatus 'deactivated' and clear their group link.
+ *
+ * The account document itself is retained rather than dropped, so the email
+ * address stays reserved and any stale JWT is rejected by the auth middleware.
+ *
+ * @returns 200 with a message describing what happened; 403 for another user's
+ *          account; 404 if the account is already gone.
+ */
 app.post('/api/user/:id/deactivate', authMiddleware, async (req, res) => {
   try {
     const userId = req.params.id;
@@ -385,7 +484,34 @@ app.post('/api/user/:id/deactivate', authMiddleware, async (req, res) => {
   }
 });
 
-// Get potential matches
+// ---------------------------------------------------------------------------
+// 4. DISCOVERY
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /api/users/:id/potential-matches
+ *
+ * Build the swipe deck for a user. The deck is assembled in three stages:
+ *   1. Exclusions - everyone the user has already swiped on, plus everyone they
+ *      already hold a match with, is collected into `excludedUserIds`.
+ *   2. Individual candidates - active, unpaused users who are not in a group and
+ *      are not excluded. Optional query-string filters (age range, rent,
+ *      cleanliness, noise, pets, smoking, gender, city, state) narrow this
+ *      further; city and state are matched case-insensitively.
+ *   3. Group candidates - active, not-full groups the user does not belong to,
+ *      flattened into the same card shape with `isGroup: true` and an id
+ *      prefixed `group_` so the client can tell the two apart.
+ *
+ * A failure while loading groups is caught and the individual results are
+ * returned alone, so a group-side problem cannot empty a user's deck.
+ *
+ * Note: `User.isCompatibleWith` is deliberately not applied here. The strict
+ * filter proved too aggressive on a small user base and left decks empty, so
+ * candidates are surfaced broadly and the explicit filters do the narrowing;
+ * the disabled call is left in place as a reference.
+ *
+ * @returns 200 with an array of user and group cards; 403 for another user's deck.
+ */
 app.get('/api/users/:id/potential-matches', authMiddleware, async (req, res) => {
   try {
     console.log('Auth check:', { reqUserId: req.userId, paramsId: req.params.id });
@@ -533,7 +659,15 @@ app.get('/api/users/:id/potential-matches', authMiddleware, async (req, res) => 
   }
 });
 
-// Search users by email
+/**
+ * GET /api/users/search?email=...
+ *
+ * Look a user up by exact email address, case-insensitively, excluding the
+ * caller. Used by the invite flow where one user already knows another's
+ * address. Exact-match only by design - it is a direct lookup, not a browse.
+ *
+ * @returns 200 with an array of at most one user; 400 when email is absent.
+ */
 app.get('/api/users/search', authMiddleware, async (req, res) => {
   try {
     const { email } = req.query;
@@ -559,7 +693,34 @@ app.get('/api/users/search', authMiddleware, async (req, res) => {
   }
 });
 
-// Swipe action
+// ---------------------------------------------------------------------------
+// 5. SWIPING AND MATCH CREATION
+// ---------------------------------------------------------------------------
+
+/**
+ * POST /api/swipe
+ *
+ * Record an individual user-to-user swipe and create a match if it is mutual.
+ *
+ * Members of a group are blocked from sending individual likes: while in a
+ * group they must swipe as the group via /api/group/:groupId/swipe, so that a
+ * candidate is not courted by a member and their group at the same time.
+ *
+ * The swipe is upserted - re-swiping the same way is rejected as a duplicate,
+ * while swiping the other way updates the existing record. New swipes are
+ * inserted through the raw collection driver rather than the Mongoose model:
+ * Mongoose would write explicit nulls for the unused groupId / targetGroupId
+ * fields, and those nulls collide on the sparse unique indexes the second time
+ * a user swipes.
+ *
+ * On a like, the reciprocal swipe is looked up; if it exists the pair is
+ * upgraded to an accepted `Match` immediately (mutual intent needs no further
+ * confirmation) and both parties are notified over their Socket.io rooms.
+ *
+ * @body   {string} targetUserId, {string} action - 'like' | 'dislike' | 'superlike'
+ * @returns 200 with { success, match, matchId? }; 400 on a duplicate swipe or a
+ *          group member attempting an individual like.
+ */
 app.post('/api/swipe', authMiddleware, async (req, res) => {
   try {
     const { targetUserId, action } = req.body;
@@ -709,7 +870,27 @@ app.post('/api/swipe', authMiddleware, async (req, res) => {
   }
 });
 
-// Group swipe endpoint - for groups to like users
+/**
+ * POST /api/group/:groupId/swipe
+ *
+ * Record a swipe cast on behalf of a group by one of its members.
+ *
+ * Before accepting the swipe the handler reconciles the member list against the
+ * users collection and drops any ids whose accounts no longer exist. Stale
+ * members would otherwise inflate the count and make the group look full,
+ * silently preventing it from ever swiping again.
+ *
+ * The group must then pass `canSendLikes()` (active, unpaused, not full), and
+ * the target must be an active individual - a user already in a group cannot be
+ * recruited into a second one.
+ *
+ * Unlike individual swiping, a group like does not wait for reciprocity: it
+ * creates a pending `GroupMatch` straight away, which surfaces to the target as
+ * an invitation for them to accept or decline.
+ *
+ * @returns 200 with { success, groupMatch, groupMatchId? }; 400 when the group
+ *          is full; 403 when the caller is not a member.
+ */
 app.post('/api/group/:groupId/swipe', authMiddleware, async (req, res) => {
   try {
     const { targetUserId, action } = req.body;
@@ -829,7 +1010,35 @@ app.post('/api/group/:groupId/swipe', authMiddleware, async (req, res) => {
   }
 });
 
-// Get matches for user
+// ---------------------------------------------------------------------------
+// 6. MATCHES
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /api/users/:id/matches
+ *
+ * Return everything that belongs on the user's Matches screen. Four different
+ * kinds of record are normalised into one array:
+ *
+ *   1. Real matches      - `Match` documents, returned as-is with both users populated.
+ *   2. Pending matches   - inbound likes not yet reciprocated, synthesised from
+ *                          `SwipeAction` records with an id of `pending_<swipeId>`.
+ *                          Likes from users who have since joined a group are
+ *                          filtered out, as are likes that already became a match.
+ *   3. Group matches     - pending `GroupMatch` invitations, id `group_match_<id>`,
+ *                          carrying the group and its populated members.
+ *   4. Available groups  - active groups the user could ask to join, id
+ *                          `group_<id>`. Groups the user already has a pending
+ *                          join request with are excluded so they are not offered twice.
+ *
+ * The id prefixes are the contract with the client: MatchesList.tsx dispatches
+ * on them to decide which card and which accept/decline endpoint applies.
+ *
+ * Loading the candidate groups is wrapped separately so that a failure there
+ * still returns the real matches.
+ *
+ * @returns 200 with the combined array; 403 for another user's matches.
+ */
 app.get('/api/users/:id/matches', authMiddleware, async (req, res) => {
   try {
     console.log('Loading matches for user:', req.params.id, 'requested by:', req.userId);
@@ -1046,7 +1255,24 @@ app.get('/api/users/:id/matches', authMiddleware, async (req, res) => {
   }
 });
 
-// Create group
+// ---------------------------------------------------------------------------
+// 7. GROUPS
+// ---------------------------------------------------------------------------
+
+/**
+ * POST /api/groups
+ *
+ * Create a group directly from an explicit member list. The caller must include
+ * themselves, and every listed member must exist and be active.
+ *
+ * After the group is saved, any existing pairwise matches between its members
+ * are rewritten to status 'group' and pointed at the new group, so those
+ * conversations move from the individual matches list into the group. All
+ * members are then flipped to 'in_group' with their individual profile paused;
+ * `isActive` stays true because that flag also gates the ability to log in.
+ *
+ * @returns 200 with the created group; 400 when the member list is invalid.
+ */
 app.post('/api/groups', authMiddleware, async (req, res) => {
   try {
     const { name, description, memberIds, preferences, photos } = req.body;
@@ -1109,7 +1335,11 @@ app.post('/api/groups', authMiddleware, async (req, res) => {
   }
 });
 
-// Get user's group
+/**
+ * GET /api/users/:id/group
+ * Return the caller's own group with members populated.
+ * @returns 200 with the group; 403 for another user; 404 when not in a group.
+ */
 app.get('/api/users/:id/group', authMiddleware, async (req, res) => {
   try {
     if (req.userId !== req.params.id) {
@@ -1133,7 +1363,22 @@ app.get('/api/users/:id/group', authMiddleware, async (req, res) => {
   }
 });
 
-// Propose member to group
+/**
+ * POST /api/groups/:groupId/propose
+ *
+ * Open a vote on admitting a new member. Only an existing member may propose,
+ * the group must have room, and the candidate must not already be a member or
+ * the subject of an open proposal.
+ *
+ * The proposer's own 'yes' is recorded as the first ballot, so proposing is
+ * itself an act of voting. Note this endpoint does not evaluate the threshold -
+ * only /vote does - so a proposal never completes without at least one
+ * subsequent call to /vote, even when the proposer's ballot alone would suffice.
+ *
+ * NOTE: not reachable from the user interface; see the /vote endpoint below.
+ *
+ * @returns 200 on success; 400 when full or already proposed; 403 for non-members.
+ */
 app.post('/api/groups/:groupId/propose', authMiddleware, async (req, res) => {
   try {
     const { proposedUserId } = req.body;
@@ -1179,7 +1424,35 @@ app.post('/api/groups/:groupId/propose', authMiddleware, async (req, res) => {
   }
 });
 
-// Vote on proposed member
+/**
+ * POST /api/groups/:groupId/vote
+ *
+ * Cast or change a ballot on an open membership proposal. A member who has
+ * already voted has their previous ballot replaced rather than duplicated.
+ *
+ * The threshold is `ceil(memberCount / 2)` 'yes' ballots, evaluated after every
+ * ballot - so admission happens as soon as it is reached rather than waiting for
+ * everyone to vote. On success the candidate is added, moved to 'in_group', the
+ * proposal is cleared, and all members are notified over Socket.io.
+ *
+ * KNOWN ISSUES with the threshold:
+ *   - In a two-member group the threshold is 1, already satisfied by the
+ *     proposer's automatic 'yes' recorded at proposal time. The other member
+ *     voting 'no' therefore still admits the candidate: the ballot is counted,
+ *     the check re-runs, and 1 >= 1 passes. A rejection acts as an approval.
+ *   - For even member counts the threshold is exactly half rather than a
+ *     majority - 2 of 4, 3 of 6, 4 of 8 all pass.
+ *   - 'no' ballots are recorded but never actually consulted; only the 'yes'
+ *     count is compared against the threshold, so a proposal can never be
+ *     defeated, only left pending.
+ *
+ * NOTE: this endpoint and /propose are not reachable from the user interface -
+ * no client component calls either. Members join in practice through the group
+ * invite and join-request flows. See the README's Known Limitations.
+ *
+ * @body   {string} proposedUserId, {'yes'|'no'} vote
+ * @returns 200 on success; 403 for non-members; 404 with no open proposal.
+ */
 app.post('/api/groups/:groupId/vote', authMiddleware, async (req, res) => {
   try {
     const { proposedUserId, vote } = req.body;
@@ -1258,9 +1531,16 @@ app.post('/api/groups/:groupId/vote', authMiddleware, async (req, res) => {
   }
 });
 
-// Group Request Endpoints
-
-// Send group request
+/**
+ * POST /api/group-requests
+ *
+ * Ask another individual user to form a new group together. Both parties must
+ * currently be individuals, and only one pending request may exist between a
+ * given pair in either direction. The recipient is notified in real time.
+ *
+ * @returns 201 with the populated request; 400 when either user is already in a
+ *          group or a request is already outstanding.
+ */
 app.post('/api/group-requests', authMiddleware, async (req, res) => {
   try {
     const { recipientId, message } = req.body;
@@ -1333,7 +1613,10 @@ app.post('/api/group-requests', authMiddleware, async (req, res) => {
   }
 });
 
-// Get group requests (sent and received)
+/**
+ * GET /api/group-requests
+ * List the caller's group requests, split into `sent` and `received`, newest first.
+ */
 app.get('/api/group-requests', authMiddleware, async (req, res) => {
   try {
     const userId = req.userId;
@@ -1358,7 +1641,11 @@ app.get('/api/group-requests', authMiddleware, async (req, res) => {
   }
 });
 
-// Get group requests for a specific conversation
+/**
+ * GET /api/group-requests/conversation/:userId
+ * Return every group request exchanged with one specific user, in either
+ * direction. Lets the messaging UI render the request inline in the thread.
+ */
 app.get('/api/group-requests/conversation/:userId', authMiddleware, async (req, res) => {
   try {
     const currentUserId = req.userId;
@@ -1384,7 +1671,30 @@ app.get('/api/group-requests/conversation/:userId', authMiddleware, async (req, 
   }
 });
 
-// Respond to group request (accept/reject)
+/**
+ * POST /api/group-requests/:requestId/respond
+ *
+ * Accept or reject an invitation to form a group. Only the recipient may
+ * respond, and only while the request is still pending.
+ *
+ * On acceptance this is where a `Group` is actually created. The two users'
+ * preference sets are merged conservatively, so the group profile satisfies both
+ * members rather than either one alone:
+ *   - age range     - intersected (highest minimum, lowest maximum)
+ *   - gender list   - intersected
+ *   - max rent      - the lower of the two budgets
+ *   - cleanliness / noise - averaged and rounded
+ *   - pets, smoking - logical AND, so a 'no' from either wins
+ *   - location      - taken from the requester, with fallbacks
+ *
+ * The new group inherits both members' photos (http URLs only, since group
+ * photo validation rejects other forms), existing matches between the members
+ * are re-pointed at the group, and both users move to 'in_group' with paused
+ * individual profiles.
+ *
+ * @body   {'accept'|'reject'} action
+ * @returns 200 with the group and updated request; 403 when not the recipient.
+ */
 app.post('/api/group-requests/:requestId/respond', authMiddleware, async (req, res) => {
   try {
     const { action } = req.body; // 'accept' or 'reject'
@@ -1422,7 +1732,9 @@ app.post('/api/group-requests/:requestId/respond', authMiddleware, async (req, r
       console.log('Creating group for:', groupRequest.requester.name, 'and', groupRequest.recipient.name);
       const groupName = `${groupRequest.requester.name} & ${groupRequest.recipient.name}`;
       
-      // Merge preferences (take more restrictive/compatible values)
+      // Merge the two members' preferences into a single group profile, taking
+      // the more restrictive value on every axis - see the endpoint header for
+      // the rule applied to each field.
       const req1Prefs = groupRequest.requester.preferences;
       const req2Prefs = groupRequest.recipient.preferences;
       
@@ -1543,7 +1855,11 @@ app.post('/api/group-requests/:requestId/respond', authMiddleware, async (req, r
   }
 });
 
-// Get group by ID
+/**
+ * GET /api/groups/:groupId
+ * Full group record, restricted to its own members.
+ * @returns 200 with the group; 403 for non-members; 404 if unknown.
+ */
 app.get('/api/groups/:groupId', authMiddleware, async (req, res) => {
   try {
     const groupId = req.params.groupId;
@@ -1567,7 +1883,13 @@ app.get('/api/groups/:groupId', authMiddleware, async (req, res) => {
   }
 });
 
-// Get group preview (public access for discover tab)
+/**
+ * GET /api/groups/:groupId/preview
+ *
+ * Group record for any authenticated user, used to render group cards in the
+ * discovery feed. Unlike the endpoint above there is no membership check, since
+ * the whole point is to show the group to outsiders considering joining.
+ */
 app.get('/api/groups/:groupId/preview', authMiddleware, async (req, res) => {
   try {
     const groupId = req.params.groupId;
@@ -1586,7 +1908,19 @@ app.get('/api/groups/:groupId/preview', authMiddleware, async (req, res) => {
   }
 });
 
-// Update group
+/**
+ * PUT /api/groups/:groupId
+ *
+ * Edit a group's name, description, preferences, photos or capacity. Any member
+ * may edit; there is no owner role.
+ *
+ * `maxMembers` is clamped to the 2-8 range the UI offers and, because lowering
+ * it can make an existing group full, the derived status flags are recomputed
+ * immediately. All members receive a `groupUpdated` event so open clients
+ * refresh.
+ *
+ * @returns 200 with the populated group; 403 for non-members.
+ */
 app.put('/api/groups/:groupId', authMiddleware, async (req, res) => {
   try {
     const groupId = req.params.groupId;
@@ -1650,7 +1984,30 @@ app.put('/api/groups/:groupId', authMiddleware, async (req, res) => {
   }
 });
 
-// Leave group
+/**
+ * POST /api/groups/:groupId/leave
+ *
+ * Remove the caller from a group and restore them as an individual.
+ *
+ * Sequence:
+ *   1. Drop the user from `memberIds` and recompute the group's status flags.
+ *   2. Reset the user to 'individual' with an active profile.
+ *   3. Delete every `GroupMatch` addressed to this user in any status, plus this
+ *      group's pending ones. This matters: an 'accepted' group match left behind
+ *      by a partially-completed join would block the user from ever seeing a new
+ *      invitation.
+ *   4. Delete the swipes between this user and this group so the two can
+ *      encounter each other again.
+ *   5. Close out the `UserGroupHistory` record by stamping `leftAt`, but
+ *      deliberately do NOT restore the archived swipes and matches - leaving
+ *      them deleted is what allows the user to be rematched from scratch.
+ *   6. If one member remains the group is dissolved: that member is also
+ *      restored to individual status, the group's swipes and matches are
+ *      cleared, and the group document is deleted. Otherwise the group survives
+ *      and a system message announcing the departure is posted to its thread.
+ *
+ * @returns 200 with { groupDissolved }; 400 when the caller is not a member.
+ */
 app.post('/api/groups/:groupId/leave', authMiddleware, async (req, res) => {
   try {
     const groupId = req.params.groupId;
@@ -1821,7 +2178,16 @@ app.post('/api/groups/:groupId/leave', authMiddleware, async (req, res) => {
   }
 });
 
-  // Send join request to a group
+  /**
+   * POST /api/groups/:groupId/join-request
+   *
+   * Ask to join an existing group. Blocked for current members and when a
+   * request from this user is already pending. The requester is populated before
+   * the Socket.io broadcast so members receive a renderable name and photo
+   * rather than a bare id.
+   *
+   * @returns 201 with the request; 400 if already a member or already pending.
+   */
   app.post('/api/groups/:groupId/join-request', authMiddleware, async (req, res) => {
     try {
       const { message } = req.body;
@@ -1868,7 +2234,27 @@ app.post('/api/groups/:groupId/leave', authMiddleware, async (req, res) => {
     }
   });
 
-  // Admin endpoint for group members to accept/reject join requests
+  /**
+   * POST /api/groups/:groupId/join-request/:requestId/respond
+   *
+   * Accept or reject an inbound join request. Any current member may respond,
+   * and only a pending request may be answered.
+   *
+   * Acceptance is the most involved write path in the file, because admitting a
+   * user has to unwind their entire individual matching state:
+   *   1. Add them to the group and flip them to 'in_group' / paused.
+   *   2. Mark the request accepted.
+   *   3. Delete their individual swipes in both directions, and every pending
+   *      match they were part of. Everyone affected receives a
+   *      `matchInvalidated` event so stale cards disappear from open clients.
+   *   4. Re-point existing matches between all members at the group.
+   *
+   * Step 3 is wrapped in its own try/catch and never rethrows: cleanup failing
+   * must not roll back a join that has already succeeded.
+   *
+   * @body   {'accept'|'reject'} action
+   * @returns 200 with { accepted }; 403 for non-members; 400 if already handled.
+   */
   app.post('/api/groups/:groupId/join-request/:requestId/respond', authMiddleware, async (req, res) => {
     try {
     console.log('Join-request respond incoming payload:', { params: req.params, body: req.body, userId: req.userId });
@@ -2051,7 +2437,23 @@ app.post('/api/groups/:groupId/leave', authMiddleware, async (req, res) => {
     }
   });
 
-// Invite a user to an existing group (same as group liking the user)
+/**
+ * POST /api/groups/:groupId/invite
+ *
+ * Invite a specific user into an existing group. Functionally this is the group
+ * liking that user: it performs the same validation as the group swipe endpoint
+ * and produces the same pair of records - a 'group_to_user' `SwipeAction` and a
+ * pending `GroupMatch` - so the invitation lands in the target's matches list
+ * alongside organic group likes.
+ *
+ * Known limitation: the validation and record creation are duplicated from
+ * /api/group/:groupId/swipe rather than shared, so the two must be kept in step
+ * by hand. The vestigial `swipeReq` object below is a leftover from an earlier
+ * attempt to dispatch into that handler directly.
+ *
+ * @returns 200 on success; 400 when the group is full or already swiped on the
+ *          target; 403 for non-members.
+ */
 app.post('/api/groups/:groupId/invite', authMiddleware, async (req, res) => {
   try {
     const { targetUserId, message } = req.body;
@@ -2162,7 +2564,16 @@ app.post('/api/groups/:groupId/invite', authMiddleware, async (req, res) => {
   }
 });
 
-// Send group formation invitation (for users not in groups)
+/**
+ * POST /api/group-invites/send
+ *
+ * Invite another individual to form a brand-new group. This is the counterpart
+ * to the endpoint above for users who have no group yet: both parties must be
+ * individuals, and the result is a `GroupRequest` rather than a `GroupMatch`.
+ *
+ * @returns 200 on success; 400 when either party is already in a group or a
+ *          request is already pending.
+ */
 app.post('/api/group-invites/send', authMiddleware, async (req, res) => {
   try {
     const { targetUserId, message } = req.body;
@@ -2218,7 +2629,27 @@ app.post('/api/group-invites/send', authMiddleware, async (req, res) => {
   }
 });
 
-// Send message
+// ---------------------------------------------------------------------------
+// 8. MESSAGING
+// ---------------------------------------------------------------------------
+
+/**
+ * POST /api/messages
+ *
+ * Send a message to either a group (`groupId`) or a matched user (`receiverId`);
+ * exactly one must be supplied.
+ *
+ * Authorisation differs by target: group messages require membership, direct
+ * messages require an accepted `Match` between sender and receiver. This is what
+ * enforces the product rule that users can only talk to people they matched with.
+ *
+ * The saved message is populated with sender details before being broadcast, so
+ * recipients can render it without a follow-up fetch. It is emitted to every
+ * group member except the sender (whose own client already has it from the HTTP
+ * response).
+ *
+ * @returns 200 with the saved message; 403 when not matched or not a member.
+ */
 app.post('/api/messages', authMiddleware, async (req, res) => {
   try {
     const { receiverId, groupId, content } = req.body;
@@ -2286,7 +2717,11 @@ app.post('/api/messages', authMiddleware, async (req, res) => {
   }
 });
 
-// Get join requests for a group (only visible to group members)
+/**
+ * GET /api/groups/:groupId/join-requests
+ * List the join requests addressed to a group, for its members to review.
+ * @returns 200 with the populated requests; 403 for non-members.
+ */
 app.get('/api/groups/:groupId/join-requests', authMiddleware, async (req, res) => {
   try {
     const groupId = req.params.groupId;
@@ -2307,7 +2742,15 @@ app.get('/api/groups/:groupId/join-requests', authMiddleware, async (req, res) =
   }
 });
 
-// Accept match endpoint
+/**
+ * POST /api/matches/:matchId/accept
+ *
+ * Accept an individual match. The caller must be one of the two parties, and a
+ * caller whose group is already full is refused - accepting would imply a
+ * conversation they cannot act on.
+ *
+ * @returns 200 with the updated match; 400 when the caller's group is full.
+ */
 app.post('/api/matches/:matchId/accept', authMiddleware, async (req, res) => {
   try {
     const match = await Match.findById(req.params.matchId);
@@ -2343,7 +2786,35 @@ app.post('/api/matches/:matchId/accept', authMiddleware, async (req, res) => {
   }
 });
 
-// Accept group match endpoint - user accepts invitation to join group
+/**
+ * POST /api/group-matches/:groupMatchId/accept
+ *
+ * Accept an invitation to join a group. This is the transition that turns an
+ * individual into a group member, and it is deliberately ordered so that the
+ * irreversible steps happen only once every precondition has passed.
+ *
+ * Preconditions: the caller is the invitation's target, the invitation is still
+ * pending, the group still exists and has room, and the caller is still an
+ * individual.
+ *
+ * Then, in order:
+ *   1. Snapshot the caller's swipes and matches into `UserGroupHistory`, so the
+ *      deletion in step 2 is recoverable.
+ *   2. Delete every swipe and pending/accepted match involving the caller, and
+ *      emit `matchInvalidated` to each affected counterpart so their open
+ *      clients drop the now-dead cards.
+ *   3. Add the caller to the group and save it.
+ *   4. Move the caller to 'in_group' with a paused profile.
+ *   5. Only now mark the invitation accepted, and delete the caller's other
+ *      pending invitations - they can only join one group.
+ *   6. Post a system message to the group thread and notify all members.
+ *
+ * The step ordering matters: marking the invitation accepted early would leave
+ * an unjoinable "accepted" record behind if a later step threw.
+ *
+ * @returns 200 on success; 400 when the group is full or the caller is no longer
+ *          an individual; 403 when the invitation is not theirs.
+ */
 app.post('/api/group-matches/:groupMatchId/accept', authMiddleware, async (req, res) => {
   try {
     console.log('=== ACCEPT GROUP MATCH DEBUG ===');
@@ -2621,7 +3092,20 @@ app.post('/api/group-matches/:groupMatchId/accept', authMiddleware, async (req, 
   }
 });
 
-// Decline group match endpoint - user rejects invitation to join group
+/**
+ * POST /api/group-matches/:groupMatchId/decline
+ *
+ * Decline a group invitation. The record is kept rather than deleted so the
+ * group is not able to immediately re-invite the same user.
+ *
+ * KNOWN ISSUE: this writes the status 'declined', which is not one of the values
+ * in the GroupMatch status enum ('pending' | 'accepted' | 'rejected' |
+ * 'expired'), so the save fails validation and the endpoint returns a 500. The
+ * intended value is 'rejected'. Left unchanged here because this pass is
+ * documentation-only.
+ *
+ * @returns 200 on success; 403 when the invitation is not the caller's.
+ */
 app.post('/api/group-matches/:groupMatchId/decline', authMiddleware, async (req, res) => {
   try {
     const groupMatchId = req.params.groupMatchId;
@@ -2662,7 +3146,19 @@ app.post('/api/group-matches/:groupMatchId/decline', authMiddleware, async (req,
   }
 });
 
-// Unmatch endpoint
+/**
+ * DELETE /api/matches/:matchId/unmatch
+ *
+ * Permanently undo a match. The match document, the swipe actions in both
+ * directions and the direct messages between the pair are all deleted.
+ *
+ * Removing the swipes is intentional rather than incidental: with no swipe
+ * history, each user re-enters the other's deck and the pair can match again
+ * later. Group messages are untouched because the `groupId: null` filter
+ * restricts the deletion to the direct thread.
+ *
+ * @returns 200 on success; 403 when the caller is not part of the match.
+ */
 app.delete('/api/matches/:matchId/unmatch', authMiddleware, async (req, res) => {
   try {
     const match = await Match.findById(req.params.matchId);
@@ -2707,7 +3203,15 @@ app.delete('/api/matches/:matchId/unmatch', authMiddleware, async (req, res) => 
   }
 });
 
-// Decline pending match endpoint
+/**
+ * POST /api/matches/:matchId/decline
+ *
+ * Decline a match that is still pending. The record is marked 'rejected' rather
+ * than deleted, which keeps the swipe history intact and so prevents the
+ * declined user from immediately reappearing in the decliner's deck.
+ *
+ * @returns 200 on success; 400 for a non-pending match; 403 for a third party.
+ */
 app.post('/api/matches/:matchId/decline', authMiddleware, async (req, res) => {
   try {
     const match = await Match.findById(req.params.matchId);
@@ -2737,7 +3241,16 @@ app.post('/api/matches/:matchId/decline', authMiddleware, async (req, res) => {
   }
 });
 
-// Get user's group conversations 
+/**
+ * GET /api/group-conversations
+ *
+ * Return the caller's group conversation, as a single-element array so the
+ * client can concatenate it with the individual conversation list. Users who are
+ * not in a group receive an empty array.
+ *
+ * Members whose accounts have since been deleted are filtered out of the
+ * returned member list, since Mongoose populates a missing reference as null.
+ */
 app.get('/api/group-conversations', authMiddleware, async (req, res) => {
   try {
     console.log('Loading group conversations for user:', req.userId);
@@ -2792,7 +3305,20 @@ app.get('/api/group-conversations', authMiddleware, async (req, res) => {
   }
 });
 
-// Get user's conversations (list of people they can message)
+/**
+ * GET /api/conversations
+ *
+ * List the caller's one-to-one conversations, derived from their accepted
+ * matches. A user who is in a group receives an empty array - group membership
+ * replaces individual messaging entirely.
+ *
+ * Two classes of match are skipped: orphaned ones whose counterpart account no
+ * longer exists, and ones whose counterpart has since joined a group.
+ *
+ * Conversation ids are built by sorting the two user ids and joining them with
+ * an underscore, so both participants independently derive the same id for the
+ * same thread - that id is what GET /api/messages/:conversationId expects.
+ */
 app.get('/api/conversations', authMiddleware, async (req, res) => {
   try {
     // Get current user to check their status
@@ -2852,8 +3378,11 @@ app.get('/api/conversations', authMiddleware, async (req, res) => {
   }
 });
 
-// Get messages for conversation
-// Get messages for a group
+/**
+ * GET /api/messages/group/:groupId
+ * Return up to the 100 oldest-first messages in a group, for its members only.
+ * @returns 200 with the messages; 403 when the caller is not in the group.
+ */
 app.get('/api/messages/group/:groupId', authMiddleware, async (req, res) => {
   try {
     const groupId = req.params.groupId;
@@ -2878,6 +3407,28 @@ app.get('/api/messages/group/:groupId', authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * GET /api/messages/:conversationId
+ *
+ * Return the messages in a conversation. The id encodes which kind of thread is
+ * being requested:
+ *   - `group_<groupId>`     - a group thread; the caller must be a member.
+ *   - `<userId>_<userId>`   - a direct thread; the caller must be one of the two.
+ *
+ * Direct-thread ids are validated strictly (two segments, each a 24-character
+ * ObjectId) before being cast, because a malformed id would otherwise throw
+ * inside the query builder. The pair is matched in both sender/receiver
+ * directions, with `groupId: null` restricting results to the direct thread.
+ *
+ * Results are oldest-first and capped at 100 messages; there is no pagination
+ * yet, so older history in a long thread is not reachable.
+ *
+ * Note: the sample-message dump and the two "simple query" probes below are
+ * diagnostics left over from debugging an issue where direct threads returned
+ * empty. They issue extra reads on every request and should be removed.
+ *
+ * @returns 200 with the messages; 400 on a malformed id; 403 when not a participant.
+ */
 app.get('/api/messages/:conversationId', authMiddleware, async (req, res) => {
   try {
     const conversationId = req.params.conversationId;
@@ -2986,7 +3537,18 @@ app.get('/api/messages/:conversationId', authMiddleware, async (req, res) => {
   }
 });
 
-// Socket.io authentication middleware
+// ---------------------------------------------------------------------------
+// 9. REAL-TIME LAYER
+// ---------------------------------------------------------------------------
+
+/**
+ * Socket.io handshake authentication.
+ *
+ * Applies the same rules as the HTTP middleware - verify the JWT, re-read the
+ * account, reject deactivated users - and stashes the resolved user on the
+ * socket. Rejecting here rather than per-event means no unauthenticated socket
+ * is ever able to join a room.
+ */
 io.use(async (socket, next) => {
   try {
     const token = socket.handshake.auth.token;
@@ -3014,7 +3576,15 @@ io.use(async (socket, next) => {
   }
 });
 
-// Socket.io connection handling
+/**
+ * Connection handler.
+ *
+ * Every socket immediately joins a room named after its user id. All server-side
+ * notifications in this file are addressed with `io.to(userId).emit(...)`, so a
+ * user receives them on every device and tab they have open. The explicit
+ * 'join' event is retained for backward compatibility with an earlier client and
+ * only verifies that the requested room matches the authenticated user.
+ */
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id, 'User ID:', socket.userId);
   
@@ -3036,7 +3606,24 @@ io.on('connection', (socket) => {
   });
 });
 
-// Database migrations and sample data initialization
+// ---------------------------------------------------------------------------
+// 10. STARTUP
+// ---------------------------------------------------------------------------
+
+/**
+ * Idempotent data migrations, run once at boot before the sample data is seeded.
+ *
+ * Two corrections are applied to documents written by earlier revisions:
+ *   1. Users predating the `profileStatus` field are backfilled to 'active'.
+ *   2. Users in a group who were incorrectly written as `isActive: false` or
+ *      'deactivated' are restored to active/paused. An earlier version of the
+ *      group-join code deactivated members, which locked them out of logging in;
+ *      the correct state for a group member is an active account with a paused
+ *      profile.
+ *
+ * Errors are logged rather than thrown so a migration problem cannot prevent the
+ * server from starting.
+ */
 const runMigrations = async () => {
   try {
     console.log('Running database migrations...');
@@ -3109,7 +3696,20 @@ const runMigrations = async () => {
   }
 };
 
-// DANGER: Reset all users endpoint - only for development/testing
+/**
+ * POST /api/admin/reset-all
+ *
+ * DESTRUCTIVE, development only. Deletes every group, match, message, swipe and
+ * request, and resets all users to active individuals. User accounts themselves
+ * are preserved, so logins keep working against a clean relational slate.
+ *
+ * Refused outright when NODE_ENV is 'production'. Note there is no role check
+ * beyond authentication - any signed-in user may call it in a development
+ * environment. The equivalent offline tool is reset_all_users.js in the
+ * repository root.
+ *
+ * @returns 200 with per-collection deletion counts; 403 in production.
+ */
 app.post('/api/admin/reset-all', authMiddleware, async (req, res) => {
   try {
     console.log('🚨 RESET ALL USERS requested by user:', req.userId);
@@ -3181,11 +3781,18 @@ app.post('/api/admin/reset-all', authMiddleware, async (req, res) => {
   }
 });
 
-// Run migrations and initialize sample data after database connection
+// Migrations must complete before seeding, since the seed writes documents the
+// migrations would otherwise have to correct.
 runMigrations().then(() => {
   initializeSampleData();
 });
 
+// Bind on 0.0.0.0 so the server is reachable from other devices on the local
+// network, not just localhost. If the port is taken the listener retries once on
+// PORT + 1 rather than exiting, which keeps restarts working while a previous
+// process is still shutting down.
+// Note: the default of 5001 here differs from the 3333 used in the .env file and
+// the documentation; PORT should be set explicitly.
 const PORT = process.env.PORT || 5001;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on http://0.0.0.0:${PORT}`);

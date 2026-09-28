@@ -1,3 +1,26 @@
+/**
+ * GROUP-ACCEPT WALKTHROUGH, FULL VARIANT (diagnostic utility, writes to the database)
+ *
+ * The more complete of the two accept walkthroughs. Unlike test_accept_group.js
+ * it first runs every precondition the endpoint enforces (target matches the
+ * caller, invitation pending, group available, user still an individual) and
+ * throws on the first failure, then performs the full sequence including
+ * deleting the user's swipes and matches and clearing their other pending
+ * invitations.
+ *
+ * Not an automated test despite the name: no assertions, no test runner.
+ *
+ * Usage: run from the server/ directory - `node test_alex_accept.js`
+ *
+ * Connections:
+ *   - server/models/GroupMatch.js, Group.js, User.js, UserGroupHistory.js,
+ *     SwipeAction.js, Match.js, Message.js
+ *   - server/index.js - the endpoint this mirrors most closely.
+ *   - server/test_accept_group.js - the earlier, partial variant.
+ *
+ * Note: performs real, destructive writes; the ids are hard-coded and no longer
+ * resolve. Listed in the dead-file audit.
+ */
 const mongoose = require('mongoose');
 const GroupMatch = require('./models/GroupMatch');
 const Group = require('./models/Group');

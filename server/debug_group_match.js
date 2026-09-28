@@ -1,3 +1,18 @@
+/**
+ * SINGLE GROUP-MATCH INSPECTOR (diagnostic utility)
+ *
+ * Read-only. Prints one GroupMatch document with its group's capacity flags and
+ * the target user's current status - the minimum needed to decide whether an
+ * invitation is still actionable.
+ *
+ * Usage: run from the server/ directory - `node debug_group_match.js`
+ *
+ * Connections:
+ *   - server/models/GroupMatch.js, Group.js, User.js
+ *
+ * Note: the GroupMatch id is hard-coded and no longer resolves. Listed in the
+ * dead-file audit.
+ */
 const mongoose = require('mongoose');
 const GroupMatch = require('./models/GroupMatch');
 const Group = require('./models/Group');

@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<!--
+  HTML TEMPLATE for the Homey client.
+
+  Consumed by HtmlWebpackPlugin (client/webpack.config.js), which injects the
+  compiled bundle script tag and writes the result to client/dist/index.html.
+  The only markup that matters is the #root container that client/src/index.tsx
+  mounts the React tree into.
+
+  The inline styles are a minimal reset plus the page background, kept here so
+  the shell is painted before the bundle loads and the app's own stylesheet
+  (client/src/index.css) is applied.
+-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">

@@ -1,9 +1,41 @@
 /**
- * SWIPE CARD COMPONENT - Interactive user profile card for the discovery/swipe interface
- * Displays user photos, bio, age, gender, and detailed roommate preferences in card format.
- * Handles touch/mouse interactions for swiping left (pass) or right (like) on potential matches.
- * Includes expandable sections for viewing full user details and preference compatibility.
- * Provides smooth animations and gesture recognition for intuitive user experience.
+ * SWIPE CARD COMPONENT
+ *
+ * A single draggable card in the discovery deck, showing a photo, name, bio and
+ * preference tags, with pass and like buttons beneath.
+ *
+ * Gesture handling is implemented directly rather than with a library. Pointer
+ * and touch events are handled in parallel so the card behaves the same on
+ * desktop and mobile: the press records an origin, movement stores the offset,
+ * and release either commits a swipe or springs the card back. A horizontal
+ * displacement of more than 100px counts as a decision - right for 'like', left
+ * for 'pass'. During a drag the CSS transition is disabled so the card tracks
+ * the pointer exactly, and restored on release so the spring-back animates.
+ * Rotation and opacity are derived from the horizontal offset, which is what
+ * gives the card its tilt and fade as it leaves the screen.
+ *
+ * The deck contains both people and groups. A group card arrives from the API
+ * with `isGroup: true` and an id prefixed `group_`; the component branches on
+ * that flag to show a member count instead of an age, to shorten the bio, and to
+ * offer an info button that fetches the group's full profile into a modal.
+ * Because the incoming object is not a real `User` instance, those extra fields
+ * are reached through `as any` casts - the deck is heterogeneous while the prop
+ * type is not.
+ *
+ * Props:
+ *   user    - the person or group to display.
+ *   onSwipe - called with (userId, 'like' | 'pass') once a decision is made.
+ *   style   - positioning supplied by the parent for card stacking.
+ *
+ * Connections:
+ *   - client/src/App.tsx        - owns the deck and handles onSwipe.
+ *   - client/src/classes/User.ts - the prop type.
+ *   - client/src/services/authService.ts - token for the group preview fetch.
+ *   - server/index.js - GET /api/groups/:groupId/preview, and the
+ *                       potential-matches endpoint that supplies these cards.
+ *
+ * Note: this component emits 'pass', while the server's swipe endpoint expects
+ * 'dislike'; App.tsx translates between the two.
  */
 import React, { useState, useRef } from 'react';
 import { User } from '../classes/User';
@@ -25,6 +57,9 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ user, onSwipe, style }) => {
   const [loadingGroupInfo, setLoadingGroupInfo] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // --- Pointer gesture handling -------------------------------------------
+  // Records the drag origin and disables the CSS transition so the card follows
+  // the pointer one-to-one rather than easing behind it.
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     setStartPos({ x: e.clientX, y: e.clientY });
@@ -41,6 +76,14 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ user, onSwipe, style }) => {
     setDragOffset({ x: deltaX, y: deltaY });
   };
 
+  /**
+   * End of a pointer drag. Past 100px of horizontal travel the gesture counts as
+   * a decision - right is a like, left a pass - otherwise the offset is cleared
+   * and the restored transition springs the card back to centre.
+   *
+   * Also bound to onMouseLeave, so dragging off the card ends the gesture
+   * cleanly instead of leaving it stuck to the pointer.
+   */
   const handleMouseUp = () => {
     if (!isDragging) return;
     
@@ -58,6 +101,10 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ user, onSwipe, style }) => {
     }
   };
 
+  // --- Touch gesture handling ---------------------------------------------
+  // The same three-phase logic against the first touch point. Touch and pointer
+  // events are handled separately because a browser does not reliably deliver
+  // both for one physical gesture.
   const handleTouchStart = (e: React.TouchEvent) => {
     const touch = e.touches[0];
     setIsDragging(true);
@@ -101,6 +148,13 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ user, onSwipe, style }) => {
     onSwipe(user.getId(), 'pass');
   };
 
+  /**
+   * Load and show a group's full profile in a modal.
+   *
+   * Only meaningful for group cards. The real group id is taken from the
+   * `groupId` field where present, falling back to stripping the `group_` prefix
+   * the potential-matches endpoint applies to the card id.
+   */
   const handleGroupInfo = async () => {
     if (!(user as any).isGroup) return;
     
@@ -131,6 +185,9 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ user, onSwipe, style }) => {
     }
   };
 
+  // Visual feedback derived from the drag: the card tilts in proportion to
+  // horizontal travel and fades as it approaches the edge, floored at 0.3 so it
+  // stays visible right up to the moment it is released.
   const rotation = dragOffset.x * 0.1;
   const opacity = Math.max(0.3, 1 - Math.abs(dragOffset.x) / 300);
 
@@ -322,7 +379,12 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ user, onSwipe, style }) => {
                 <h5 style={{ color: '#2d3436', marginBottom: '12px', fontSize: '14px' }}>Members:</h5>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                   {groupData.memberIds.filter((member: any) => member && member._id).map((member: any, index: number) => {
-                    // Calculate responsive sizing based on group size (matching group invitation layout)
+                    // Scale each member tile down as the group grows, so that up
+                    // to eight members still fit the modal without scrolling.
+                    // The same size ladder is used by the group invitation card
+                    // in MatchesList.tsx, keeping the two views consistent.
+                    // Members are filtered first because a deleted account
+                    // populates as null.
                     const validMembers = groupData.memberIds.filter((m: any) => m && m._id);
                     const memberCount = validMembers.length;
                     let imageSize, fontSize, padding, maxWidth;

@@ -1,9 +1,31 @@
 /**
- * USER CLASS - Business logic and methods for user objects on the client side
- * Provides object-oriented interface for user data with validation and helper methods.
- * Handles user compatibility checking between potential roommates based on preferences.
- * Includes getters/setters for profile management and data conversion for API calls.
- * Maintains user status, group membership, and activity state with update timestamps.
+ * USER CLASS
+ *
+ * Client-side domain model for a single user. Fields are private and reached
+ * through accessors, and every mutator refreshes `updatedAt`, so a User instance
+ * is a self-contained record of its own last modification.
+ *
+ * In the running application this class is used chiefly as a typed shape:
+ * App.tsx and the components below receive plain user objects from the API and
+ * treat them as `User`. Its behavioural methods - `isCompatibleWith` in
+ * particular - are exercised by the unit tests, where the class stands on its
+ * own without a server.
+ *
+ * Connections:
+ *   - client/src/types/index.ts      - `UserData`, `Preferences`, `UserStatus`.
+ *   - client/src/classes/Group.ts    - groups hold users and compare against them.
+ *   - client/src/components/SwipeCard.tsx, Profile.tsx, MatchesList.tsx,
+ *     GroupManagement.tsx, MessagingInterface.tsx - consumers.
+ *   - client/src/__tests__/User.test.ts - unit tests.
+ *   - server/models/User.js          - the server-side counterpart, which
+ *                                      implements the same compatibility rule.
+ *
+ * Notes:
+ *   - `isCompatibleWith` is intentionally duplicated on the server. The server's
+ *     copy is authoritative for building swipe decks; this one exists so the
+ *     client can reason about compatibility without a round trip.
+ *   - The constructor does not accept `status` or `groupId`; both default to the
+ *     individual state and are set afterwards through their setters.
  */
 import { UserData, Preferences, UserStatus } from '../types';
 
@@ -113,7 +135,21 @@ export class User {
     this.updatedAt = new Date();
   }
 
-  //Check if user is compatible with another user's preferences
+  /**
+   * Symmetric compatibility test between this user and another.
+   *
+   * Every criterion must pass in both directions - this is a hard filter, not a
+   * score. Each user must fall inside the other's age range and preferred-gender
+   * list; cleanliness and noise ratings must be within two points of each other;
+   * pet and smoking preferences must agree exactly.
+   *
+   * The rent check is deliberately disabled below: comparing the two budget
+   * ceilings directly excluded pairs who could in fact afford a place together,
+   * so budget is handled by the explicit filters in the discovery UI instead.
+   *
+   * @param otherUser - the candidate being evaluated.
+   * @returns true when the two users are mutually compatible.
+   */
   isCompatibleWith(otherUser: User): boolean {
     const otherPrefs = otherUser.getPreferences();
     const myPrefs = this.preferences;
@@ -162,7 +198,11 @@ export class User {
     return true;
   }
 
-  //Convert to plain object for API calls
+  /**
+   * Flatten to the plain `UserData` shape used for API payloads and for storing
+   * users in React state.
+   * @returns a serialisable copy of this user.
+   */
   toJSON(): UserData {
     return {
       id: this.id,

@@ -1,3 +1,23 @@
+/**
+ * GROUP MEMBER SWIPE CLEANUP (destructive maintenance utility)
+ *
+ * Deletes every swipe action involving a user who is currently in a group, in
+ * either direction.
+ *
+ * The application deletes these swipes at the moment a user joins a group, so
+ * that neither party is left holding a pending match against someone who is no
+ * longer individually available. This script performs the same cleanup after the
+ * fact, for users who joined before that behaviour existed.
+ *
+ * Usage: run from the server/ directory - `node cleanup_group_users_swipes.js`
+ *
+ * Connections:
+ *   - server/models/SwipeAction.js, User.js
+ *   - server/index.js - the accept/join endpoints that now do this inline.
+ *
+ * Note: the "confirm before deleting" log line is misleading - the script prints
+ * a warning but does not prompt, and deletes immediately afterwards.
+ */
 const mongoose = require('mongoose');
 const SwipeAction = require('./models/SwipeAction');
 const User = require('./models/User');

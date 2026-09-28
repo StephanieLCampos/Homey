@@ -1,3 +1,28 @@
+/**
+ * GROUP-ACCEPT WALKTHROUGH (diagnostic utility, writes to the database)
+ *
+ * Replays the group-match accept sequence step by step outside the HTTP layer -
+ * archive to history, add to group, update user status, mark the invitation
+ * accepted, post the system message - printing progress after each step so a
+ * failure can be attributed to a specific one. Written while diagnosing accepts
+ * that were failing with an opaque 500.
+ *
+ * Not an automated test despite the name: no assertions, no test runner.
+ *
+ * Usage: run from the server/ directory - `node test_accept_group.js`
+ *
+ * Connections:
+ *   - server/models/GroupMatch.js, Group.js, User.js, UserGroupHistory.js,
+ *     SwipeAction.js, Match.js, Message.js
+ *   - server/index.js - the endpoint this mirrors.
+ *   - server/test_alex_accept.js - a later variant that also runs the
+ *     precondition checks and the swipe/match deletion.
+ *
+ * Notes:
+ *   - Performs real writes; the ids are hard-coded and no longer resolve.
+ *   - Omits the precondition checks the endpoint performs, so it would happily
+ *     drive an invalid transition. Listed in the dead-file audit.
+ */
 const mongoose = require('mongoose');
 const GroupMatch = require('./models/GroupMatch');
 const Group = require('./models/Group');

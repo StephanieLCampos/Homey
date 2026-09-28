@@ -1,3 +1,29 @@
+/**
+ * GROUP MEMBERSHIP RECONCILIATION (destructive maintenance utility)
+ *
+ * Repairs disagreement between the two halves of group membership, which is
+ * stored redundantly as `User.groupId` / `User.status` and as `Group.memberIds`.
+ * Because they are written separately, a failure part-way through a join or
+ * leave can leave them out of step.
+ *
+ * The script reconciles in both directions:
+ *   - For each user marked 'in_group': if their group is gone, reset them to
+ *     individual; if the group exists but omits them, add them to its member list.
+ *   - For each active group: drop member ids with no account, and correct any
+ *     member whose own status or groupId does not point back at the group.
+ * It then prints the reconciled state for verification.
+ *
+ * Usage: run from the server/ directory - `node fix_group_sync.js`
+ *
+ * Connections:
+ *   - server/models/User.js, Group.js
+ *   - server/cleanup_orphaned_members.js - the narrower group-side-only cleanup.
+ *   - fix_user_status.js (repository root) - the single-user equivalent.
+ *
+ * Note: resolves every disagreement in favour of membership existing. A user
+ * left mid-way through leaving a group will be pulled back into it rather than
+ * released.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Group = require('./models/Group');
@@ -10,7 +36,9 @@ async function fixGroupSync() {
 
     console.log('\n=== Fixing Group Synchronization Issues ===\n');
 
-    // 1. Find users with groupId but the group doesn't exist or doesn't include them
+    // Pass 1 - user side. For every user who believes they are in a group,
+    // confirm the group exists and lists them; otherwise release the user or add
+    // them to the member list.
     const usersWithGroupIds = await User.find({ 
       groupId: { $exists: true, $ne: null },
       status: 'in_group'
@@ -46,7 +74,9 @@ async function fixGroupSync() {
       }
     }
 
-    // 2. Find groups with memberIds that point to users not marked as in_group
+    // Pass 2 - group side. For every active group, drop member ids with no
+    // account and correct any member whose own status or groupId does not point
+    // back at this group.
     const groups = await Group.find({ isActive: true });
     
     console.log(`\nChecking ${groups.length} active groups:`);

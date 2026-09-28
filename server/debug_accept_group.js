@@ -1,3 +1,20 @@
+/**
+ * GROUP-MATCH ACCEPT PRECONDITION DUMP (diagnostic utility)
+ *
+ * Read-only. Walks the same preconditions as POST /api/group-matches/:id/accept
+ * - invitation exists, caller is its target, invitation is pending, group has
+ * room, user is still an individual - and prints the outcome of each, so a
+ * failing accept can be attributed to a specific check.
+ *
+ * Usage: run from the server/ directory - `node debug_accept_group.js`
+ *
+ * Connections:
+ *   - server/models/GroupMatch.js, Group.js, User.js
+ *   - server/index.js - the endpoint whose logic this mirrors.
+ *
+ * Note: the GroupMatch and user ids are hard-coded from one historic debugging
+ * session and no longer resolve. Listed in the dead-file audit.
+ */
 const mongoose = require('mongoose');
 const GroupMatch = require('./models/GroupMatch');
 const Group = require('./models/Group');

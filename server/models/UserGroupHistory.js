@@ -1,8 +1,27 @@
 /**
- * USER GROUP HISTORY MODEL - MongoDB schema for storing user data when joining groups
- * Stores likes and matches that were deleted when user joined a group
- * Enables restoration of user's matching history when they leave a group
- * Tracks group membership history and provides data recovery capabilities
+ * USER GROUP HISTORY MODEL
+ *
+ * Archive of the individual matching state a user had before joining a group.
+ *
+ * When a user joins a group their personal swipes and matches are deleted, so
+ * that the group - not the individual - is the thing being matched. Deleting
+ * that state outright would be irreversible, so the affected `SwipeAction` and
+ * `Match` documents are snapshotted here first, embedded verbatim rather than
+ * referenced (the originals no longer exist to reference).
+ *
+ * `joinedAt` / `leftAt` bracket the membership period; a record with no `leftAt`
+ * describes a membership that is still current. When a user leaves the group,
+ * the leave endpoint reads the matching snapshot back to restore their prior
+ * swipe history.
+ *
+ * Connections:
+ *   - server/models/User.js, Group.js       - the membership being recorded.
+ *   - server/models/SwipeAction.js, Match.js - shape of the archived documents.
+ *   - server/index.js                        - written on join, read on leave.
+ *
+ * Notes:
+ *   - Restoration is best-effort: matches whose counterpart user has since been
+ *     deleted or has joined a group of their own are not revived.
  */
 
 const mongoose = require('mongoose');

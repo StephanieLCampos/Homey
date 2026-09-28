@@ -1,3 +1,30 @@
+/**
+ * JOIN-REQUEST ACCEPTANCE SMOKE TEST (throwaway script)
+ *
+ * Drives the group join-request flow end to end over HTTP against a locally
+ * running server: log in as a known group member, fetch that member's group
+ * conversation, list the group's pending join requests, and accept the first
+ * one. Each step's status code and body are printed.
+ *
+ * Unlike the diagnostic scripts in server/, this one exercises the real API
+ * surface rather than the database, which is what made it useful for confirming
+ * that authentication and routing were behaving as well as the data layer.
+ *
+ * Usage: with the server running on port 3333, run from the repository root
+ *        `node tmp_accept_request.js`
+ *
+ * Connections:
+ *   - server/index.js       - the endpoints exercised.
+ *   - server/routes/auth.js - the login call.
+ *   - package.json          - the repository root's only dependency,
+ *                             node-fetch, exists solely for this script.
+ *
+ * Notes:
+ *   - The `tmp_` prefix and the hard-coded sample credentials mark this as a
+ *     throwaway from one debugging session; it performs a real, irreversible
+ *     accept against whatever server it is pointed at.
+ *   - Listed in the dead-file audit.
+ */
 (async ()=>{
   const fetch = require('node-fetch');
   const base = 'http://localhost:3333';
@@ -6,7 +33,9 @@
     const loginResp = await fetch(base + '/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'mrseanlai@gmail.com', password: 'password123' })
+      // A seeded sample account - see initializeSampleData() in server/index.js.
+      // Must be a member of a group for the rest of this script to do anything.
+      body: JSON.stringify({ email: 'alex@example.com', password: 'password123' })
     });
     const login = await loginResp.json();
     console.log('LOGIN_STATUS', loginResp.status);

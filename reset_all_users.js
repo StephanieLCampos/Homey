@@ -1,3 +1,33 @@
+/**
+ * FULL DATA RESET (destructive maintenance utility)
+ *
+ * Returns the application to a clean slate while preserving accounts. It deletes
+ * every group, match, message, swipe action, group request, join request, group
+ * match and history record, then resets each user to an active individual with
+ * no group.
+ *
+ * User documents are deliberately kept, so existing logins continue to work and
+ * email addresses stay reserved - the intent is a fresh start for matching, not
+ * an empty database.
+ *
+ * Unlike most scripts here it prompts for confirmation, requiring the literal
+ * string YES before doing anything.
+ *
+ * Usage: run from the repository root - `node reset_all_users.js`
+ *
+ * Connections:
+ *   - server/models/* - all eight collections are cleared.
+ *   - verify_reset.js - the verification counterpart (note the database-name
+ *     mismatch described in that file's header).
+ *   - server/seed.js  - repopulates demonstration users afterwards.
+ *   - server/index.js - POST /api/admin/reset-all is the in-process equivalent.
+ *
+ * Notes:
+ *   - Destructive and irreversible.
+ *   - Users are saved individually rather than with `updateMany` so the model's
+ *     pre-save hooks run.
+ *   - Targets the `homey_roommate_app` database, matching server/.env.
+ */
 // Reset script to clear all matches, groups, and interactions
 // Run this in the server directory: node ../reset_all_users.js
 // WARNING: This will delete all matches, groups, messages, and swipe actions!
@@ -25,7 +55,8 @@ async function resetAllUsers() {
     console.log('- All user group histories');
     console.log('\nUsers and their profiles will be preserved but reset to individual status.\n');
 
-    // Simple confirmation
+    // Require an exact, case-sensitive YES. This is the only guard on an
+    // irreversible operation, so a bare Enter or a lowercase 'yes' cancels.
     const readline = require('readline').createInterface({
       input: process.stdin,
       output: process.stdout
@@ -95,7 +126,9 @@ async function resetAllUsers() {
     await UserGroupHistory.deleteMany({});
     console.log(`✓ Deleted ${userGroupHistoryCount} user group histories`);
 
-    // 8. Reset all users to individual status (DO NOT DELETE USERS)
+    // Users are reset rather than deleted, so logins keep working and email
+    // addresses stay reserved. Each is saved individually so the model's
+    // pre-save hooks run.
     const users = await User.find({});
     console.log(`\n✓ Found ${users.length} users to reset\n`);
 

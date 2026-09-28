@@ -1,9 +1,22 @@
 /**
- * AUTH PAGE COMPONENT - Main authentication interface with login/register toggle
- * Provides unified entry point for user authentication with tab switching.
- * Manages state between login and registration forms and handles authentication success.
- * Displays welcome messaging and coordinates authentication flow with child components.
- * Responsive design for mobile and desktop authentication experience.
+ * AUTH PAGE COMPONENT
+ *
+ * The signed-out shell. App.tsx renders this instead of the application whenever
+ * there is no authenticated user, so it is the entire surface a visitor sees
+ * before signing in.
+ *
+ * Its only state is which of the two forms to show. Each form is given the
+ * callback that switches to the other, so the toggle is driven from inside the
+ * forms rather than by a separate tab control, and `onAuthSuccess` is passed
+ * through unchanged - both paths end the same way.
+ *
+ * Props:
+ *   onAuthSuccess - invoked after a successful login or registration; App.tsx
+ *                   uses it to load the now-authenticated user.
+ *
+ * Connections:
+ *   - client/src/components/Auth/LoginForm.tsx, RegisterForm.tsx - the two forms.
+ *   - client/src/App.tsx - renders this when unauthenticated.
  */
 import React, { useState } from 'react';
 import { LoginForm } from './LoginForm';

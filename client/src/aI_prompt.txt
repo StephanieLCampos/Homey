@@ -1,3 +1,20 @@
+================================================================================
+AI PROMPT ARCHIVE (development artefact - not application code)
+
+The specification that was handed to an AI coding assistant to implement the
+group-formation feature: pausing individual profiles on joining a group, merging
+member preferences into a shared group profile, the member voting system, and the
+messaging restrictions that follow from group membership.
+
+Kept as a record of how that feature was specified. It is not read by any build
+step, test or runtime code, and the behaviour it describes is now implemented in
+server/index.js, server/models/Group.js and
+client/src/components/GroupManagement.tsx - consult those for what the system
+actually does, since the two may have diverged.
+
+Listed in the dead-file audit.
+================================================================================
+
 
 
 I need you to implement group functionality with the following requirements:

@@ -1,6 +1,30 @@
 #!/bin/bash
-
-# Roommate Finder App Startup Script
+#
+# DEVELOPMENT STARTUP SCRIPT
+#
+# Convenience launcher for local development. It verifies that Node.js and npm
+# are present, installs dependencies for client/ and server/ if their
+# node_modules directories are missing, then starts both processes in the
+# background: the Express API from server/ and the webpack dev server from
+# client/. A trap on SIGINT/SIGTERM stops both together, so Ctrl+C shuts the
+# whole stack down rather than orphaning the backend.
+#
+# Usage: ./start.sh   (from the repository root)
+#
+# Connections:
+#   - server/index.js      - the backend process started here.
+#   - client/package.json  - the `dev` script that serves the front end on :3000.
+#   - client/webpack.config.js - proxies /api from :3000 to the backend.
+#
+# Notes:
+#   - MongoDB is NOT started by this script; start it separately (see the README)
+#     or the server will exit on a failed connection.
+#   - The messages announce port 5000, which is neither the port the server
+#     defaults to (5001) nor the one server/.env sets (3333). Treat the printed
+#     backend URL as decorative and use the port from server/.env. The webpack
+#     proxy is hard-coded to 3333 and is the one that must match.
+#   - `npm install --force` is used to push past peer-dependency conflicts; it
+#     can mask genuine version incompatibilities.
 
 echo "🏠 Starting Roommate Finder App..."
 
@@ -60,7 +84,8 @@ echo "🔧 Backend: http://localhost:5000"
 echo ""
 echo "Press Ctrl+C to stop both servers"
 
-# Function to cleanup on exit
+# Stop both child processes on exit so Ctrl+C does not leave the backend running
+# and holding its port.
 cleanup() {
     echo ""
     echo "🛑 Stopping servers..."

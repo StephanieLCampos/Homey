@@ -1,8 +1,43 @@
 /**
- * SEARCH COMPONENT - User search and group invitation functionality
- * Allows users to search for other users by email address
- * Provides group invitation functionality for users in groups
- * Shows user profiles and handles group join requests
+ * SEARCH COMPONENT
+ *
+ * Directed discovery: find one specific person by email address and reach out to
+ * them, for users who already know who they want to live with. It complements
+ * the swipe deck, which is undirected.
+ *
+ * The outreach action adapts to the searcher's own situation, which is why this
+ * component loads the user's group on mount:
+ *   - In a group  - the action invites the person into that group
+ *                   (POST /api/groups/:groupId/invite), producing a pending
+ *                   group match on their side.
+ *   - Individual  - the action is an ordinary like (POST /api/swipe), which
+ *                   becomes a match immediately if the target had already liked
+ *                   them back.
+ *
+ * A full group replaces the whole view with an explanatory panel rather than
+ * disabling the controls, since neither action is available: a full group cannot
+ * invite, and its members cannot send individual likes.
+ *
+ * `sentRequests` tracks who has already been contacted in the current result
+ * set, so the action cannot be fired twice at the same person; it is cleared at
+ * the start of each new search.
+ *
+ * Props:
+ *   currentUser - the signed-in user, used for the group lookup.
+ *
+ * Connections:
+ *   - client/src/services/authService.ts - supplies the auth token.
+ *   - client/src/App.tsx - renders this as the Search view.
+ *   - server/index.js - GET /api/users/search, GET /api/user/:id,
+ *                       GET /api/groups/:groupId, POST /api/groups/:id/invite,
+ *                       POST /api/swipe.
+ *
+ * Notes:
+ *   - Search is an exact, case-insensitive email match. There is no partial or
+ *     name search, which is a deliberate privacy stance: users can only be found
+ *     by people who already know their address.
+ *   - `currentUser` is typed `any` rather than `User`, unlike the sibling
+ *     components; the accessor calls below assume a `User` instance regardless.
  */
 import React, { useState, useEffect } from 'react';
 import { authService } from '../services/authService';
@@ -33,11 +68,18 @@ const Search: React.FC<SearchProps> = ({ currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [sentRequests, setSentRequests] = useState<Set<string>>(new Set()); // Track sent requests by user ID
 
-  // Check if current user is in a group
+  // The available action depends on whether the user is in a group, so the group
+  // is resolved on mount and again whenever the user changes.
   useEffect(() => {
     checkUserGroup();
   }, [currentUser]);
 
+  /**
+   * Resolve the signed-in user's group, if any, in two steps: read the user to
+   * obtain their `groupId`, then fetch the group itself for its member count and
+   * capacity. `userGroup` is left null for an individual, which is what selects
+   * the like-based outreach path below.
+   */
   const checkUserGroup = async () => {
     if (!currentUser || !currentUser.getId()) return;
 
@@ -73,12 +115,20 @@ const Search: React.FC<SearchProps> = ({ currentUser }) => {
     }
   };
 
-  // Check if user's group is full
+  /**
+   * Whether the user's group has reached capacity. A full group disables search
+   * entirely - see the early return further down - because neither outreach path
+   * is available to its members.
+   */
   const isGroupFull = (): boolean => {
     if (!userGroup) return false;
     return userGroup.memberIds?.length >= userGroup.maxMembers;
   };
 
+  /**
+   * Look up a user by exact email address. Clears the record of prior outreach
+   * first, so the buttons in the new result set start enabled.
+   */
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchEmail.trim()) return;
@@ -109,6 +159,21 @@ const Search: React.FC<SearchProps> = ({ currentUser }) => {
     }
   };
 
+  /**
+   * Reach out to a searched-for user, taking whichever form fits the searcher's
+   * situation.
+   *
+   * In a group, this sends a group invitation, which arrives as a pending group
+   * match the target can accept. As an individual, it sends an ordinary like -
+   * and if the target had already liked back, the server reports an immediate
+   * match, which is surfaced here rather than left for the Matches tab to reveal.
+   *
+   * Either way the target is added to `sentRequests` so the action cannot be
+   * repeated from this result set.
+   *
+   * @param targetUserId   - the recipient.
+   * @param targetUserName - used in the invitation message and confirmations.
+   */
   const sendGroupInvite = async (targetUserId: string, targetUserName: string) => {
     setLoading(true);
     try {
@@ -170,7 +235,8 @@ const Search: React.FC<SearchProps> = ({ currentUser }) => {
     }
   };
 
-  // Show group full message if user's group is at capacity
+  // A full group replaces the entire view with an explanation, rather than
+  // presenting a search box whose every result would be unactionable.
   if (isGroupFull()) {
     return (
       <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>

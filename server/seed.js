@@ -1,3 +1,33 @@
+/**
+ * DATABASE SEED SCRIPT (maintenance utility)
+ *
+ * Populates an empty database with four fully-formed demonstration users
+ * (Alex, Sam, Jordan and Mike) with contrasting preferences and Unsplash
+ * portrait photos, so that the matching and filtering flows have realistic data
+ * to work against. All four share the password 'password123'.
+ *
+ * Refuses to run if the users collection is non-empty, so it can never
+ * duplicate or overwrite real data; reset first with reset_all_users.js.
+ *
+ * Usage: run from the server/ directory - `node seed.js`
+ *
+ * Connections:
+ *   - server/models/User.js - the documents written.
+ *   - reset_all_users.js    - the counterpart that clears the database.
+ *
+ * Notes:
+ *   - Overlaps with `initializeSampleData()` in server/index.js, which seeds a
+ *     different, smaller set of accounts (@example.com rather than @email.com)
+ *     automatically on every server start. This script is the richer, manual
+ *     alternative.
+ *   - Hashes the password itself with bcrypt before constructing the document.
+ *     Because the User model also hashes on save, the stored value is a hash of
+ *     a hash - the seeded accounts therefore cannot be logged into with the
+ *     stated password. Documented rather than corrected: this pass is
+ *     documentation-only.
+ *   - Passes the legacy `useNewUrlParser` / `useUnifiedTopology` options, which
+ *     are no-ops in Mongoose 8.
+ */
 // Seed script to create sample users
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -136,7 +166,8 @@ async function seedDatabase() {
     
     console.log('Connected to database');
     
-    // Check if users already exist
+    // Refuse to run against a non-empty database, so the seed can never
+    // duplicate or overwrite real accounts.
     const existingUsers = await User.countDocuments();
     if (existingUsers > 0) {
       console.log(`Database already has ${existingUsers} users. Skipping seed.`);
@@ -148,6 +179,8 @@ async function seedDatabase() {
     // Create users
     console.log('\nCreating sample users...\n');
     
+    // Users are created one at a time rather than with insertMany so that the
+    // model's pre-save hooks run for each document.
     for (const userData of sampleUsers) {
       const hashedPassword = await bcrypt.hash(userData.password, 10);
       const user = new User({

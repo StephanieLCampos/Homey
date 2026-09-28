@@ -1,3 +1,24 @@
+/**
+ * TEST-USER REMOVAL SCRIPT (destructive maintenance utility)
+ *
+ * Deletes every account whose name matches /test user( \d+)?/i together with its
+ * matches, swipe actions and messages, in that order, so no orphaned references
+ * are left behind.
+ *
+ * Usage: run from the server/ directory - `node removeTestUsers.js`
+ *
+ * Connections:
+ *   - server/models/User.js, Match.js, SwipeAction.js, Message.js
+ *   - server/findTestUsers.js - the read-only preview of what this will delete.
+ *
+ * Notes:
+ *   - Destructive and unprompted: it deletes as soon as it is run.
+ *   - The swipe cleanup filters on `swipedUserId`, which is not a field on the
+ *     SwipeAction schema (the correct name is `targetUserId`), so swipes
+ *     *received* by a test user are not removed. Flagged rather than fixed, as
+ *     this pass is documentation-only.
+ *   - Reads MONGO_URI, defaulting to the 'homey' database.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Match = require('./models/Match');
@@ -28,7 +49,8 @@ async function removeTestUsers() {
     // Get array of Test User IDs
     const testUserIds = testUsers.map(user => user._id);
     
-    // Remove related data first
+    // Delete dependent records before the users themselves, so an interrupted run
+    // cannot leave matches and messages pointing at accounts that are already gone.
     console.log('\nRemoving related data...');
     
     // Remove matches involving test users

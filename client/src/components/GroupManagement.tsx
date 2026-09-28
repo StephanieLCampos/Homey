@@ -1,9 +1,48 @@
 /**
- * GROUP MANAGEMENT COMPONENT - Interface for managing group conversations and members
- * Displays group chat interface when user is in a group, showing member list and messages.
- * Handles group messaging, member management, and leave group functionality.
- * Integrates with backend API for real-time group communications and status updates.
- * Replaces individual messaging interface when users form groups through group requests.
+ * GROUP MANAGEMENT COMPONENT
+ *
+ * The Groups view, and the whole of a user's group experience in one place: the
+ * shared chat thread, the member list, the group profile and its editor, the
+ * queue of inbound join requests, and the option to leave.
+ *
+ * A user belongs to at most one group, so this component loads a single group
+ * conversation rather than a list, and renders an empty state when the user has
+ * none.
+ *
+ * Live updates arrive over Socket.io, and the event set differs from the
+ * individual messaging view: alongside 'message' it listens for
+ * `groupJoinRequest`, `joinRequestAccepted`, `joinRequestRejected`, `memberLeft`
+ * and `groupDissolved` - the events that change who is in the group. Socket
+ * set-up is deliberately fault-tolerant: a failure to connect is logged and the
+ * component continues over REST alone, on the principle that losing live updates
+ * should not cost the user their group chat.
+ *
+ * Group editing is collaborative - any member may rename the group, change its
+ * description, photo, preferences or capacity - with no owner or admin role.
+ * Join requests are likewise answerable by any member.
+ *
+ * Props:
+ *   currentUser        - the signed-in user.
+ *   onUserStatusChange - notifies App.tsx when the user has left the group, so
+ *                        the rest of the application can return to its
+ *                        individual state.
+ *
+ * Connections:
+ *   - client/src/services/authService.ts - token for REST calls and the handshake.
+ *   - client/src/App.tsx - the parent.
+ *   - server/index.js - /api/group-conversations, /api/messages/group/:groupId,
+ *                       /api/groups/:groupId (GET and PUT),
+ *                       /api/groups/:groupId/join-requests,
+ *                       /api/groups/:groupId/leave, and the Socket.io server.
+ *   - server/models/Group.js - the schema behind the profile edited here.
+ *
+ * Notes:
+ *   - As in MessagingInterface, the socket URL is derived by substituting 3000
+ *     for 3333 in the page origin, which ties it to the local development ports.
+ *   - The group photo is stored as a base64 data URL on the group document, the
+ *     same approach as user photos.
+ *   - Responding to a join request is rendered in the request list further down;
+ *     it posts to /api/groups/:groupId/join-request/:requestId/respond.
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { User } from '../classes/User';
@@ -51,6 +90,10 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
   const [joinRequests, setJoinRequests] = useState<any[]>([]);
   const socketRef = useRef<Socket | null>(null);
 
+  // Load the group conversation, then attach the socket. The `mounted` flag
+  // guards against the asynchronous load completing after unmount and writing to
+  // state; the cleanup removes every listener before disconnecting so no handler
+  // survives into the next mount.
   useEffect(() => {
     console.log('GroupManagement useEffect triggered for user:', currentUser.getId());
     let mounted = true;
@@ -86,6 +129,24 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
     };
   }, [currentUser.getId()]); // Depend on user ID to force reload when user changes
 
+  /**
+   * Open the authenticated socket and register the group event handlers.
+   *
+   * Failure is tolerated throughout: a missing token skips the connection
+   * entirely, an authentication error disconnects without retrying, and nothing
+   * is surfaced to the user - the component remains fully usable over REST, just
+   * without live updates.
+   *
+   * Two details are deliberate. The connection is created inside a short timeout
+   * with a re-check of the ref, which avoids a race in React's strict-mode double
+   * invocation that could otherwise open two sockets. And the 'message' handler
+   * ignores messages from the current user, because the sender's own message is
+   * already appended locally when the send request returns - without that guard
+   * it would appear twice.
+   *
+   * Transports are set to polling first, then websocket, so a connection is
+   * established even where a websocket upgrade is blocked.
+   */
   const initializeSocket = () => {
     // Clean up existing socket first
     if (socketRef.current) {
@@ -150,6 +211,10 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
           });
 
           // Listen for join requests sent to the group and refresh the list when received
+          // A join request is broadcast to every member. The incoming group id is
+          // normalised to a string first, because it may arrive as an ObjectId or
+          // as a populated object depending on the emitting endpoint, and it is
+          // then matched against whichever group this view currently has loaded.
           socketRef.current.on('groupJoinRequest', (data: any) => {
             try {
               console.log('Received groupJoinRequest socket event:', data);
@@ -249,6 +314,10 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
   };
 
   // Handle uploading a single photo for the group profile (client-side base64 conversion)
+  /**
+   * Read a chosen image into a base64 data URL and stage it on the edit form.
+   * Nothing is sent until the profile is saved.
+   */
   const handleGroupPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -271,6 +340,10 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
     setEditData((prev: any) => ({ ...prev, photo: null }));
   };
 
+  /**
+   * Load the group's inbound join requests. Restricted server-side to members,
+   * and any member may accept or reject.
+   */
   const loadJoinRequests = async (groupId: string) => {
     try {
       const resp = await fetch(`/api/groups/${groupId}/join-requests`, {
@@ -288,6 +361,14 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
     }
   };
 
+  /**
+   * Load the user's group conversation.
+   *
+   * The endpoint returns an array for symmetry with the individual conversations
+   * endpoint, but a user belongs to at most one group, so only the first element
+   * is used and an empty array means the user has no group. Messages and pending
+   * join requests are loaded alongside it, so the view is complete in one pass.
+   */
   const loadGroupConversation = async () => {
     try {
       const response = await fetch('/api/group-conversations', {
@@ -346,6 +427,14 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
     }
   };
 
+  /**
+   * Send a message to the group.
+   *
+   * The input is cleared optimistically so the field is immediately ready for
+   * the next message, and restored verbatim if the request fails - the user does
+   * not lose what they typed. The saved message is appended locally because the
+   * server excludes the sender from its broadcast.
+   */
   const sendMessage = async () => {
     if (!newMessage.trim() || !groupConversation) return;
 
@@ -392,6 +481,10 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
     }
   };
 
+  /**
+   * Write one staged edit. A key prefixed 'preferences.' is routed into the
+   * nested preferences object; anything else is a top-level group field.
+   */
   const handleEditChange = (field: string, value: any) => {
     if (field.startsWith('preferences.')) {
       const prefKey = field.split('preferences.')[1];
@@ -410,6 +503,17 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
     }
   };
 
+  /**
+   * Save the group profile.
+   *
+   * Any member may do this - the group has no owner. The single staged photo is
+   * sent as a one-element array (or an empty array to clear it), matching the
+   * `photos` array on the schema. The conversation is reloaded afterwards so a
+   * renamed group is reflected in the header.
+   *
+   * Note that lowering `maxMembers` below the current member count will mark the
+   * group full and pause it, which the server handles on save.
+   */
   const handleSaveGroupProfile = async () => {
     if (!groupConversation || !editData) return;
 
@@ -449,6 +553,10 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
     }
   };
 
+  /**
+   * Open the editor with freshly-fetched group data, rather than whatever was
+   * last rendered - another member may have changed the profile since.
+   */
   const handleOpenEditProfile = async () => {
     if (groupConversation) {
       await loadGroupData(groupConversation.groupId);
@@ -457,6 +565,14 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ currentUser, onUserSt
     }
   };
 
+  /**
+   * Leave the group, after confirming.
+   *
+   * The server restores the user to an individual with an active profile and, if
+   * only one member would remain, dissolves the group and releases that member
+   * too. `onUserStatusChange` tells App.tsx to reload, since the user's swipe
+   * deck, matches and conversations all revert to their individual form.
+   */
   const handleLeaveGroup = async () => {
     if (!groupConversation) return;
     

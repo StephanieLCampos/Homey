@@ -1,9 +1,33 @@
 /**
- * WEBPACK CONFIGURATION - Build configuration for the Homey React client application
- * Configures module bundling, TypeScript compilation, and asset processing for development.
- * Sets up dev server with hot reloading, handles CSS/image imports, and generates HTML.
- * Provides source maps for debugging and proper file resolution for React/TypeScript.
- * Enables development workflow with live reloading and production-ready bundling.
+ * WEBPACK CONFIGURATION
+ *
+ * Builds the client into client/dist/bundle.js, which server/index.js then
+ * serves statically alongside the API.
+ *
+ * Three loaders cover the source tree: ts-loader compiles .ts/.tsx, style-loader
+ * and css-loader inline the stylesheet, and the `asset/resource` rule emits
+ * images as separate files whose URLs are substituted into the import - which is
+ * what makes the declarations in src/types/images.d.ts true at runtime.
+ * HtmlWebpackPlugin writes dist/index.html from the public/ template with the
+ * bundle script tag injected.
+ *
+ * The devServer block is what makes local development work without CORS: the
+ * client is served on :3000 and every /api request is proxied to the backend on
+ * :3333, so the browser sees a single origin. That proxy is also why the client
+ * can address the API with relative paths in both environments.
+ *
+ * Usage (from client/): `npm run build` for production, `npm start` for the dev
+ * server.
+ *
+ * Connections:
+ *   - client/src/index.tsx      - the entry point.
+ *   - client/public/index.html  - the HTML template.
+ *   - client/tsconfig.json      - compiler options used by ts-loader.
+ *   - server/index.js           - serves the resulting bundle, and is the proxy
+ *                                 target below.
+ *
+ * Note: the proxy target is hard-coded to port 3333, which must match the PORT
+ * in server/.env.
  */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');

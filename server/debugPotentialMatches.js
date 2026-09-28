@@ -1,3 +1,25 @@
+/**
+ * SWIPE DECK REPRODUCTION SCRIPT (diagnostic utility)
+ *
+ * Read-only. Re-runs the individual-candidate half of
+ * GET /api/users/:id/potential-matches directly against the database - the
+ * swiped and matched exclusion sets, then the candidate query - and prints each
+ * intermediate result. Written to determine whether an unexpectedly empty or
+ * over-full swipe deck originated in the data or in the API layer.
+ *
+ * Usage: run from the server/ directory - `node debugPotentialMatches.js`
+ *
+ * Connections:
+ *   - server/models/User.js, SwipeAction.js, Match.js
+ *   - server/index.js - the endpoint this reproduces.
+ *   - server/testApiDirectly.js - a near-duplicate of this script.
+ *
+ * Notes:
+ *   - The user id is hard-coded and no longer resolves.
+ *   - Reproduces an older version of the endpoint: it filters on `isActive`
+ *     rather than the current `profileStatus`, and omits the group candidates
+ *     the endpoint now appends. Listed in the dead-file audit.
+ */
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const SwipeAction = require('./models/SwipeAction');

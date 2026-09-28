@@ -1,3 +1,29 @@
+/**
+ * ORPHANED GROUP-MATCH SWEEP AND REPAIR (destructive maintenance utility)
+ *
+ * Scans every GroupMatch marked 'accepted' and repairs those where the
+ * acceptance never completed - the user is absent from the group's member list,
+ * or their own status and groupId do not agree with it.
+ *
+ * This is the state an earlier version of the accept endpoint could leave behind
+ * when a later step failed after the invitation had already been marked
+ * accepted; the affected user could then neither join the group nor see the
+ * invitation again. Each such record is reset to 'pending' so the accept can be
+ * retried. The current endpoint marks the invitation accepted last, which
+ * prevents new occurrences.
+ *
+ * Usage: run from the server/ directory
+ *        `node detect_and_fix_orphaned_group_matches.js`
+ *
+ * Connections:
+ *   - server/models/GroupMatch.js, Group.js, User.js
+ *   - server/index.js - the accept endpoint whose ordering now prevents this.
+ *   - server/check_alex_groupmatch.js, server/fix_alex_group_issue.js - the
+ *     single-record predecessors of this sweep.
+ *
+ * Note: this is the general, id-independent version and is the one to keep of
+ * the three.
+ */
 const mongoose = require('mongoose');
 const GroupMatch = require('./models/GroupMatch');
 const Group = require('./models/Group');
@@ -31,7 +57,9 @@ async function detectAndFixOrphanedGroupMatches() {
         continue;
       }
       
-      // Check if user is actually in the group
+      // Two independent consistency checks: the group must list the user, and
+      // the user's own status and groupId must agree. Either failing means the
+      // acceptance was recorded but never completed.
       const userInGroup = group.memberIds.some(memberId => 
         memberId.toString() === user._id.toString()
       );

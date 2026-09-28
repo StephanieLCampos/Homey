@@ -1,3 +1,19 @@
+/**
+ * GROUP SWIPE INSPECTOR (diagnostic utility)
+ *
+ * Read-only. Lists every 'group_to_user' swipe aimed at one user, with the
+ * originating group and action, followed by that user's status flags. Written to
+ * check whether a group's like had actually been recorded when the corresponding
+ * invitation failed to appear.
+ *
+ * Usage: run from the server/ directory - `node debug_group_swipe.js`
+ *
+ * Connections:
+ *   - server/models/SwipeAction.js, Group.js, User.js
+ *
+ * Note: the target user id is hard-coded and no longer resolves. Listed in the
+ * dead-file audit.
+ */
 const mongoose = require('mongoose');
 const SwipeAction = require('./models/SwipeAction');
 const Group = require('./models/Group');

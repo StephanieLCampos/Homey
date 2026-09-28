@@ -1,3 +1,24 @@
+/**
+ * NULL-REFERENCE SWIPE AND MATCH CLEANUP (destructive maintenance utility)
+ *
+ * Deletes SwipeAction documents whose userId or targetUserId is null or absent,
+ * and Match documents whose userId1 or userId2 is null or absent.
+ *
+ * These records were produced by an earlier revision in which Mongoose wrote
+ * explicit nulls into the unused id fields. Beyond being meaningless, they
+ * collided on the collection's sparse unique indexes and caused subsequent
+ * swipes to fail. The current SwipeAction pre-save hook prevents new ones.
+ *
+ * Usage: run from the server/ directory - `node cleanup_null_swipes.js`
+ *
+ * Connections:
+ *   - server/models/SwipeAction.js - the pre-save hook that prevents recurrence.
+ *   - server/models/Match.js
+ *   - server/fix_all_swipe_issues.js - the broader repair, which also rebuilds
+ *     the indexes as partial indexes.
+ *
+ * Note: destructive and unprompted.
+ */
 const mongoose = require('mongoose');
 const SwipeAction = require('./models/SwipeAction');
 const Match = require('./models/Match');
