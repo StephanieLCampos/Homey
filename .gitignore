@@ -2,3 +2,5 @@ mongodb/
 node_modules/
 *.log
 dist/
+server/server.log
+server/server.out
